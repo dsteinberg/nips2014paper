@@ -55,7 +55,95 @@ Address \\
 
 \section{Introduction}
 
-\section{Linearised Gaussian Models}
+TODO
+
+
+\section{Nonlinear Gaussian Models}
+
+In many inversion problems we may have a Gaussian prior model and a nonlinear
+likelihood/forward model. We wish to find the latent input to the forward
+model given its output by using Bayes' rule to perform the inversion,
+\begin{equation}
+    \probC{\lstate}{\obs} = \frac{\probC{\obs}{\lstate}\prob{\lstate}}
+        {\prob{\obs}},
+    \label{eq:bayesrule}
+\end{equation}
+where $\obs \in \real{d}$ is an observable quantity, and $\lstate \in \real{D}$
+is the latent state of interest. The following forms are assumed for the prior
+and likelihood:
+\begin{equation}
+    \prob{\lstate} = \gausC{\lstate}{\prmean, \prcov}
+    \quad \text{and} \quad
+    \probC{\obs}{\lstate} = \gausC{\obs}{\nonlin{\lstate}, \lcov},
+    \label{eq:priorlike}
+\end{equation}
+where $\nonlin{\cdot} : \real{D} \to \real{d}$ is a nonlinear function or
+forward model. Unfortunately the marginal likelihood is intractable to compute
+because the nonlinear function makes the likelihood and prior non-conjugate,
+\begin{equation}
+    \prob{\obs} = \int \gausC{\obs}{\nonlin{\lstate}, \lcov}
+        \gausC{\lstate}{\prmean, \prcov} d\lstate,
+    \label{eq:marglike}
+\end{equation}
+which also makes the posterior intractable to evaluate. Thus, we choose to
+approximate the posterior using variational inference \cite{}.
+
+
+\section{Variational Approximation}
+
+Using variational inference, we can put a lower bound on the log-marginal
+likelihood using Jensen's inequality, 
+\begin{equation}
+    \log \prob{\obs} \geq \int \qrob{\lstate} \log 
+        \frac{\prob{\obs, \lstate}}{\qrob{\lstate}} d\lstate,
+\end{equation}
+with equality iff $\KL{\qrob{\lstate}}{\probC{\lstate}{\obs}} = 0$, and
+$\qrob{\lstate}$ is an approximation to the true posterior. This lower bound is
+often referred to as `free energy', and can be re-written as follows
+\begin{equation}
+    \Fengy = \expec{q\lstate}{\log \probC{\obs}{\lstate}}
+        + \expec{q\lstate}{\log \prob{\lstate}} + \entropy{\qrob{\lstate}},
+    \label{eq:fengy}
+\end{equation}
+where $\expec{q\lstate}{\cdot}$ is an expectation with respect to the
+variational posterior, $\qrob{\lstate}$. We assume the posterior takes a
+Gaussian form,
+\begin{equation}
+    \qrob{\lstate} = \gausC{\lstate}{\pomean, \pocov}. \label{eq:varpost}
+\end{equation}
+Now we can evaluate the expectations and entropy terms in \eqref{eq:fengy},
+\begin{align}
+    \expec{q\lstate}{\log \probC{\obs}{\lstate}}
+        =& - \frac{D}{2}\log{2\pi} - \frac{1}{2} \log\deter{\lcov} 
+        - \frac{1}{2} 
+            \expec{q\lstate}{\brac{\obs - \nonlin{\lstate}}\transpose\lcov\inv
+            \brac{\obs - \nonlin{\lstate}}},
+            \label{eq:qlike} \\
+    \expec{q\lstate}{\log \prob{\lstate}}
+        =& - \frac{D}{2}\log{2\pi} - \frac{1}{2}\log\deter{\prcov}
+            - \frac{1}{2} \brac{\pomean - \prmean}\transpose\prcov\inv
+            \brac{\pomean - \prmean}
+            - \frac{1}{2} \trace{\prcov\inv\pocov},
+            \label{eq:qprior} \\
+    \entropy{\qrob{\lstate}} =& \frac{1}{2} \log\deter{\pocov} 
+        + \frac{D}{2}\log{2\pi} + \frac{D}{2} \label{eq:qentropy}.
+\end{align}
+where the expectation involving $\nonlin{\cdot}$ may be intractable.
+
+
+\subsection{Learning the Parameters}
+
+TODO: Introduce the linearisation here, but I'm not sure if we also need the
+augmented state form, it may be sufficient to say this can be shown to be
+similar to a non-linear least squares problem in augmented form? Maybe put it
+in for now, and take it out if we run out of space...
+
+\subsection{Taylor Series Linearisation}
+
+\subsection{Statistical Linearisation}
+
+\subsection{Approximate Lower Bound}
+
 
 \section{Linearised Gaussian Processes}
 
@@ -63,6 +151,28 @@ Address \\
 
 
 \subsection{Various Nonlinear Functions}
+
+Experimental setup:
+\begin{itemize}
+
+    \item True latent function, $\lstate_{\text{true}}\!\brac{\inobs} =
+        \sin\!\brac{\inobs} + \cos\!\brac{\pi\inobs}$.
+
+    \item The observations are generated as $\obs =
+        \nonlin{\lstate_\text{true}} + \epsilon$ where $\epsilon \sim \gaus{0,
+            0.2^2}$.
+    
+    \item Matern $\frac{5}{2}$ covariance functions are used. 
+
+    \item Held out predictive negative log likelihood for the latent function
+        is calculated as,
+        \begin{equation}
+            \frac{1}{2N\test} \sum^{N\test}_n \log{2\pi\pocovs\test_{nn}}
+                + \frac{1}{\pocovs\test_{nn}} \brac{\lstates\test_n -
+                    \pomeans\test_n}^2.
+        \end{equation}
+
+\end{itemize}
 
 \begin{figure}[htb]
     \subfloat[][$\nonlin{\lstate} = 2\text{sign}\!\brac{\lstate} + \lstate^3$]
@@ -121,7 +231,7 @@ Address \\
             & Taylor & 20.1577 & 5.9408 & 387.67 & 131.13 & 889.80 & 127.22 \\
             & \cite{Opper2009} \\
         \midrule
-        $\tanh\brac{2\lstate}$
+        $\tanh\!\brac{2\lstate}$
             & Statistical & $-$0.5903 & 0.1132 & 395.96 & 40.270 & 602.24 
                 & 60.622 \\
             & Taylor & 23.7728 & 8.9093 & 894.32 & 523.64 & 606.16 & 64.206 \\
@@ -133,6 +243,19 @@ Address \\
 
 \subsection{Binary Handwritten Digit Classification}
 
+We use the error rate (percent incorrectly predicted labels) and average 
+negative log Bernoulli likelihood to asses performance,
+\begin{equation}
+    - \frac{1}{N\test} \sum^{N\test}_{n} \obss\test_n 
+        \log\brac{\pi\test_n}
+    + \brac{1-\obss\test_n}\log\brac{1 - \pi\test_n},
+\end{equation}
+where $\pi\test_n = \expec{}{\prob{\obss\test_n = 1}}$ is predicted from the
+classifications algorithms.
+
+A square exponential kernel with amplitude $\sigma_\text{se}$ and length
+scale $l_\text{se}$ is used for the Gaussian processes in this experiment.
+
 \begin{table}[htb]
     \centering
     \small
@@ -140,11 +263,11 @@ Address \\
         handwritten-digits dataset for numbers `3' and `5'.}
     \begin{tabular}{r| c c c c}
         Algorithm & Av.\ neg.\ ll. & Error rate (\%) 
-            & $\log\brac{\sigma}$ & $\log\brac{l}$ \\
+            & $\log\!\brac{\sigma_\text{se}}$ & $\log\!\brac{l_\text{se}}$ \\
         \toprule
         GP -- Laplace & 0.11528 & 2.9754 & 2.5855 & 2.5823 \\
         GP -- EP & 0.07522 & 2.4580 & 5.2209 & 2.5315 \\
-        SVM (RBF) & 0.07342 & 2.3286 & -- & -- \\
+        SVM (RBF) & 0.08055 & 2.3286 & -- & -- \\
         Logistic Reg. & 0.11995 & 3.6223 & -- & -- \\
         \midrule
         GP -- Statistical & 0.11748 & 2.9754 &  2.8177 & 2.5504 \\
