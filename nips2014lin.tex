@@ -133,10 +133,122 @@ where the expectation involving $\nonlin{\cdot}$ may be intractable.
 
 \subsection{Learning the Parameters}
 
-TODO: Introduce the linearisation here, but I'm not sure if we also need the
-augmented state form, it may be sufficient to say this can be shown to be
-similar to a non-linear least squares problem in augmented form? Maybe put it
-in for now, and take it out if we run out of space...
+To find the optimal posterior mean, $\pomean$, we need to find the derivative,
+\begin{equation}
+    \frac{\partial\Fengy}{\partial\pomean} = -\frac{1}{2}
+    \frac{\partial}{\pomean} \expec{q\lstate}{
+        \brac{\lstate - \prmean}\transpose\prcov\inv
+        \brac{\lstate - \prmean}
+        + \brac{\obs - \nonlin{\lstate}}\transpose \lcov\inv
+            \brac{\obs - \nonlin{\lstate}}},
+\end{equation}
+where all terms in $\Fengy$ independent of $\pomean$ have been dropped, and we
+have placed the quadratic term from the prior, \eqref{eq:qprior}, back into the
+expectation. We can also represent this as an augmented Gaussian,
+\begin{equation}
+    \frac{\partial\Fengy}{\partial\pomean} = -\frac{1}{2}
+        \frac{\partial}{\pomean}
+        \expec{q\lstate}{
+        \brac{\augobs - \augnonlin{\lstate}}\transpose\augcov\inv
+        \brac{\augobs - \augnonlin{\lstate}}
+    },
+    \label{eq:augsys}
+\end{equation}
+where
+\begin{equation}
+    \augobs = \begin{bmatrix} \obs \\ \mathbf{0} \end{bmatrix}, \quad
+    \augnonlin{\lstate} = \begin{bmatrix} \nonlin{\lstate} \\ \lstate - \prmean 
+        \end{bmatrix}, \quad
+    \augcov = \begin{bmatrix} \lcov & \mathbf{0} \\ \mathbf{0} & \prcov 
+        \end{bmatrix}.
+\end{equation}
+which we can see is essentially a non-linear least squares problem\!
+\footnote{$-\frac{1}{2}
+        \frac{\partial}{\partial\lstate}
+        \brac{\augobs - \augnonlin{\lstate}}\transpose\augcov\inv
+        \brac{\augobs - \augnonlin{\lstate}} = 0$.}, but about
+the expected posterior value of $\lstate$. Even without the expectation, there
+is no solution closed form solution to $\partial\Fengy/\partial\pomean = 0$.
+To find a solution to this problem for the optimal $\pomean$ we can use the
+Newton algorithm. It begins with an initial guess, $\pomean_0$, then proceeds
+with the iterations,
+\begin{equation}
+    \pomean_{k+1} = \pomean_k -
+    \step\brac{\nabla_\pomean\nabla_\pomean\Fengy}\inv \nabla_\pomean\Fengy,
+    \label{eq:newton}
+\end{equation}
+for some step length, $\step \in (0, 1]$. Unfortunately, evaluating
+$\nabla_\pomean\Fengy$ is still intractable because of the nonlinear term
+within the expectation in \eqref{eq:augsys}. We can linearise
+$\augnonlin{\lstate}$, so we can then tractably evaluate the expectation,
+\begin{equation}
+    \nonlin{\lstate} \approx \Linmat\lstate + \intcpt,
+    \label{eq:linearise}
+\end{equation}
+for some linearisation matrix $\Linmat \in \real{d \times D}$ and an intercept
+term $\intcpt \in \real{d}$. Using this approximation we get,
+\begin{align}
+    \nabla_\pomean \Fengy
+        &\approx \Linmat\transpose\lcov\inv\brac{\obs - \Linmat\pomean 
+            - \intcpt} - \prcov\inv\brac{\pomean - \prmean}, 
+        \label{eq:delF} \\
+    \nabla_\pomean \nabla_\pomean \Fengy
+        &\approx - \Linmat\transpose\lcov\inv\Linmat - \prcov\inv,
+        \label{eq:deldelF}
+\end{align}
+So substituting \eqref{eq:delF} and \eqref{eq:deldelF} into \eqref{eq:newton}
+and using the Woodbury identity we get,
+\begin{equation}
+    \pomean_{k+1} = \brac{1-\step}\pomean_k + \step\prmean 
+        + \step\Kgain_k\brac{\obs - \intcpt_k - \Linmat_k\prmean},
+    \label{eq:pomean}
+\end{equation}
+where $\Kgain_k$ is a ``Kalman gain'' term,
+\begin{equation}
+    \Kgain_k = \prcov\Linmat_k\transpose\brac{\lcov +
+        \Linmat_k\prcov\Linmat_k\transpose}\inv.
+\end{equation}
+and we have assumed that the linearisation $\Linmat_k$ and intercept,
+$\intcpt_k$ are in some way dependent on the iteration.
+
+Similarly to the posterior mean, we can find the posterior covariance by
+setting $\partial\Fengy/\partial\pocov = 0$ where,
+\begin{equation}
+    \frac{\partial\Fengy}{\partial\pocov} = -\frac{1}{2} 
+        \frac{\partial}{\partial\pocov}
+        \expec{q\lstate}{
+            \brac{\augobs - \augnonlin{\lstate}}\transpose\augcov\inv
+            \brac{\augobs - \augnonlin{\lstate}}
+    } 
+    + \frac{1}{2} \frac{\partial}{\partial\pocov} \log \deter{\pocov}.
+\end{equation}
+Again we do not have an analytic solution to this because we need to take the 
+expectation and derivative of $\augnonlin{\lstate}$, so we use the
+approximation in \eqref{eq:linearise} to get,
+\begin{align*}
+    0 =& -\frac{1}{2} \frac{\partial}{\partial\pocov} \sbrac{
+            \brac{\augobs - \augLinmat\pomean - \augintcpt}\transpose
+            \augcov\inv 
+            \brac{\augobs - \augLinmat\pomean - \augintcpt}
+            + \trace{\augLinmat\transpose \augcov\inv \augLinmat \pocov}
+        } 
+        + \frac{1}{2} \frac{\partial}{\partial\pocov} \log \deter{\pocov}, \\
+    =& - \augLinmat\transpose \augcov\inv \augLinmat + \pocov\inv \\
+    =& - \prcov\inv + \Linmat\transpose\lcov\Linmat + \pocov\inv.
+\end{align*}
+So, from this we can see,
+\begin{align*}
+    \pocov =& \sbrac{\prcov\inv + \Linmat\transpose\lcov\Linmat}\inv, \\
+    &= - \brac{\nabla_\pomean \nabla_\pomean \Fengy}\inv.
+\end{align*}
+Using the Woodbury identity,
+\begin{align}
+    \pocov &= \prcov - \Kgain\Linmat\prcov \\
+    &= \prcov - \Kgain\brac{\lcov +
+        \Linmat\prcov\Linmat\transpose}\Kgain\transpose,
+    \label{eq:pocov}
+\end{align}
+Where the converged values of $\Linmat$ and $\Kgain$ are used.
 
 \subsection{Taylor Series Linearisation}
 
