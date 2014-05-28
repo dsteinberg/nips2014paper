@@ -8,6 +8,8 @@
             style=numeric,
             firstinits=true,
             natbib=true]{biblatex}
+\usepackage{graphicx}
+\usepackage{subfig}
 \bibliography{nips2014lin}
 
 
@@ -62,10 +64,31 @@ Address \\
 
 \subsection{Various Nonlinear Functions}
 
+\begin{figure}[htb]
+    \subfloat[][$\nonlin{\lstate} = 2\text{sign}\!\brac{\lstate} + \lstate^3$]
+        {\includegraphics[width=0.5\linewidth]{fig/signdemo}\label{sub:sign}}
+    \subfloat[][$\nonlin{\lstate} = \lfloor 5\lstate \rceil$]
+        {\includegraphics[width=0.5\linewidth]{fig/rounddemo}\label{sub:rnd}}\\
+    \subfloat[][MAP trace -- poor hyperparameter values]
+        {\includegraphics[width=0.5\linewidth]{fig/trace_beg}\label{sub:mapb}}
+    \subfloat[][MAP trace -- near optimal hyperprameter values]
+        {\includegraphics[width=0.5\linewidth]{fig/trace_end}\label{sub:mape}}
+    \caption[]{Example of learning the statistically linearised GP with
+        non-differentiable nonlinear functions in \subref{sub:sign} and
+        \subref{sub:rnd}. Typical traces from the MAP objective function used
+        to learn $\pomean$, \subref{sub:mapb} is from near the outset of
+        learning the hyperparameters, and \subref{sub:mape} is near model
+        convergence -- both terminated because of `divergence'.}
+    \label{fig:learnex}
+\end{figure}
+
 \begin{table}[htb]
     \centering
     \small
-    \caption[]{}
+    \caption[]{Results from running nonlinear likelihood GPs with various
+        differentiable nonlinear functions. The true latent function is
+        $\lstate_{\text{true}}\!\brac{\inobs} = \sin\!\brac{\inobs} 
+            + \cos\!\brac{\pi\inobs}$.}
     \begin{tabular}{r|c| c c c c c c}
         \multirow{2}{*}{$\nonlin{\lstate}$} & \multirow{2}{*}{Algorithm} & 
             \multicolumn{2}{c}{$-\frac{1}{N\test}
