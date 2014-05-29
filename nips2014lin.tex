@@ -235,9 +235,6 @@ Using the Woodbury identity,
 \end{equation}
 where the converged values of $\Linmat$ and $\Kgain$ are used.
 
-\textbf{TODO}: some implementation details of how to monitor for convergence of
-$\pomean$??
-
 
 \subsection{Taylor Series Linearisation}
 
@@ -347,7 +344,7 @@ unscented Kalman filter \cite{Julier2004}, and statistically linearised
 recursive least squares \cite{Geist2010}.
 
 
-\subsection{Calculating the Lower Bound}
+\subsection{Learning Objective Functions}
 
 Because of the expectations involving an arbitrary function in
 \eqref{eq:qlike}, no analytical solution exists for the lower bound on the
@@ -392,7 +389,47 @@ $\pomean_0$ is sufficiently close to the true posterior mean. No such
 guarantees exist for the statistical linearisation method, though it also works
 well in practice, more discussion on this point is in Section \ref{sec:exptoy}. 
 
+
 \section{Linearised Gaussian Processes}
+
+We now present two predictive the Gaussian Process (GP) models
+\cite{Rasmussen2006} with arbitrary non-linear likelihoods using the framework
+presented previously. The Gaussian process has the following likelihood and
+prior,
+\begin{equation}
+    \obs \sim \gaus{\nonlin{\lstate}, \lvar\ident{N}}, \qquad
+    \lstate \sim \gaus{\mathbf{0}, \KERNL}.
+    \label{eq:gplikeprior}
+\end{equation}
+Here $\obs \in \real{N}$ are the $N$ noisy observed values of the transformed
+latent function, $\nonlin{\lstate}$, and $\lstate \in \real{N}$ is the latent
+function we are interested in inferring. $\KERNL \in \real{N\times N}$ is the
+kernel matrix, where each element $\kernl_{ij} = \kernl\!\brac{\inobs_i,
+    \inobs_j}$ is the result of applying a kernel function to each input,
+$\inobs \in \real{D}$, in a pair-wise manner. It is also important to note that
+the likelihood noise model is \emph{isotropic}\footnote{This is not a necessary
+    condition.} with a variance of $\lvar$. 
+
+To perform an inversion with this GP, we need to perform Bayes' rule
+\eqref{eq:bayesrule} to find the posterior over $\lstate$ as before. Again we
+make the approximation that the posterior is Gaussian,
+\begin{equation}
+    \lstate \sim \qrob{\pomean, \pocov} = \gaus{\pomean, \pocov}.
+\end{equation}
+Where $\pomean \in \real{N}$ is the mean posterior latent function, and $\pocov
+\in \real{N \times N}$ is the posterior covariance. Since the likelihood is
+isotropic and factorises over $N$, we have the following expectation under
+variational inference,
+\begin{equation*}
+    \expec{q\lstate}{\log\probC{\obs}{\lstate}} =
+        - \frac{N}{2}\log{2\pi\lvar}
+        - \frac{1}{2\lvar} \sum_{n=1}^N 
+            \expec{q\lstates_n}{\brac{\obss_n - \nonlin{\lstates_n}}^2}
+\end{equation*}
+The linearisation is now simply,
+\begin{equation}
+    \nonlin{\lstates_n} \approx \Lins_n\lstates_n + \intcpts_n,
+\end{equation}
 
 \section{Experiments}
 
