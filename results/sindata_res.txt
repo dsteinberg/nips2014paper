@@ -1,0 +1,11 @@
+np.sin(f):
+
+Final result:
+	 Statistical linearisation --
+		 -ll(f): av = -0.8892, std = 0.1259
+		 smse(f): av = 1.5275e-02, std = 3.2744e-03
+		 smse(y): av = 8.5863e-02, std = 1.0426e-02
+	 Taylor linearisation  --
+		 -ll(f): av = 20.1577, std = 5.9408
+		 smse(f): av = 3.8767e-02, std = 1.3113e-02
+		 smse(y): av = 8.8980e-02, std = 1.2722e-02

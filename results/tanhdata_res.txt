@@ -1,0 +1,11 @@
+np.tanh(2*f):
+
+Final result:
+	 Statistical linearisation --
+		 -ll(f): av = -0.5903, std = 0.1132
+		 smse(f): av = 3.9596e-02, std = 4.0270e-03
+		 smse(y): av = 6.0224e-02, std = 6.0622e-03
+	 Taylor linearisation  --
+		 -ll(f): av = 23.7728, std = 8.9093
+		 smse(f): av = 8.9432e-02, std = 5.4364e-02
+		 smse(y): av = 6.0616e-02, std = 6.4206e-03

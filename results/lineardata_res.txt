@@ -1,0 +1,14 @@
+f:
+
+Final result:
+	 Statistical linearisation --
+		 -ll(f): av = -1.4453, std = 0.0601
+		 smse(f): av = 3.6471e-03, std = 7.3091e-04
+		 smse(y): av = 3.9928e-02, std = 4.7889e-03
+	 Taylor linearisation  --
+		 -ll(f): av = 14.2072, std = 2.7953
+		 smse(f): av = 5.4674e-03, std = 8.8899e-04
+		 smse(y): av = 4.0950e-02, std = 5.0967e-03
+	 Linear GP --
+		 -ll(f): av = -1.2793, std = 0.0162
+		 smse(f): av = 4.0210e-03, std = 7.0115e-04

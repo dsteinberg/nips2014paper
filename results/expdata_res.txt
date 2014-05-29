@@ -1,0 +1,11 @@
+np.exp(f):
+
+Final result:
+	 Statistical linearisation --
+		 -ll(f): av = -1.3858, std = 0.2320
+		 smse(f): av = 9.9405e-03, std = 7.5756e-03
+		 smse(y): av = 1.7007e-02, std = 2.7940e-03
+	 Taylor linearisation  --
+		 -ll(f): av = 15.1875, std = 4.0084
+		 smse(f): av = 2.3510e-02, std = 8.2551e-03
+		 smse(y): av = 1.7470e-02, std = 2.6181e-03

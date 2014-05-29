@@ -207,6 +207,7 @@ where $\Kgain_k$ is a ``Kalman gain'' term,
 \begin{equation}
     \Kgain_k = \prcov\Linmat_k\transpose\brac{\lcov +
         \Linmat_k\prcov\Linmat_k\transpose}\inv.
+    \label{eq:kgain}
 \end{equation}
 and we have assumed that the linearisation $\Linmat_k$ and intercept,
 $\intcpt_k$ are in some way dependent on the iteration. We can find the 
@@ -261,7 +262,7 @@ Substituting these values into \eqref{eq:pomean} we get,
         + \jacob{\pomean_k}\brac{\pomean_k - \prmean}},
     \label{eq:pomean_ekf}
 \end{equation}
-where $\Kgain$ is,
+where $\Kgain_k$ is,
 \begin{equation}
     \Kgain_k = \prcov\jacob{\pomean_k}\transpose\brac{\lcov +
         \jacob{\pomean_k}\prcov\jacob{\pomean_k}\transpose}\inv.
@@ -281,17 +282,18 @@ step of the iterated extended Kalman filter~\cite{Bell1993, Sibley2006}.
 
 Another method for linearising $\nonlin{\cdot}$ is \emph{statistical
     linearisation} \cite{Geist2010}. Statistical linearisation finds a least
-squares best fit to $\nonlin{\cdot}$ about a point; in our case
-this point is the \emph{posterior} mean, $\pomean$. To obtain this fit multiple
-observations of $\nonlin{\cdot}$ are required for different input points. One
-method of obtaining these points is the unscented transform \cite{Julier2004},
-which defines $2D+1$ ``sigma'' points,
+squares best fit to $\nonlin{\cdot}$ about a point; in our case this point is
+the \emph{posterior} mean, $\pomean$. The advantage of this method is that it
+does not require derivatives $\partial\nonlin{\lstate}/\partial\lstate$. To
+obtain the fit multiple observations of $\nonlin{\cdot}$ are required for
+different input points. One method of obtaining these points is the unscented
+transform \cite{Julier2004}, which defines $2D+1$ ``sigma'' points,
 \begin{align}
     \Sfunc_0 &= \pomean, \\
-    \Sfunc_i &= \pomean + \brac{\sqrt{\brac{D + \scoef} \pocov}}_i,
-        \quad i = 1 \ldots D, \\
-    \Sfunc_i &= \pomean - \brac{\sqrt{\brac{D + \scoef} \pocov}}_i,
-        \quad i = D+1 \ldots 2D, \\
+    \Sfunc_i &= \pomean + \brac{\sqrt{\brac{D + \scoef} \pocov}}_i \quad
+        \text{for} \quad i = 1 \ldots D, \\
+    \Sfunc_i &= \pomean - \brac{\sqrt{\brac{D + \scoef} \pocov}}_i \quad
+        \text{for} \quad i = D+1 \ldots 2D, \\
     \Sobs_i &= \nonlin{\Sfunc_i}.
 \end{align}
 Here $(\sqrt{\cdot})_i$ refers to columns of the matrix square root, we follow
@@ -309,7 +311,7 @@ where,
 \begin{equation}
     \Sw_0 = \frac{\scoef}{D + \scoef},
         \qquad \Sw_i = \frac{1}{2\brac{D + \scoef}}
-        \quad i = 1 \ldots 2D,
+        \quad \text{for} \quad i = 1 \ldots 2D,
 \end{equation}
 for a free parameter $\scoef$\footnote{Setting $\scoef = 0.5$ yields
     uniform weights.}. According to \cite{Julier2004} various settings of
@@ -328,23 +330,67 @@ Substituting $\intcpt$ back into \eqref{eq:pomean}, we obtain,
 \begin{equation}
     \pomean_{k+1} = \brac{1-\step}\pomean_k + \step\prmean 
         + \step\Kgain_k\brac{\obs - \bar\obs_k 
-        + \Linmat_k\brac{\pomean_k - \prmean}},
+        + \Linmat_k\brac{\pomean_k - \prmean}}.
     \label{eq:pomean_sl}
 \end{equation}
-where $\Kgain_k$, $\Linmat_k$ and $\bar\obs_k$ have been evaluated using the
+Here $\Kgain_k$, $\Linmat_k$ and $\bar\obs_k$ have been evaluated using the
 statistics from the $k$th iteration. This implies that the posterior
 covariance, $\pocov_k$, is now estimated at every iteration of
-\eqref{eq:pomean_sl} since we use it to form $\Linmat_k$ and $\intcpt_k$.
+\eqref{eq:pomean_sl} since we use it to form $\Linmat_k$ and $\intcpt_k$, and 
+$\Kgain_k$ and $\pocov_k$ have the same form as \eqref{eq:kgain} and
+\eqref{eq:pocov} respectively. Equations \eqref{eq:pomean_sl} and
+\eqref{eq:pocov} are similar to the equations for a single update of the
+iterated sigma-point Kalman filter (iSPKF) \cite{Sibley2006} for $\step = 1$,
+however we have the term $\bar\obs_k$ appearing in \eqref{eq:pomean_sl} as
+opposed to $\nonlin{\pomean_k}$. This is more in-line with the regular
+unscented Kalman filter \cite{Julier2004}, and statistically linearised
+recursive least squares \cite{Geist2010}.
 
-Equations \eqref{eq:pomean_sl} and \eqref{eq:pocov} are similar to the
-equations for a single update of the iterated sigma-point Kalman filter (iSPKF)
-\cite{Sibley2006} for $\step = 1$, however we have the term $\bar\obs_k$
-appearing in \eqref{eq:pomean_sl} as opposed to $\nonlin{\pomean_k}$. This is
-more in-line with the regular unscented Kalman filter \cite{Julier2004}, and
-statistically linearised recursive least squares \cite{Geist2010}.
 
-\subsection{Approximate Lower Bound}
+\subsection{Calculating the Lower Bound}
 
+Because of the expectations involving an arbitrary function in
+\eqref{eq:qlike}, no analytical solution exists for the lower bound on the
+likelihood, $\Fengy$. However, we can use our approximation
+\eqref{eq:linearise} to calculate $\Fengy$ once the posterior
+mean, $\pomean$, has converged,
+\begin{multline}
+    \Fengy \approx - \frac{1}{2} \bigg[
+        D\log{2\pi} + \log\deter{\lcov} + \log\deter{\prcov} 
+        - \log\deter{\pocov}
+    + \brac{\pomean - \prmean}\transpose\prcov\inv
+        \brac{\pomean - \prmean} \\
+    + \brac{\obs - \Linmat\pomean - \intcpt}\transpose\lcov\inv
+        \brac{\obs - \Linmat\pomean - \intcpt}
+        \bigg].
+    \label{eq:approxfengy}
+\end{multline}
+Unfortunately we cannot use this as an objective to monitor the convergence of
+$\pomean$, since it is only a valid approximation once $\pomean$ has been
+found. However, $\Fengy$ is useful if our model has hyperparameters that need
+to be learned, such as a Gaussian process. 
+
+This leaves us requiring an objective function to monitor for convergence of 
+$\pomean$. In practice we have found that simply using the least squares 
+objective function that the Newton optimises effective,
+\begin{multline}
+    -\frac{1}{2}
+        \brac{\augobs - \augnonlin{\pomean}}\transpose
+        \augcov\inv
+        \brac{\augobs - \augnonlin{\pomean}} 
+    = -\frac{1}{2} \brac{\obs - \nonlin{\pomean}}\transpose
+            \lcov\inv
+            \brac{\obs - \nonlin{\pomean}} \\
+    -\frac{1}{2}
+        \brac{\pomean - \prmean}\transpose
+        \prcov\inv
+        \brac{\pomean - \prmean}. 
+\end{multline}
+This is also the \emph{maximum a-posteriori} objective, and will converge to
+the true posterior mean using the Taylor series linearisation method if 
+$\pomean_0$ is sufficiently close to the true posterior mean. No such
+guarantees exist for the statistical linearisation method, though it also works
+well in practice, more discussion on this point is in Section \ref{sec:exptoy}. 
 
 \section{Linearised Gaussian Processes}
 
@@ -352,6 +398,7 @@ statistically linearised recursive least squares \cite{Geist2010}.
 
 
 \subsection{Various Nonlinear Functions}
+\label{sec:exptoy}
 
 Experimental setup:
 \begin{itemize}
