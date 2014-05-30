@@ -286,11 +286,13 @@ obtain the fit multiple observations of $\nonlin{\cdot}$ are required for
 different input points. One method of obtaining these points is the unscented
 transform \cite{Julier2004}, which defines $2D+1$ ``sigma'' points,
 \begin{align}
-    \Sfunc_0 &= \pomean, \\
+    \Sfunc_0 &= \pomean,
+        \label{eq:spoint0} \\
     \Sfunc_i &= \pomean + \brac{\sqrt{\brac{D + \scoef} \pocov}}_i \quad
         \text{for} \quad i = 1 \ldots D, \\
     \Sfunc_i &= \pomean - \brac{\sqrt{\brac{D + \scoef} \pocov}}_i \quad
-        \text{for} \quad i = D+1 \ldots 2D, \\
+        \text{for} \quad i = D+1 \ldots 2D,
+        \label{eq:spointi} \\
     \Sobs_i &= \nonlin{\Sfunc_i}.
 \end{align}
 Here $(\sqrt{\cdot})_i$ refers to columns of the matrix square root, we follow
@@ -303,12 +305,14 @@ we can define the following statistics,
     \qquad
     \xcov = \sum^{2D}_{i=0} \Sw_i \brac{\Sobs_i - \bar\obs}
         \brac{\Sfunc_i - \pomean}\transpose,
+    \label{eq:slstats}
 \end{equation}
 where,
 \begin{equation}
     \Sw_0 = \frac{\scoef}{D + \scoef},
         \qquad \Sw_i = \frac{1}{2\brac{D + \scoef}}
         \quad \text{for} \quad i = 1 \ldots 2D,
+    \label{eq:slweights}
 \end{equation}
 for a free parameter $\scoef$\footnote{Setting $\scoef = 0.5$ yields
     uniform weights.}. According to \cite{Julier2004} various settings of
@@ -401,6 +405,7 @@ prior,
     \lstate \sim \gaus{\mathbf{0}, \KERNL}.
     \label{eq:gplikeprior}
 \end{equation}
+
 Here $\obs \in \real{N}$ are the $N$ noisy observed values of the transformed
 latent function, $\nonlin{\lstate}$, and $\lstate \in \real{N}$ is the latent
 function we are interested in inferring. $\KERNL \in \real{N\times N}$ is the
@@ -408,28 +413,99 @@ kernel matrix, where each element $\kernl_{ij} = \kernl\!\brac{\inobs_i,
     \inobs_j}$ is the result of applying a kernel function to each input,
 $\inobs \in \real{D}$, in a pair-wise manner. It is also important to note that
 the likelihood noise model is \emph{isotropic}\footnote{This is not a necessary
-    condition.} with a variance of $\lvar$. 
-
-To perform an inversion with this GP, we need to perform Bayes' rule
-\eqref{eq:bayesrule} to find the posterior over $\lstate$ as before. Again we
-make the approximation that the posterior is Gaussian,
-\begin{equation}
-    \lstate \sim \qrob{\pomean, \pocov} = \gaus{\pomean, \pocov}.
-\end{equation}
-Where $\pomean \in \real{N}$ is the mean posterior latent function, and $\pocov
-\in \real{N \times N}$ is the posterior covariance. Since the likelihood is
-isotropic and factorises over $N$, we have the following expectation under
-variational inference,
+    condition.} with a variance of $\lvar$. As before, we make the
+approximation that the posterior is Gaussian, $\qrobC{\lstate}{\pomean, \pocov}
+= \gausC{\lstate}{\pomean, \pocov}$ where $\pomean \in \real{N}$ is the mean
+posterior latent function, and $\pocov \in \real{N \times N}$ is the posterior
+covariance. Since the likelihood is isotropic and factorises over $N$, we have
+the following expectation under variational inference,
 \begin{equation*}
     \expec{q\lstate}{\log\probC{\obs}{\lstate}} =
         - \frac{N}{2}\log{2\pi\lvar}
         - \frac{1}{2\lvar} \sum_{n=1}^N 
-            \expec{q\lstates_n}{\brac{\obss_n - \nonlin{\lstates_n}}^2}
+            \expec{q\lstates_n}{\brac{\obss_n - \nonlin{\lstates_n}}^2}.
 \end{equation*}
-The linearisation is now simply,
+As a consequence the linearisation is scaler per element of $\lstate$,
 \begin{equation}
-    \nonlin{\lstates_n} \approx \Lins_n\lstates_n + \intcpts_n,
+    \nonlin{\lstates_n} \approx \Lins_n\lstates_n + \intcpts_n.
 \end{equation}
+Using this we can derive the approximate gradients,
+\begin{equation}
+    \nabla_\pomean\Fengy \approx \frac{1}{\lvar}\Linmat\brac{\obs -
+        \Linmat\pomean - \intcpt} - \KERNL\inv\pomean,
+    \qquad
+    \nabla_\pomean\nabla_\pomean \Fengy \approx -\KERNL\inv
+    -\Linmat\Lvar\inv\Linmat,
+\end{equation}
+where $\Linmat = \diag{\sbrac{\Lins_1, \ldots, \Lins_N}}$ and $\Lvar =
+\diag{\sbrac{\lvar, \ldots, \lvar}}$. Because of the factorising likelihood we
+obtain $\pocov\inv = \KERNL\inv + \Linmat\Lvar\inv\Linmat$, that is, the
+inverse posterior covariance is just the prior inverse covariance, but with a
+modified diagonal. This means if we were to use the natural parameterisation of
+the Gaussian, we only have to infer $2N$ parameters (not $N + N^2$), which a
+similar result to \cite{Opper2009}.  Straight-forwardly we can obtain the
+Newton steps for the posterior mean,
+\begin{equation}
+    \pomean_{k+1} = \brac{1-\step}\pomean_k 
+        + \step\Kgain_k\brac{\obs - \intcpt_k}.
+\end{equation}
+Also as before,
+\begin{align}
+    \Kgain_k &= \KERNL\Linmat_k\brac{\Lvar + \Linmat_k\KERNL\Linmat_k}\inv, \\
+    \pocov &= \brac{\ident{N} - \Kgain\Linmat}\!\KERNL.
+\end{align}
+The values for $\Lins_n$ and $\intcpts_n$ for the Taylor series linearisation
+are now,
+\begin{equation}
+    \Lins_n = \frac{\partial\nonlin{\pomeans_n}}{\partial\pomeans_n},
+    \qquad
+    \intcpts_n = \nonlin{\pomeans_n}
+        - \frac{\partial\nonlin{\pomeans_n}}{\partial\pomeans_n} \pomeans_n,
+\end{equation}
+and for statistical linearisation,
+\begin{equation}
+    \Lins_n = \frac{\xcovs_{\pomeans\obss,n}}{\pocovs_{nn}},
+    \qquad
+    \intcpts_n = \bar\obss_n - \Lins_n\pomeans_n.
+\end{equation}
+$\pocovs_{nn}$ is the $n$th diagonal element of $\pocov$ and
+$\xcovs_{\pomeans\obss,n}$ and $\bar\obss_n$ are calculated the same way as
+\eqref{eq:spoint0} -- \eqref{eq:slweights} where the sigma points for each
+observation $n \in N$ are $\Sfunc_{n} = \big\{\pomeans_n,~\pomeans_n +
+    \sqrt{\brac{1 + \scoef}\pocovs_{nn}},~\pomeans_n - \sqrt{\brac{1 +
+            \scoef}\pocovs_{nn}}\big\}$ and the dimensionality is~1. 
+
+To find the distribution for a test point, $\lstates\test$, we follow the
+procedure in \cite{Rasmussen2006} for a Laplace GP classifier\footnote{More
+    detail is provided in the supplementary material}. This gives
+$\lstates\test \sim \gaus{\pomeans\test, \pocovs\test}$ where,
+\begin{equation}
+    \pomeans\test = \Kernl\testT\KERNL\inv\pomean,
+    \qquad
+    \pocovs\test = \kernl\ttest - \Kernl\testT\KERNL\inv\sbrac{\ident{N} -
+        \pocov\KERNL\inv}\Kernl\test,
+\end{equation}
+and $\kernl\ttest = \kernl\!\brac{\inobs\test, \inobs\test}$ and $\Kernl\test
+= \sbrac{\kernl\!\brac{\inobs_1, \inobs\test}, \ldots, \kernl\!\brac{\inobs_N,
+        \inobs\test}}\transpose$. We can also find the predicted observations,
+$\bar\obss\test$ by evaluating the one-dimensional integral,
+\begin{equation}
+    \bar\obss\test = \expec{q\lstates\test}{\obss\test} = \int
+        \nonlin{\lstates\test} \gausC{\lstates\test}{\pomeans\test,
+            \pocovs\test} d\lstates\test,
+\end{equation}
+for which we can use quadrature. Alternatively, if we were to use statistical
+linearisation we can use another application of the unscented transform to
+approximate the predictive distribution $\obss\test \sim \gaus{\bar\obss\test,
+    \lvar_{\obss\test}}$ and,
+\begin{equation}
+    \bar\obss\test = \sum^2_{i=0} \Sw_i \Sfunc_i\test, \qquad 
+    \lvar_{\obss\test} = \sum^2_{i=0} \Sw_i \brac{\Sobs_i\test -
+        \bar\obss\test}^2.
+    \label{eq:slpred}
+\end{equation}
+which we find find works well in practice, see \autoref{fig:learnex} for a
+demonstration.
 
 \section{Experiments}
 
@@ -468,12 +544,16 @@ Experimental setup:
         {\includegraphics[width=0.5\linewidth]{fig/trace_beg}\label{sub:mapb}}
     \subfloat[][MAP trace -- near optimal hyperprameter values]
         {\includegraphics[width=0.5\linewidth]{fig/trace_end}\label{sub:mape}}
+
     \caption[]{Example of learning the statistically linearised GP with
         non-differentiable nonlinear functions in \subref{sub:sign} and
-        \subref{sub:rnd}. Typical traces from the MAP objective function used
-        to learn $\pomean$, \subref{sub:mapb} is from near the outset of
-        learning the hyperparameters, and \subref{sub:mape} is near model
-        convergence -- both terminated because of `divergence'.}
+        \subref{sub:rnd}. In these figures we show the predicitve distribution
+        of $\expec{q\lstates}{\obss\test}$ using \eqref{eq:slpred}. Typical
+        traces from the MAP objective function used to learn $\pomean$,
+        \subref{sub:mapb} is from near the outset of learning the
+        hyperparameters, and \subref{sub:mape} is near model convergence --
+        both terminated because of `divergence'.}
+
     \label{fig:learnex}
 \end{figure}
 
@@ -487,7 +567,7 @@ Experimental setup:
     \begin{tabular}{r|c| c c c c c c}
         \multirow{2}{*}{$\nonlin{\lstate}$} & \multirow{2}{*}{Algorithm} & 
             \multicolumn{2}{c}{$-\frac{1}{N\test}
-                \log\probC{\lstates\test}{\obs,\lstate}$} &
+                \log\probC{\lstates\test}{\obs}$} &
             \multicolumn{2}{c}{SMSE $\lstates\test$ (\expon{}{-4})} &
             \multicolumn{2}{c}{SMSE $\obss\test$ (\expon{}{-4})} \\
         & & mean & std. & mean & std. & mean & std.\\
