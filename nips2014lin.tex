@@ -7,13 +7,14 @@
 \usepackage[backend=bibtex,
             style=numeric,
             firstinits=true,
-            natbib=true]{biblatex}
+            natbib=true,
+            maxbibnames=10]{biblatex}
 \usepackage{graphicx}
 \usepackage{subfig}
 \bibliography{nips2014lin}
 
 
-\title{A Variational Framework for Gaussian Models with Nonlinear Likelihoods}
+\title{Variational Inference for Extended and Unscented Gaussian Processes}
 
 
 \author{
@@ -57,8 +58,17 @@ Address \\
 
 TODO
 
+Initially we formulate our model in \autoref{sec:gausmod} for the \emph{finite}
+Gaussian case because the linearisation methods are more easily presentable and
+comparable with existing algorithms. Then in \autoref{sec:gpmod} we
+specifically derive a factorising likelihood Gaussian process model using our
+framework, which we use for experiments in \autoref{sec:experiments}.
+
 
 \section{Nonlinear Gaussian Models}
+\label{sec:gausmod}
+
+\textbf{TODO:} Tidy the following paragraph up
 
 In many inversion problems we may have a Gaussian prior model and a nonlinear
 likelihood/forward model. We wish to find the latent input to the forward
@@ -86,7 +96,7 @@ because the nonlinear function makes the likelihood and prior non-conjugate,
     \label{eq:marglike}
 \end{equation}
 which also makes the posterior intractable to evaluate. Thus, we choose to
-approximate the posterior using variational inference \cite{}.
+approximate the posterior using variational inference \cite{Jordan1999}.
 
 
 \section{Variational Approximation}
@@ -98,11 +108,12 @@ likelihood using Jensen's inequality,
         \frac{\prob{\obs, \lstate}}{\qrob{\lstate}} d\lstate,
 \end{equation}
 with equality iff $\KL{\qrob{\lstate}}{\probC{\lstate}{\obs}} = 0$, and
-$\qrob{\lstate}$ is an approximation to the true posterior. This lower bound is
-often referred to as `free energy', and can be re-written as follows
+$\qrob{\lstate}$ is an approximation to the true posterior,
+\probC{\lstate}{\obs}. This lower bound is often referred to as `free energy',
+and can be re-written as follows
 \begin{equation}
     \Fengy = \expec{q\lstate}{\log \probC{\obs}{\lstate}}
-        + \expec{q\lstate}{\log \prob{\lstate}} + \entropy{\qrob{\lstate}},
+        - \KL{\qrob{\lstate}}{\prob{\lstate}},
     \label{eq:fengy}
 \end{equation}
 where $\expec{q\lstate}{\cdot}$ is an expectation with respect to the
@@ -111,7 +122,7 @@ Gaussian form,
 \begin{equation}
     \qrob{\lstate} = \gausC{\lstate}{\pomean, \pocov}. \label{eq:varpost}
 \end{equation}
-Now we can evaluate the expectations and entropy terms in \eqref{eq:fengy},
+Now we can evaluate the expectation and KL term in \eqref{eq:fengy},
 \begin{align}
     \expec{q\lstate}{\log \probC{\obs}{\lstate}}
         =& - \frac{D}{2}\log{2\pi} - \frac{1}{2} \log\deter{\lcov} 
@@ -119,14 +130,13 @@ Now we can evaluate the expectations and entropy terms in \eqref{eq:fengy},
             \expec{q\lstate}{\brac{\obs - \nonlin{\lstate}}\transpose\lcov\inv
             \brac{\obs - \nonlin{\lstate}}},
             \label{eq:qlike} \\
-    \expec{q\lstate}{\log \prob{\lstate}}
+     - \KL{\qrob{\lstate}}{\prob{\lstate}}
         =& - \frac{D}{2}\log{2\pi} - \frac{1}{2}\log\deter{\prcov}
             - \frac{1}{2} \brac{\pomean - \prmean}\transpose\prcov\inv
             \brac{\pomean - \prmean}
-            - \frac{1}{2} \trace{\prcov\inv\pocov},
-            \label{eq:qprior} \\
-    \entropy{\qrob{\lstate}} =& \frac{1}{2} \log\deter{\pocov} 
-        + \frac{D}{2}\log{2\pi} + \frac{D}{2} \label{eq:qentropy}.
+            - \frac{1}{2} \trace{\prcov\inv\pocov} \nonumber \\
+        &+ \frac{1}{2} \log\deter{\pocov} 
+            + \frac{D}{2}\log{2\pi} + \frac{D}{2} \label{eq:qkl}.
 \end{align}
 where the expectation involving $\nonlin{\cdot}$ may be intractable.
 
@@ -143,7 +153,7 @@ To find the optimal posterior mean, $\pomean$, we need to find the derivative,
             \brac{\obs - \nonlin{\lstate}}},
 \end{equation}
 where all terms in $\Fengy$ independent of $\pomean$ have been dropped, and we
-have placed the quadratic term from the prior, \eqref{eq:qprior}, back into the
+have placed the quadratic term from the prior, \eqref{eq:qkl}, back into the
 expectation. We can also represent this as an augmented Gaussian,
 \begin{equation}
     \frac{\partial\Fengy}{\partial\pomean} = -\frac{1}{2}
@@ -180,7 +190,7 @@ with the iterations,
 for some step length, $\step \in (0, 1]$. Unfortunately, evaluating
 $\nabla_\pomean\Fengy$ is still intractable because of the nonlinear term
 within the expectation in \eqref{eq:augsys}. We can linearise
-$\augnonlin{\lstate}$, so we can then tractably evaluate the expectation,
+$\nonlin{\lstate}$, so we can then tractably evaluate the expectation,
 \begin{equation}
     \nonlin{\lstate} \approx \Linmat\lstate + \intcpt,
     \label{eq:linearise}
@@ -284,7 +294,7 @@ the \emph{posterior} mean, $\pomean$. The advantage of this method is that it
 does not require derivatives $\partial\nonlin{\lstate}/\partial\lstate$. To
 obtain the fit multiple observations of $\nonlin{\cdot}$ are required for
 different input points. One method of obtaining these points is the unscented
-transform \cite{Julier2004}, which defines $2D+1$ ``sigma'' points,
+transform \cite{Julier2004}, which defines $2D+1$ `sigma' points,
 \begin{align}
     \Sfunc_0 &= \pomean,
         \label{eq:spoint0} \\
@@ -353,8 +363,7 @@ recursive least squares \cite{Geist2010}.
 Because of the expectations involving an arbitrary function in
 \eqref{eq:qlike}, no analytical solution exists for the lower bound on the
 likelihood, $\Fengy$. However, we can use our approximation
-\eqref{eq:linearise} to calculate $\Fengy$ once the posterior
-mean, $\pomean$, has converged,
+\eqref{eq:linearise} to calculate $\Fengy$,
 \begin{multline}
     \Fengy \approx - \frac{1}{2} \bigg[
         D\log{2\pi} + \log\deter{\lcov} + \log\deter{\prcov} 
@@ -366,35 +375,30 @@ mean, $\pomean$, has converged,
         \bigg].
     \label{eq:approxfengy}
 \end{multline}
-Unfortunately we cannot use this as an objective to monitor the convergence of
-$\pomean$, since it is only a valid approximation once $\pomean$ has been
-found. However, $\Fengy$ is useful if our model has hyperparameters that need
-to be learned, such as a Gaussian process. 
 
-This leaves us requiring an objective function to monitor for convergence of 
-$\pomean$. In practice we have found that simply using the least squares 
-objective function that the Newton optimises effective,
-\begin{multline}
-    -\frac{1}{2}
-        \brac{\augobs - \augnonlin{\pomean}}\transpose
-        \augcov\inv
-        \brac{\augobs - \augnonlin{\pomean}} 
-    = -\frac{1}{2} \brac{\obs - \nonlin{\pomean}}\transpose
+In practice we only calculate this approximation $\Fengy$ if we need to
+optimise some model hyperparameters, like for a Gaussian process. For
+optimising $\pomean$, the only dependent parts of $\Fengy$ on $\pomean$ are,
+\begin{equation}
+    -\frac{1}{2} \brac{\obs - \nonlin{\pomean}}\transpose
             \lcov\inv
             \brac{\obs - \nonlin{\pomean}} \\
     -\frac{1}{2}
         \brac{\pomean - \prmean}\transpose
         \prcov\inv
-        \brac{\pomean - \prmean}. 
-\end{multline}
-This is also the \emph{maximum a-posteriori} objective, and will converge to
-the true posterior mean using the Taylor series linearisation method if 
-$\pomean_0$ is sufficiently close to the true posterior mean. No such
-guarantees exist for the statistical linearisation method, though it also works
-well in practice, more discussion on this point is in Section \ref{sec:exptoy}. 
+        \brac{\pomean - \prmean},
+    \label{eq:MAP}
+\end{equation}
+in the Taylor series linearisation case. This is also the \emph{maximum
+    a-posteriori} objective, and optimising this using Newton's method will
+lead $\pomean$ to converge if $\pomean_0$ is sufficiently close to the true
+posterior mean. No such guarantees exist for the statistical linearisation
+method, though \eqref{eq:MAP} also works well in practice, more discussion on
+this point is in section \ref{sec:exptoy}. 
 
 
 \section{Linearised Gaussian Processes}
+\label{sec:gpmod}
 
 We now present two predictive the Gaussian Process (GP) models
 \cite{Rasmussen2006} with arbitrary non-linear likelihoods using the framework
@@ -412,13 +416,17 @@ function we are interested in inferring. $\KERNL \in \real{N\times N}$ is the
 kernel matrix, where each element $\kernl_{ij} = \kernl\!\brac{\inobs_i,
     \inobs_j}$ is the result of applying a kernel function to each input,
 $\inobs \in \real{D}$, in a pair-wise manner. It is also important to note that
-the likelihood noise model is \emph{isotropic}\footnote{This is not a necessary
-    condition.} with a variance of $\lvar$. As before, we make the
-approximation that the posterior is Gaussian, $\qrobC{\lstate}{\pomean, \pocov}
-= \gausC{\lstate}{\pomean, \pocov}$ where $\pomean \in \real{N}$ is the mean
-posterior latent function, and $\pocov \in \real{N \times N}$ is the posterior
-covariance. Since the likelihood is isotropic and factorises over $N$, we have
-the following expectation under variational inference,
+the likelihood noise model is \emph{isotropic} with a variance of $\lvar$. This
+is not a necessary condition, and we can use a correlated noise likelihood
+model, however the factorised likelihood case is still useful and provides some
+computational benefits. 
+    
+As before, we make the approximation that the posterior is Gaussian,
+$\qrobC{\lstate}{\pomean, \pocov} = \gausC{\lstate}{\pomean, \pocov}$ where
+$\pomean \in \real{N}$ is the mean posterior latent function, and $\pocov \in
+\real{N \times N}$ is the posterior covariance. Since the likelihood is
+isotropic and factorises over $N$, we have the following expectation under
+variational inference,
 \begin{equation*}
     \expec{q\lstate}{\log\probC{\obs}{\lstate}} =
         - \frac{N}{2}\log{2\pi\lvar}
@@ -472,8 +480,11 @@ $\pocovs_{nn}$ is the $n$th diagonal element of $\pocov$ and
 $\xcovs_{\pomeans\obss,n}$ and $\bar\obss_n$ are calculated the same way as
 \eqref{eq:spoint0} -- \eqref{eq:slweights} where the sigma points for each
 observation $n \in N$ are $\Sfunc_{n} = \big\{\pomeans_n,~\pomeans_n +
-    \sqrt{\brac{1 + \scoef}\pocovs_{nn}},~\pomeans_n - \sqrt{\brac{1 +
-            \scoef}\pocovs_{nn}}\big\}$ and the dimensionality is~1. 
+\sqrt{\brac{1 + \scoef}\pocovs_{nn}},~\pomeans_n - \sqrt{\brac{1 +
+        \scoef}\pocovs_{nn}}\big\}$ and the dimensionality is~1. We refer to
+the Taylor series linearised GP as the \emph{extended} GP (EGP), and the
+statistically linearised GP as the \emph{unscented} GP (UGP) to be consistent
+with the literature on the EKF and UKF.
 
 To find the distribution for a test point, $\lstates\test$, we follow the
 procedure in \cite{Rasmussen2006} for a Laplace GP classifier\footnote{More
@@ -494,9 +505,9 @@ $\bar\obss\test$ by evaluating the one-dimensional integral,
         \nonlin{\lstates\test} \gausC{\lstates\test}{\pomeans\test,
             \pocovs\test} d\lstates\test,
 \end{equation}
-for which we can use quadrature. Alternatively, if we were to use statistical
-linearisation we can use another application of the unscented transform to
-approximate the predictive distribution $\obss\test \sim \gaus{\bar\obss\test,
+for which we can use quadrature. Alternatively, if we were to use the UGP we
+can use another application of the unscented transform to approximate the
+predictive distribution $\obss\test \sim \gaus{\bar\obss\test,
     \lvar_{\obss\test}}$ and,
 \begin{equation}
     \bar\obss\test = \sum^2_{i=0} \Sw_i \Sfunc_i\test, \qquad 
@@ -507,8 +518,20 @@ approximate the predictive distribution $\obss\test \sim \gaus{\bar\obss\test,
 which we find find works well in practice, see \autoref{fig:learnex} for a
 demonstration.
 
-\section{Experiments}
+\textbf{TODO}: Learning these GPs 
+\begin{equation}
+    \Fengy \approx - \frac{1}{2} \bigg[
+        N\log{2\pi\lvar} + \log\deter{\KERNL} 
+        - \log\deter{\pocov}
+    + \pomean\transpose\KERNL\inv \pomean
+    + \frac{1}{\lvar}\brac{\obs - \bar\obs}\transpose\!\brac{\obs - \bar\obs}
+        \bigg].
+    \label{eq:fengygp}
+\end{equation}
 
+
+\section{Experiments}
+\label{sec:experiments}
 
 \subsection{Various Nonlinear Functions}
 \label{sec:exptoy}
@@ -545,14 +568,13 @@ Experimental setup:
     \subfloat[][MAP trace -- near optimal hyperprameter values]
         {\includegraphics[width=0.5\linewidth]{fig/trace_end}\label{sub:mape}}
 
-    \caption[]{Example of learning the statistically linearised GP with
-        non-differentiable nonlinear functions in \subref{sub:sign} and
-        \subref{sub:rnd}. In these figures we show the predicitve distribution
-        of $\expec{q\lstates}{\obss\test}$ using \eqref{eq:slpred}. Typical
-        traces from the MAP objective function used to learn $\pomean$,
-        \subref{sub:mapb} is from near the outset of learning the
-        hyperparameters, and \subref{sub:mape} is near model convergence --
-        both terminated because of `divergence'.}
+    \caption[]{Example of learning the UGP with non-differentiable nonlinear
+        functions in \subref{sub:sign} and \subref{sub:rnd}. In these figures
+        we show the predicitve distribution of $\expec{q\lstates}{\obss\test}$
+        using \eqref{eq:slpred}. Typical traces from the MAP objective function
+        used to learn $\pomean$, \subref{sub:mapb} is from near the outset of
+        learning the hyperparameters, and \subref{sub:mape} is near model
+        convergence -- both terminated because of `divergence'.}
 
     \label{fig:learnex}
 \end{figure}
@@ -573,33 +595,33 @@ Experimental setup:
         & & mean & std. & mean & std. & mean & std.\\
         \toprule
         $\lstate$ 
-            & Statistical & $-$1.4453 & 0.0601 & 36.471 & 7.309 & -- & -- \\
-            & Taylor & 14.2072 & 2.7953 & 54.674 & 8.890 & -- & -- \\
+            & UGP & $-$1.4453 & 0.0601 & 36.471 & 7.309 & -- & -- \\
+            & EGP & 14.2072 & 2.7953 & 54.674 & 8.890 & -- & -- \\
             & \cite{Opper2009} \\
-            & Linear & $-$1.2793 & 0.0162 & 40.210 & 7.012 & -- & -- \\
+            & GP & $-$1.2793 & 0.0162 & 40.210 & 7.012 & -- & -- \\
         \midrule
         $\lstate^3 + \lstate^2 + \lstate$ 
-            & Statistical & $-$2.1402 & 0.0604 & 27.725 & 6.097 & 36.239 
+            & UGP & $-$2.1402 & 0.0604 & 27.725 & 6.097 & 36.239 
                 & 5.089 \\
-            & Taylor & 10.1842 & 1.9443 & 31.094 & 9.193 & 36.991 & 5.869 \\
+            & EGP & 10.1842 & 1.9443 & 31.094 & 9.193 & 36.991 & 5.869 \\
             & \cite{Opper2009} \\
         \midrule
         $\exp\!\brac{\lstate}$ 
-            & Statistical & $-$1.3858 & 0.2320 & 99.405 & 75.756 & 170.07 
+            & UGP & $-$1.3858 & 0.2320 & 99.405 & 75.756 & 170.07 
                 & 27.490 \\
-            & Taylor & 15.1875 & 4.0084 & 235.10 & 82.551 & 174.70 & 26.181 \\
+            & EGP & 15.1875 & 4.0084 & 235.10 & 82.551 & 174.70 & 26.181 \\
             & \cite{Opper2009} \\
         \midrule
         $\sin\!\brac{\lstate}$ 
-            & Statistical & $-$0.8892 & 0.1259 & 152.75 & 32.744 & 858.63
+            & UGP & $-$0.8892 & 0.1259 & 152.75 & 32.744 & 858.63
                 & 104.26 \\
-            & Taylor & 20.1577 & 5.9408 & 387.67 & 131.13 & 889.80 & 127.22 \\
+            & EGP & 20.1577 & 5.9408 & 387.67 & 131.13 & 889.80 & 127.22 \\
             & \cite{Opper2009} \\
         \midrule
         $\tanh\!\brac{2\lstate}$
-            & Statistical & $-$0.5903 & 0.1132 & 395.96 & 40.270 & 602.24 
+            & UGP & $-$0.5903 & 0.1132 & 395.96 & 40.270 & 602.24 
                 & 60.622 \\
-            & Taylor & 23.7728 & 8.9093 & 894.32 & 523.64 & 606.16 & 64.206 \\
+            & EGP & 23.7728 & 8.9093 & 894.32 & 523.64 & 606.16 & 64.206 \\
             & \cite{Opper2009} \\
         \bottomrule
     \end{tabular}
@@ -638,13 +660,21 @@ scale $l_\text{se}$ is used for the Gaussian processes in this experiment.
         SVM (RBF) & 0.08055 & 2.3286 & -- & -- \\
         Logistic Reg. & 0.11995 & 3.6223 & -- & -- \\
         \midrule
-        GP -- Statistical & 0.11748 & 2.9754 &  2.8177 & 2.5504 \\
-        GP --Taylor & 0.69293 & 42.4321 & 3.1268 & $-$0.1696 \\
+        UGP & 0.11748 & 2.9754 &  2.8177 & 2.5504 \\
+        EGP & 0.69293 & 42.4321 & 3.1268 & $-$0.1696 \\
         \bottomrule
     \end{tabular}
 \end{table}
 
 \section{Conclusion}
+
+Future work:
+\begin{itemize}
+    \item Use a fully correlated noise model E/UGP.
+    \item Extend this to a multiple output/task E/UGP so it can be used for a
+        wide range of inversion problems, such as inverse kinematics.
+    \item Hyperparameter gradients.
+\end{itemize}
 
 \subsubsection*{Acknowledgments}
 

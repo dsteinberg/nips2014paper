@@ -5,18 +5,23 @@
 \newcommand{\abrac}[1]  {\ensuremath{\left\langle{#1}\right\rangle}}
 
 %% Symbols
+
+% General
+\newcommand{\test}       {\ensuremath{^{*}}}
+\newcommand{\testT}      {\ensuremath{^{*\top}\!}}
+\newcommand{\ttest}      {\ensuremath{^{**}}}
 \newcommand{\real}  [1] {\ensuremath{\mathbb{R}^{#1}}}
 \newcommand{\ident} [1] {\ensuremath{\mathbf{I}_{#1}}}
-\newcommand{\lstate}    {\ensuremath{\mathbf{x}}}
-\newcommand{\lcov}      {\ensuremath{\mathbf{R}}}
+
+% Variables
+\newcommand{\lstate}    {\ensuremath{\mathbf{f}}}
+\newcommand{\lcov}      {\ensuremath{\boldsymbol{\Sigma}}}
 \newcommand{\obs}       {\ensuremath{\mathbf{y}}}
 \newcommand{\hyper}     {\ensuremath{\boldsymbol{\theta}}}
 \newcommand{\prmean}    {\ensuremath{\boldsymbol{\mu}}}
-\newcommand{\prcov}     {\ensuremath{\boldsymbol{\Sigma}}}
+\newcommand{\prcov}     {\ensuremath{\mathbf{K}}}
 \newcommand{\pomean}    {\ensuremath{\mathbf{m}}}
-\newcommand{\pomeanp}   {\ensuremath{\mathbf{m}_\text{-}}}
 \newcommand{\pocov}     {\ensuremath{\mathbf{C}}}
-\newcommand{\pocovp}    {\ensuremath{\mathbf{C}_\text{-}}}
 \newcommand{\xcov}      {\ensuremath{\boldsymbol\Sigma_{\obs\pomean}}}
 \newcommand{\Sobs}      {\ensuremath{\mathcal{Y}}}
 \newcommand{\Sfunc}     {\ensuremath{\mathcal{M}}}
@@ -37,11 +42,11 @@
 
 % Gaussian Process
 \newcommand{\obss}      {\ensuremath{y}}
-\newcommand{\lstates}   {\ensuremath{x}}
+\newcommand{\lstates}   {\ensuremath{f}}
 \newcommand{\Lins}      {\ensuremath{a}}
 \newcommand{\Linvec}    {\ensuremath{\mathbf{a}}}
 \newcommand{\intcpts}   {\ensuremath{b}}
-\newcommand{\inobs}     {\ensuremath{\mathbf{s}}}
+\newcommand{\inobs}     {\ensuremath{\mathbf{x}}}
 \newcommand{\kernl}     {\ensuremath{k}}
 \newcommand{\Kernl}     {\ensuremath{\mathbf{k}}}
 \newcommand{\KERNL}     {\ensuremath{\mathbf{K}}}
@@ -66,15 +71,12 @@
 \newcommand{\evar} [2]   {\ensuremath{\mathbb{V}_{#1}\!\sbrac{#2}}}
 \newcommand{\KL}[2]      {\ensuremath{\text{KL}\!\sbrac{{#1}\!\parallel\!{#2}}}}
 \newcommand{\entropy}[1] {\ensuremath{\mathbb{H}\sbrac{#1}}}
-\newcommand{\test}       {\ensuremath{^{*}}}
-\newcommand{\testT}      {\ensuremath{^{*\top}\!}}
-\newcommand{\ttest}      {\ensuremath{^{**}}}
 \newcommand{\lnorm}[2]   {\ensuremath{\left\|{#2}\right\|_{{#1}}}}
 
 
 %% Functions, PDFs etc
-\newcommand{\nonlin}[1] {\ensuremath{f\!\brac{{#1}}}}
-\newcommand{\augnonlin}[1] {\ensuremath{g\!\brac{{#1}}}}
+\newcommand{\nonlin}[1] {\ensuremath{g\!\brac{{#1}}}}
+\newcommand{\augnonlin}[1] {\ensuremath{h\!\brac{{#1}}}}
 \newcommand{\prob}  [1] {\ensuremath{p\!\brac{#1}}}
 \newcommand{\probC} [2] {\ensuremath{p\!\left({#1}\middle\vert{#2}\right)}}
 \newcommand{\qrob}  [1] {\ensuremath{q\!\brac{#1}}}
