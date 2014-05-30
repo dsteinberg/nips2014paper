@@ -10,6 +10,7 @@
             natbib=true,
             maxbibnames=10]{biblatex}
 \usepackage{graphicx}
+\usepackage{algorithm2e}
 \usepackage{subfig}
 \bibliography{nips2014lin}
 
@@ -529,6 +530,13 @@ demonstration.
     \label{eq:fengygp}
 \end{equation}
 
+\begin{algorithm}[htb]
+    \SetAlgoLined
+    \While{$\Fengy_\text{new} - \Fengy_\text{old} > \varepsilon$}{
+
+    }
+    \caption{Algorithm for learning the extended and unscented GPs.}
+\end{algorithm}
 
 \section{Experiments}
 \label{sec:experiments}
