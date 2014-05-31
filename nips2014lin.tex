@@ -10,8 +10,7 @@
             natbib=true,
             maxbibnames=10]{biblatex}
 \usepackage{graphicx}
-\usepackage{algorithm2e}
-\usepackage{subfig}
+\usepackage{caption,subcaption}
 \bibliography{nips2014lin}
 
 
@@ -69,19 +68,19 @@ framework, which we use for experiments in \autoref{sec:experiments}.
 \section{Nonlinear Gaussian Models}
 \label{sec:gausmod}
 
-\textbf{TODO:} Tidy the following paragraph up
+\textbf{TODO:} Tidy the following paragraph up given the intro
 
-In many inversion problems we may have a Gaussian prior model and a nonlinear
-likelihood/forward model. We wish to find the latent input to the forward
-model given its output by using Bayes' rule to perform the inversion,
+Given some observable quantity $\obs \in \real{d}$, and a likelihood model for
+the system we are interested in, $\probC{\obs}{\lstate}$, in many situations it
+is desirable to know the latent input to the system, $\lstate\in\real{D}$, that
+generated the observation. Finding these inputs is an inversion problem and can
+be cast as an application of Bayes' rule in a probabilistic setting,
 \begin{equation}
     \probC{\lstate}{\obs} = \frac{\probC{\obs}{\lstate}\prob{\lstate}}
-        {\prob{\obs}},
+        {\prob{\obs}}.
     \label{eq:bayesrule}
 \end{equation}
-where $\obs \in \real{d}$ is an observable quantity, and $\lstate \in \real{D}$
-is the latent state of interest. The following forms are assumed for the prior
-and likelihood:
+The following forms are assumed for the prior and likelihood:
 \begin{equation}
     \prob{\lstate} = \gausC{\lstate}{\prmean, \prcov}
     \quad \text{and} \quad
@@ -139,7 +138,9 @@ Now we can evaluate the expectation and KL term in \eqref{eq:fengy},
         &+ \frac{1}{2} \log\deter{\pocov} 
             + \frac{D}{2}\log{2\pi} + \frac{D}{2} \label{eq:qkl}.
 \end{align}
-where the expectation involving $\nonlin{\cdot}$ may be intractable.
+where the expectation involving $\nonlin{\cdot}$ may be intractable. One method
+of dealing with these expectations is presented in \cite{Opper2009}; we provide
+two alternatives based on methods of linearising $\nonlin{\cdot}$.
 
 
 \subsection{Learning the Parameters}
@@ -487,6 +488,8 @@ the Taylor series linearised GP as the \emph{extended} GP (EGP), and the
 statistically linearised GP as the \emph{unscented} GP (UGP) to be consistent
 with the literature on the EKF and UKF.
 
+\subsection{Prediction}
+
 To find the distribution for a test point, $\lstates\test$, we follow the
 procedure in \cite{Rasmussen2006} for a Laplace GP classifier\footnote{More
     detail is provided in the supplementary material}. This gives
@@ -519,24 +522,47 @@ predictive distribution $\obss\test \sim \gaus{\bar\obss\test,
 which we find find works well in practice, see \autoref{fig:learnex} for a
 demonstration.
 
-\textbf{TODO}: Learning these GPs 
+
+\subsection{Learning}
+
+Learning the extended and unscented GPs consists of in an inner and outer loop.
+Much like the Laplace approximation for binary Gaussian Process classifiers
+\cite{Rasmussen2006}, the inner loop is for learning the posterior mean,
+$\pomean$, and the outer loop is to optimise the likelihood variance $\lvar$ 
+and kernel hyperparameters $\khypers$.
+
+A line search could be used to select an optimal value for the step length,
+$\step$. However, we find that setting $\step=1$, and then successively
+multiplying $\step$ by some number in $\brac{0, 1}$ until the MAP objective
+\eqref{eq:MAP} lowers, or some maximum number of iterations is exceeded, works 
+well in practice. If the maximum number of iterations is exceeded we call this
+a `diverge' condition, and terminate the search of $\pomean$ (and return the
+last good value). This only tends to happen for the unscented GP, and does not
+tend to impact the algorithms performance, as demonstrated in 
+\autoref{fig:learnex}.
+
+\textbf{TODO: verify this --}
+The gradients $\partial\Fengy/\partial\khypers$ have both explicit and implicit
+components ($\pomean$ is dependent on $\lvar$ and $\khypers$). Where $\Fengy$
+for the GPs is approximated,
 \begin{equation}
     \Fengy \approx - \frac{1}{2} \bigg[
         N\log{2\pi\lvar} + \log\deter{\KERNL} 
         - \log\deter{\pocov}
     + \pomean\transpose\KERNL\inv \pomean
-    + \frac{1}{\lvar}\brac{\obs - \bar\obs}\transpose\!\brac{\obs - \bar\obs}
-        \bigg].
+    + \frac{1}{\lvar}
+        \brac{\obs - \Linmat\pomean - \intcpt}\transpose\!
+        \brac{\obs - \Linmat\pomean - \intcpt}
+    \bigg].
     \label{eq:fengygp}
 \end{equation}
+Finding the implicit gradients for the unscented GP requires knowledge of
+$\partial\nonlin{\lstates}\!/\partial\lstates$, which may not exist. We use
+numerical techniques to find these gradients for both the extended and
+unscented algorithms. In particular we use derivative-free optimisation methods
+from the NLopt library \cite{JohnsonNLOPT}, which we find fast and highly
+effective.
 
-\begin{algorithm}[htb]
-    \SetAlgoLined
-    \While{$\Fengy_\text{new} - \Fengy_\text{old} > \varepsilon$}{
-
-    }
-    \caption{Algorithm for learning the extended and unscented GPs.}
-\end{algorithm}
 
 \section{Experiments}
 \label{sec:experiments}
@@ -567,14 +593,26 @@ Experimental setup:
 \end{itemize}
 
 \begin{figure}[htb]
-    \subfloat[][$\nonlin{\lstate} = 2\text{sign}\!\brac{\lstate} + \lstate^3$]
-        {\includegraphics[width=0.5\linewidth]{fig/signdemo}\label{sub:sign}}
-    \subfloat[][$\nonlin{\lstate} = \lfloor 5\lstate \rceil$]
-        {\includegraphics[width=0.5\linewidth]{fig/rounddemo}\label{sub:rnd}}\\
-    \subfloat[][MAP trace -- poor hyperparameter values]
-        {\includegraphics[width=0.5\linewidth]{fig/trace_beg}\label{sub:mapb}}
-    \subfloat[][MAP trace -- near optimal hyperprameter values]
-        {\includegraphics[width=0.5\linewidth]{fig/trace_end}\label{sub:mape}}
+    \begin{subfigure}[b]{0.5\linewidth}
+        \includegraphics[width=\linewidth]{fig/signdemo}
+        \caption{$\nonlin{\lstate} = 2\text{sign}\!\brac{\lstate} + \lstate^3$}
+        \label{sub:sign}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.5\linewidth}
+        \includegraphics[width=\linewidth]{fig/rounddemo}
+        \caption{$\nonlin{\lstate} = \text{round}\!\brac{5\lstate}$}
+        \label{sub:rnd}
+    \end{subfigure} \\
+    \begin{subfigure}[b]{0.5\linewidth}
+        \includegraphics[width=\linewidth]{fig/trace_beg}
+        \caption{MAP trace -- poor hyperparameter values}
+        \label{sub:mapb}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.5\linewidth}
+        \includegraphics[width=\linewidth]{fig/trace_end}
+        \caption{MAP trace -- near optimal hyperprameter values}
+        \label{sub:mape}
+    \end{subfigure}
 
     \caption[]{Example of learning the UGP with non-differentiable nonlinear
         functions in \subref{sub:sign} and \subref{sub:rnd}. In these figures

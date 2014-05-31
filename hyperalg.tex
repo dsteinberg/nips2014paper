@@ -1,0 +1,25 @@
+\begin{algorithm}[H]
+    %\caption{Algorithm for learning the extended and unscented GPs.}
+    \small
+    
+    \SetKwFunction{newt}{MeanFind}
+    \SetKwFunction{comhyper}{ComputeHypers}
+    \SetKwFunction{comfengy}{ComputeBnd}
+    
+    \KwIn{$\inobs$, $\obs$, $\nonlin{\cdot}$,
+          $\sbrac{\partial\nonlin{\cdot}}$,
+          $\kfunc{\cdot}{\cdot}$, $\lvar_0$ and $\khypers_0$}
+
+    \Repeat{$\Fengy$ \textrm{converges}}{
+        $\KERNL \leftarrow \kfunc{\inobs_i}{\inobs_j|\khypers} \quad 
+            \forall i, j \in N$\;
+        $\pomean, \intcpt, \Linmat, \Kgain \leftarrow$ \newt{$\obs, \KERNL, 
+                \lvar, \nonlin{\cdot}, \sbrac{\partial\nonlin{\cdot}}$}\;
+        $\pocov \leftarrow \brac{\ident{N} - \Kgain\Linmat}\KERNL$\;
+        $\Fengy, \sbrac{\partial\Fengy} \leftarrow$ \comfengy{$\obs, \pomean,
+                \Kernl, \pocov, \Linmat, \intcpt, \lvar$}\;
+        $\lvar, \khypers \leftarrow$ \comhyper{$\Fengy, 
+                \sbrac{\partial\Fengy}$}\;
+    }
+    \KwOut{\pomean, \pocov, \lvar, \khypers}
+\end{algorithm}
