@@ -541,10 +541,11 @@ last good value). This only tends to happen for the unscented GP, and does not
 tend to impact the algorithms performance, as demonstrated in 
 \autoref{fig:learnex}.
 
-\textbf{TODO: verify this --}
-The gradients $\partial\Fengy/\partial\khypers$ have both explicit and implicit
-components ($\pomean$ is dependent on $\lvar$ and $\khypers$). Where $\Fengy$
-for the GPs is approximated,
+\textbf{TODO: verify this --} The kernel hyperparameters,
+$\kfunc{\cdot}{\cdot|\khypers}$, can be learned by optimising the gradients
+$\partial\Fengy/\partial\khypers$. These gradients have both explicit and
+implicit components ($\pomean$ is dependent on $\lvar$ and $\khypers$). Where
+$\Fengy$ for the GPs is approximated as,
 \begin{equation}
     \Fengy \approx - \frac{1}{2} \bigg[
         N\log{2\pi\lvar} + \log\deter{\KERNL} 
@@ -590,37 +591,42 @@ Experimental setup:
                     \pomeans\test_n}^2.
         \end{equation}
 
+    \item 5-fold cross validation, 400 points training, 100 points testing.
+
 \end{itemize}
 
 \begin{figure}[htb]
     \begin{subfigure}[b]{0.5\linewidth}
         \includegraphics[width=\linewidth]{fig/signdemo}
-        \caption{$\nonlin{\lstate} = 2\text{sign}\!\brac{\lstate} + \lstate^3$}
+        \caption{$\nonlin{\lstate} = 2\times\text{sign}\!\brac{\lstate}
+            + \lstate^3$}
         \label{sub:sign}
     \end{subfigure}
-    \begin{subfigure}[b]{0.5\linewidth}
-        \includegraphics[width=\linewidth]{fig/rounddemo}
-        \caption{$\nonlin{\lstate} = \text{round}\!\brac{5\lstate}$}
-        \label{sub:rnd}
-    \end{subfigure} \\
-    \begin{subfigure}[b]{0.5\linewidth}
-        \includegraphics[width=\linewidth]{fig/trace_beg}
-        \caption{MAP trace -- poor hyperparameter values}
-        \label{sub:mapb}
-    \end{subfigure}
+    %\begin{subfigure}[b]{0.5\linewidth}
+        %\includegraphics[width=\linewidth]{fig/rounddemo}
+        %\caption{$\nonlin{\lstate} = \text{round}\!\brac{5\lstate}$}
+        %\label{sub:rnd}
+    %\end{subfigure} \\
+    %\begin{subfigure}[b]{0.5\linewidth}
+        %\includegraphics[width=\linewidth]{fig/trace_beg}
+        %\caption{MAP trace -- poor hyperparameter values}
+        %\label{sub:mapb}
+    %\end{subfigure}
     \begin{subfigure}[b]{0.5\linewidth}
         \includegraphics[width=\linewidth]{fig/trace_end}
         \caption{MAP trace -- near optimal hyperprameter values}
         \label{sub:mape}
+        \vspace{1.5mm}
     \end{subfigure}
 
-    \caption[]{Example of learning the UGP with non-differentiable nonlinear
-        functions in \subref{sub:sign} and \subref{sub:rnd}. In these figures
-        we show the predicitve distribution of $\expec{q\lstates}{\obss\test}$
-        using \eqref{eq:slpred}. Typical traces from the MAP objective function
-        used to learn $\pomean$, \subref{sub:mapb} is from near the outset of
-        learning the hyperparameters, and \subref{sub:mape} is near model
-        convergence -- both terminated because of `divergence'.}
+    \caption[]{Example of learning the UGP with a non-differentiable nonlinear
+        function in (\subref{sub:sign}). In this figure we show the predicitve
+        distribution of $\expec{q\lstates}{\obss\test}$ using
+        \eqref{eq:slpred}. A typical trace from the MAP objective function used
+        to learn $\pomean$ from the non-linear function in (\subref{sub:sign})
+        is shown in (\subref{sub:mape}. The optimisation shown terminated
+        because of a `divergence' condition, which was typical for this
+        example.}
 
     \label{fig:learnex}
 \end{figure}
