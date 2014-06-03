@@ -366,8 +366,7 @@ likelihood, $\Fengy$. However, we can use our approximation
 \eqref{eq:linearise} to calculate $\Fengy$,
 \begin{multline}
     \Fengy \approx - \frac{1}{2} \bigg[
-        D\log{2\pi} + \log\deter{\lcov} + \log\deter{\prcov} 
-        - \log\deter{\pocov}
+        D\log{2\pi} + \log\deter{\lcov} + \log\deter{\prcov\pocov\inv}
     + \brac{\pomean - \prmean}\transpose\prcov\inv
         \brac{\pomean - \prmean} \\
     + \brac{\obs - \Linmat\pomean - \intcpt}\transpose\lcov\inv
@@ -546,8 +545,7 @@ implicit components ($\pomean$ is dependent on $\lvar$ and $\khypers$). Where
 $\Fengy$ for the GPs is approximated as,
 \begin{equation}
     \Fengy \approx - \frac{1}{2} \bigg[
-        N\log{2\pi\lvar} + \log\deter{\KERNL} 
-        - \log\deter{\pocov}
+        N\log{2\pi\lvar} + \log\deter{\KERNL\pocov\inv}
     + \pomean\transpose\KERNL\inv \pomean
     + \frac{1}{\lvar}
         \brac{\obs - \Linmat\pomean - \intcpt}\transpose\!
