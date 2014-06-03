@@ -59,7 +59,7 @@ Address \\
 TODO
 
 Initially we formulate our model in \autoref{sec:gausmod} for the \emph{finite}
-Gaussian case because the linearisation methods are more easily presentable and
+Gaussian case because the linearization methods are more easily presentable and
 comparable with existing algorithms. Then in \autoref{sec:gpmod} we
 specifically derive a factorising likelihood Gaussian process model using our
 framework, which we use for experiments in \autoref{sec:experiments}.
@@ -138,7 +138,7 @@ Now we can evaluate the expectation and KL term in \eqref{eq:fengy},
 \end{align}
 where the expectation involving $\nonlin{\cdot}$ may be intractable. One method
 of dealing with these expectations is presented in \cite{Opper2009}; we provide
-two alternatives based on methods of linearising $\nonlin{\cdot}$.
+two alternatives based on methods of linearizing $\nonlin{\cdot}$.
 
 
 \subsection{Learning the Parameters}
@@ -153,8 +153,8 @@ To find the optimal posterior mean, $\pomean$, we need to find the derivative,
             \brac{\obs - \nonlin{\lstate}}},
 \end{equation}
 where all terms in $\Fengy$ independent of $\pomean$ have been dropped, and we
-have placed the quadratic term from the prior, \eqref{eq:qkl}, back into the
-expectation. We can also represent this as an augmented Gaussian,
+have placed the quadratic term from the KL term, \eqref{eq:qkl}, back into the
+expectation. We can represent this as an augmented Gaussian,
 \begin{equation}
     \frac{\partial\Fengy}{\partial\pomean} = -\frac{1}{2}
         \frac{\partial}{\pomean}
@@ -172,8 +172,8 @@ where
     \augcov = \begin{bmatrix} \lcov & \mathbf{0} \\ \mathbf{0} & \prcov 
         \end{bmatrix}.
 \end{equation}
-which we can see is essentially a non-linear least squares problem\!
-\footnote{$-\frac{1}{2}
+Now we can see solving for $\pomean$ is essentially a non-linear least squares 
+problem\footnote{$-\frac{1}{2}
         \frac{\partial}{\partial\lstate}
         \brac{\augobs - \augnonlin{\lstate}}\transpose\augcov\inv
         \brac{\augobs - \augnonlin{\lstate}} = 0$.}, but about
@@ -189,25 +189,25 @@ with the iterations,
 \end{equation}
 for some step length, $\step \in (0, 1]$. Unfortunately, evaluating
 $\nabla_\pomean\Fengy$ is still intractable because of the nonlinear term
-within the expectation in \eqref{eq:augsys}. We can linearise
+within the expectation in \eqref{eq:augsys}. We can linearize
 $\nonlin{\lstate}$, so we can then tractably evaluate the expectation,
 \begin{equation}
     \nonlin{\lstate} \approx \Linmat\lstate + \intcpt,
-    \label{eq:linearise}
+    \label{eq:linearize}
 \end{equation}
-for some linearisation matrix $\Linmat \in \real{d \times D}$ and an intercept
+for some linearization matrix $\Linmat \in \real{d \times D}$ and an intercept
 term $\intcpt \in \real{d}$. Using this approximation we get,
-\begin{align}
+\begin{equation}
     \nabla_\pomean \Fengy
-        &\approx \Linmat\transpose\lcov\inv\brac{\obs - \Linmat\pomean 
-            - \intcpt} - \prcov\inv\brac{\pomean - \prmean}, 
-        \label{eq:delF} \\
+        \approx \Linmat\transpose\lcov\inv\brac{\obs - \Linmat\pomean 
+            - \intcpt} - \prcov\inv\brac{\pomean - \prmean}
+    \quad \text{and} \quad
     \nabla_\pomean \nabla_\pomean \Fengy
-        &\approx - \Linmat\transpose\lcov\inv\Linmat - \prcov\inv,
+        \approx - \Linmat\transpose\lcov\inv\Linmat - \prcov\inv.
         \label{eq:deldelF}
-\end{align}
-So substituting \eqref{eq:delF} and \eqref{eq:deldelF} into \eqref{eq:newton}
-and using the Woodbury identity we get,
+\end{equation}
+Substituting \eqref{eq:deldelF} into \eqref{eq:newton} and using the Woodbury
+identity we get,
 \begin{equation}
     \pomean_{k+1} = \brac{1-\step}\pomean_k + \step\prmean 
         + \step\Kgain_k\brac{\obs - \intcpt_k - \Linmat_k\prmean},
@@ -219,7 +219,7 @@ where $\Kgain_k$ is a ``Kalman gain'' term,
         \Linmat_k\prcov\Linmat_k\transpose}\inv.
     \label{eq:kgain}
 \end{equation}
-and we have assumed that the linearisation $\Linmat_k$ and intercept,
+and we have assumed that the linearization $\Linmat_k$ and intercept,
 $\intcpt_k$ are in some way dependent on the iteration. We can find the 
 posterior covariance by setting $\partial\Fengy/\partial\pocov = 0$ where,
 \begin{equation}
@@ -233,10 +233,11 @@ posterior covariance by setting $\partial\Fengy/\partial\pocov = 0$ where,
 \end{equation}
 Again we do not have an analytic solution to this because we need to take
 expectations and derivatives of terms involving $\nonlin{\lstate}$, so we use
-the approximation in \eqref{eq:linearise} to get,
+the approximation in \eqref{eq:linearize} to get,
 \begin{equation}
     \pocov = \sbrac{\prcov\inv + \Linmat\transpose\lcov\inv\Linmat}\inv
-    = - \brac{\nabla_\pomean \nabla_\pomean \Fengy}\inv.
+        = - \brac{\nabla_\pomean \nabla_\pomean \Fengy}\inv.
+    \label{eq:pocovi}
 \end{equation}
 Using the Woodbury identity,
 \begin{equation}
@@ -246,18 +247,18 @@ Using the Woodbury identity,
 where the converged values of $\Linmat$ and $\Kgain$ are used.
 
 
-\subsection{Taylor Series Linearisation}
+\subsection{Taylor Series Linearization}
 
-Now we need to find expressions for the linearisation terms $\Linmat$ and
+Now we need to find expressions for the linearization terms $\Linmat$ and
 $\intcpt$. One method is to use a $1$st order Taylor Series Expansion to 
-linearise $\nonlin{\cdot}$ about the last calculation of the posterior mean, 
+linearize $\nonlin{\cdot}$ about the last calculation of the posterior mean, 
 $\pomean_k$,
 \begin{equation}
     \nonlin{\lstate} \approx \nonlin{\pomean_k} +
     \jacob{\pomean_k}\brac{\lstate - \pomean_k},
 \end{equation}
 where $\jacob{\pomean_k}$ is the Jacobian $\partial\nonlin{\pomean_k}\!/ 
-\partial\pomean_k$. Equating coefficients with \eqref{eq:linearise},
+\partial\pomean_k$. Equating coefficients with \eqref{eq:linearize},
 \begin{equation}
     \Linmat = \jacob{\pomean_k}, \qquad \intcpt = \nonlin{\pomean_k} -
     \jacob{\pomean_k}\pomean_k.
@@ -269,26 +270,24 @@ Substituting these values into \eqref{eq:pomean} we get,
         + \jacob{\pomean_k}\brac{\pomean_k - \prmean}},
     \label{eq:pomean_ekf}
 \end{equation}
-where $\Kgain_k$ is,
+where,
 \begin{equation}
     \Kgain_k = \prcov\jacob{\pomean_k}\transpose\brac{\lcov +
-        \jacob{\pomean_k}\prcov\jacob{\pomean_k}\transpose}\inv.
-\end{equation}
-Similarly we can obtain,
-\begin{equation}
-    \pocov = \brac{\ident{D} - \Kgain\jacob{\pomean}}\!\prcov
+        \jacob{\pomean_k}\prcov\jacob{\pomean_k}\transpose}\inv
+    \quad\text{and}\quad
+    \pocov = \brac{\ident{D} - \Kgain\jacob{\pomean}}\!\prcov.
     \label{eq:pocov_ekf}
 \end{equation}
-Where $\jacob{\pomean}$ and $\Kgain$ are constructed about the converged
-posterior, $\pomean$. It is worth noting that when $\step = 1$,
-\eqref{eq:pomean_ekf} -- \eqref{eq:pocov_ekf} are the \emph{same} as a single
-step of the iterated extended Kalman filter~\cite{Bell1993, Sibley2006}.
+Here $\jacob{\pomean}$ and $\Kgain$ without the $k$ subscript are constructed
+about the converged posterior, $\pomean$. It is worth noting that when $\step =
+1$, \eqref{eq:pomean_ekf} -- \eqref{eq:pocov_ekf} are the \emph{same} as a
+single step of the iterated extended Kalman filter~\cite{Bell1993, Sibley2006}.
 
 
-\subsection{Statistical Linearisation}
+\subsection{Statistical Linearization}
 
-Another method for linearising $\nonlin{\cdot}$ is \emph{statistical
-    linearisation} \cite{Geist2010}. Statistical linearisation finds a least
+Another method for linearizing $\nonlin{\cdot}$ is \emph{statistical
+    linearization} \cite{Geist2010}. Statistical linearization finds a least
 squares best fit to $\nonlin{\cdot}$ about a point; in our case this point is
 the \emph{posterior} mean, $\pomean$. The advantage of this method is that it
 does not require derivatives $\partial\nonlin{\lstate}/\partial\lstate$. To
@@ -354,7 +353,7 @@ $\Kgain_k$ and $\pocov_k$ have the same form as \eqref{eq:kgain} and
 iterated sigma-point Kalman filter (iSPKF) \cite{Sibley2006} for $\step = 1$,
 however we have the term $\bar\obs_k$ appearing in \eqref{eq:pomean_sl} as
 opposed to $\nonlin{\pomean_k}$. This is more in-line with the regular
-unscented Kalman filter \cite{Julier2004}, and statistically linearised
+unscented Kalman filter \cite{Julier2004}, and statistically linearized
 recursive least squares \cite{Geist2010}.
 
 
@@ -363,7 +362,7 @@ recursive least squares \cite{Geist2010}.
 Because of the expectations involving an arbitrary function in
 \eqref{eq:qlike}, no analytical solution exists for the lower bound on the
 likelihood, $\Fengy$. However, we can use our approximation
-\eqref{eq:linearise} to calculate $\Fengy$,
+\eqref{eq:linearize} to calculate $\Fengy$,
 \begin{multline}
     \Fengy \approx - \frac{1}{2} \bigg[
         D\log{2\pi} + \log\deter{\lcov} + \log\deter{\prcov\pocov\inv}
@@ -374,10 +373,13 @@ likelihood, $\Fengy$. However, we can use our approximation
         \bigg].
     \label{eq:approxfengy}
 \end{multline}
-
-In practice we only calculate this approximation $\Fengy$ if we need to
-optimise some model hyperparameters, like for a Gaussian process. For
-optimising $\pomean$, the only dependent parts of $\Fengy$ on $\pomean$ are,
+Here the trace term from \eqref{eq:qkl} has cancelled with a trace term from
+the expected likelihood, $\trace{\Linmat\transpose\lcov\inv\Linmat\pocov} = D -
+\trace{\prcov\inv\pocov}$ once we have linearized $\nonlin{\cdot}$ and
+substituted \eqref{eq:pocovi}. In practice we only calculate this approximation
+$\Fengy$ if we need to optimise some model hyperparameters, like for a Gaussian
+process. For optimising $\pomean$, the only dependent parts of $\Fengy$ on
+$\pomean$ are,
 \begin{equation}
     -\frac{1}{2} \brac{\obs - \nonlin{\pomean}}\transpose
             \lcov\inv
@@ -388,15 +390,15 @@ optimising $\pomean$, the only dependent parts of $\Fengy$ on $\pomean$ are,
         \brac{\pomean - \prmean},
     \label{eq:MAP}
 \end{equation}
-in the Taylor series linearisation case. This is also the \emph{maximum
+in the Taylor series linearization case. This is also the \emph{maximum
     a-posteriori} objective, and optimising this using Newton's method will
 lead $\pomean$ to converge if $\pomean_0$ is sufficiently close to the true
-posterior mean. No such guarantees exist for the statistical linearisation
+posterior mean. No such guarantees exist for the statistical linearization
 method, though \eqref{eq:MAP} also works well in practice, more discussion on
 this point is in section \ref{sec:exptoy}. 
 
 
-\section{Linearised Gaussian Processes}
+\section{Linearized Gaussian Processes}
 \label{sec:gpmod}
 
 We now present two predictive the Gaussian Process (GP) models
@@ -432,7 +434,7 @@ variational inference,
         - \frac{1}{2\lvar} \sum_{n=1}^N 
             \expec{q\lstates_n}{\brac{\obss_n - \nonlin{\lstates_n}}^2}.
 \end{equation*}
-As a consequence the linearisation is scaler per element of $\lstate$,
+As a consequence the linearization is scaler per element of $\lstate$,
 \begin{equation}
     \nonlin{\lstates_n} \approx \Lins_n\lstates_n + \intcpts_n.
 \end{equation}
@@ -457,11 +459,12 @@ Newton steps for the posterior mean,
         + \step\Kgain_k\brac{\obs - \intcpt_k}.
 \end{equation}
 Also as before,
-\begin{align}
-    \Kgain_k &= \KERNL\Linmat_k\brac{\Lvar + \Linmat_k\KERNL\Linmat_k}\inv, \\
-    \pocov &= \brac{\ident{N} - \Kgain\Linmat}\!\KERNL.
-\end{align}
-The values for $\Lins_n$ and $\intcpts_n$ for the Taylor series linearisation
+\begin{equation}
+    \Kgain_k = \KERNL\Linmat_k\brac{\Lvar + \Linmat_k\KERNL\Linmat_k}\inv
+    \quad \text{and} \quad
+    \pocov = \brac{\ident{N} - \Kgain\Linmat}\!\KERNL.
+\end{equation}
+The values for $\Lins_n$ and $\intcpts_n$ for the Taylor series linearization
 are now,
 \begin{equation}
     \Lins_n = \frac{\partial\nonlin{\pomeans_n}}{\partial\pomeans_n},
@@ -469,7 +472,7 @@ are now,
     \intcpts_n = \nonlin{\pomeans_n}
         - \frac{\partial\nonlin{\pomeans_n}}{\partial\pomeans_n} \pomeans_n,
 \end{equation}
-and for statistical linearisation,
+and for statistical linearization,
 \begin{equation}
     \Lins_n = \frac{\xcovs_{\pomeans\obss,n}}{\pocovs_{nn}},
     \qquad
@@ -481,8 +484,8 @@ $\xcovs_{\pomeans\obss,n}$ and $\bar\obss_n$ are calculated the same way as
 observation $n \in N$ are $\Sfunc_{n} = \big\{\pomeans_n,~\pomeans_n +
 \sqrt{\brac{1 + \scoef}\pocovs_{nn}},~\pomeans_n - \sqrt{\brac{1 +
         \scoef}\pocovs_{nn}}\big\}$ and the dimensionality is~1. We refer to
-the Taylor series linearised GP as the \emph{extended} GP (EGP), and the
-statistically linearised GP as the \emph{unscented} GP (UGP) to be consistent
+the Taylor series linearized GP as the \emph{extended} GP (EGP), and the
+statistically linearized GP as the \emph{unscented} GP (UGP) to be consistent
 with the literature on the EKF and UKF.
 
 \subsection{Prediction}
@@ -678,7 +681,7 @@ Experimental setup:
 \end{table}
 
 
-\textbf{TODO:} Discuss divergence behaviour of statistical linearisation.
+\textbf{TODO:} Discuss divergence behaviour of statistical linearization.
 
 
 \subsection{Binary Handwritten Digit Classification}
