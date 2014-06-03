@@ -125,18 +125,16 @@ Gaussian form,
 Now we can evaluate the expectation and KL term in \eqref{eq:fengy},
 \begin{align}
     \expec{q\lstate}{\log \probC{\obs}{\lstate}}
-        =& - \frac{D}{2}\log{2\pi} - \frac{1}{2} \log\deter{\lcov} 
-        - \frac{1}{2} 
-            \expec{q\lstate}{\brac{\obs - \nonlin{\lstate}}\transpose\lcov\inv
-            \brac{\obs - \nonlin{\lstate}}},
+        =& - \frac{1}{2} \sbrac{ 
+            D\log{2\pi} + \log\deter{\lcov} 
+            + \expec{q\lstate}{\brac{\obs - \nonlin{\lstate}}\transpose\lcov\inv
+            \brac{\obs - \nonlin{\lstate}}}},
             \label{eq:qlike} \\
      - \KL{\qrob{\lstate}}{\prob{\lstate}}
-        =& - \frac{D}{2}\log{2\pi} - \frac{1}{2}\log\deter{\prcov}
-            - \frac{1}{2} \brac{\pomean - \prmean}\transpose\prcov\inv
+        =& - \frac{1}{2} \sbrac{\log\deter{\prcov\pocov\inv}
+            + \brac{\pomean - \prmean}\transpose\prcov\inv
             \brac{\pomean - \prmean}
-            - \frac{1}{2} \trace{\prcov\inv\pocov} \nonumber \\
-        &+ \frac{1}{2} \log\deter{\pocov} 
-            + \frac{D}{2}\log{2\pi} + \frac{D}{2} \label{eq:qkl}.
+            + \trace{\prcov\inv\pocov} - D } \label{eq:qkl}.
 \end{align}
 where the expectation involving $\nonlin{\cdot}$ may be intractable. One method
 of dealing with these expectations is presented in \cite{Opper2009}; we provide
@@ -237,7 +235,7 @@ Again we do not have an analytic solution to this because we need to take
 expectations and derivatives of terms involving $\nonlin{\lstate}$, so we use
 the approximation in \eqref{eq:linearise} to get,
 \begin{equation}
-    \pocov = \sbrac{\prcov\inv + \Linmat\transpose\lcov\Linmat}\inv
+    \pocov = \sbrac{\prcov\inv + \Linmat\transpose\lcov\inv\Linmat}\inv
     = - \brac{\nabla_\pomean \nabla_\pomean \Fengy}\inv.
 \end{equation}
 Using the Woodbury identity,
