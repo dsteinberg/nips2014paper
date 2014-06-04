@@ -595,34 +595,85 @@ any potential implicit gradient terms.
 \section{Experiments}
 \label{sec:experiments}
 
+For the experiments in this paper, we have implemented both the EGP and UGP, as
+well as regular GP for regression in python code. We use NLopt
+\cite{JohnsonNLOPT} for derivative-free hyperparameter learning (BOBYQA), and
+scientific python (scipy.integrate.quad) for quadrature.
+
+
 \subsection{Toy Inversion Problems}
 \label{sec:exptoy}
 
-Experimental setup:
-\begin{itemize}
+In this experiment we wish to evaluate the performance of the EGP and UGP for
+inversion problems. We generate `latent' function data from
+$\lstate_{\text{true}}\!\brac{\inobs} = \sin\!\brac{\inobs} +
+\cos\!\brac{\pi\inobs}$, where $\inobs$ are drawn randomly from a uniform
+distribution between $[-2\pi, 2\pi]$. Observations used to test and train the
+GPs are then generated as $\obs = \nonlin{\lstate_\text{true}} + \epsilon$
+where $\epsilon \sim \gaus{0, 0.2^2}$. 500 points are generated in this manner,
+and we use 5-fold cross validation to train (4/5 th) and test (1/5 th) the GPs.
+We standardised mean squared error (SMSE) to test the predictions with the held
+out data in both the latent and observed spaces. We also use held-out, average
+negative log-likelihood on the latent test data, which is calculated as
+$-\frac{1}{N\test} \sum_{n} \log \gausC{\lstates_n\test}{\pomeans_n\test,
+    \pocovs_n\test}$. All of the GPs use Matern $\frac{5}{2}$ covariance
+functions with the hyperparameters and $\lvar$ initialised at 1.0 and
+lower-bounded at 0.1 (and 0.01 for $\lvar$).
 
-    \item True latent function, $\lstate_{\text{true}}\!\brac{\inobs} =
-        \sin\!\brac{\inobs} + \cos\!\brac{\pi\inobs}$.
 
-    \item The observations are generated as $\obs =
-        \nonlin{\lstate_\text{true}} + \epsilon$ where $\epsilon \sim \gaus{0,
-            0.2^2}$.
-    
-    \item Matern $\frac{5}{2}$ covariance functions are used. All parameters
-        are initialised at 1.0, and lower-bounded at 0.1 except for the noise,
-        which is lower bounded at 0.01.
+\begin{table}[tb]
+    \centering
+    \small
+    \caption[]{Results from running nonlinear likelihood GPs with various
+        differentiable nonlinear functions. The true latent function is
+        $\lstate_{\text{true}}\!\brac{\inobs} = \sin\!\brac{\inobs} 
+            + \cos\!\brac{\pi\inobs}$.}
+    \begin{tabular}{r|c| c c c c c c}
+        \multirow{2}{*}{$\nonlin{\lstate}$} & \multirow{2}{*}{Algorithm} & 
+            \multicolumn{2}{c}{Av.\ neg.\ ll.\ $\lstates\test$} &
+            \multicolumn{2}{c}{SMSE $\lstates\test$ (\expon{}{-4})} &
+            \multicolumn{2}{c}{SMSE $\obss\test$ (\expon{}{-4})} \\
+        & & mean & std. & mean & std. & mean & std.\\
+        \toprule
+        $\lstate$ 
+            & UGP & $-$1.4437 & 0.0472 & 37.476 & 4.777 & -- & -- \\
+            & EGP & $-$1.4840 & 0.0984 & 35.252 & 8.348 & -- & -- \\
+            & \cite{Opper2009} \\
+            & GP & $-$1.2970 & 0.0487 & 34.728 & 10.264 & -- & -- \\
+        \midrule
+        $\lstate^3 + \lstate^2 + \lstate$ 
+            & UGP & $-$2.1587 & 0.0681 & 26.946 & 5.936 & 36.043 & 4.971 \\
+            & EGP & $-$2.1595 & 0.0524 & 26.520 & 5.538 & 36.115 & 5.078 \\
+            & \cite{Opper2009} \\
+        \midrule
+        $\exp\!\brac{\lstate}$ 
+            & UGP & $-$1.2993 & 0.2028 & 129.22 & 76.450 & 173.28 & 27.692 \\
+            & EGP & $-$1.3136 & 0.1878 & 112.25 & 63.446 & 173.30 & 27.918 \\
+            & \cite{Opper2009} \\
+        \midrule
+        $\sin\!\brac{\lstate}$ 
+            & UGP & $-$0.8904 & 0.1214 & 151.16 & 30.212 & 858.74 & 104.04 \\
+            & EGP & $-$0.8170 & 0.1552 & 173.06 & 41.686 & 858.33 & 103.47 \\
+            & \cite{Opper2009} \\
+        \midrule
+        $\tanh\!\brac{2\lstate}$
+            & UGP & $-$0.6060 & 0.1240 & 354.57 & 66.352 & 604.98 & 62.572 \\
+            & EGP & $-$0.4592 & 0.1805 & 476.43 & 108.81 & 610.52 & 62.544 \\
+            & \cite{Opper2009} \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:toy}
+\end{table}
 
-    \item Held out predictive negative log likelihood for the latent function
-        is calculated as,
-        \begin{equation}
-            \frac{1}{2N\test} \sum^{N\test}_n \log{2\pi\pocovs\test_{nn}}
-                + \frac{1}{\pocovs\test_{nn}} \brac{\lstates\test_n -
-                    \pomeans\test_n}^2.
-        \end{equation}
-
-    \item 5-fold cross validation, 400 points training, 100 points testing.
-
-\end{itemize}
+In \autoref{tab:toy} we present results for multiple differentiable forward
+models, $\nonlin{\cdot}$. We also test the EGP and UGP on a linear model
+($\nonlin{\lstate} = \lstate$) against normal GP regression. In
+\autoref{fig:learnex} we show the results of the UGP using a forward
+model for which no derivative exists. We also show a typical objective function
+trace for learning the posterior mean which terminated on a `divergence'
+condition. We use quadrature for the predictions in observations space in
+\autoref{tab:toy} and the unscented transform for the predictions in
+\autoref{fig:learnex}.
 
 \begin{figure}[tb]
     \begin{subfigure}[b]{0.5\linewidth}
@@ -660,55 +711,26 @@ Experimental setup:
     \label{fig:learnex}
 \end{figure}
 
-\begin{table}[tb]
-    \centering
-    \small
-    \caption[]{Results from running nonlinear likelihood GPs with various
-        differentiable nonlinear functions. The true latent function is
-        $\lstate_{\text{true}}\!\brac{\inobs} = \sin\!\brac{\inobs} 
-            + \cos\!\brac{\pi\inobs}$.}
-    \begin{tabular}{r|c| c c c c c c}
-        \multirow{2}{*}{$\nonlin{\lstate}$} & \multirow{2}{*}{Algorithm} & 
-            \multicolumn{2}{c}{$-\frac{1}{N\test}
-                \log\probC{\lstates\test}{\obs}$} &
-            \multicolumn{2}{c}{SMSE $\lstates\test$ (\expon{}{-4})} &
-            \multicolumn{2}{c}{SMSE $\obss\test$ (\expon{}{-4})} \\
-        & & mean & std. & mean & std. & mean & std.\\
-        \toprule
-        $\lstate$ 
-            & UGP & $-$1.4437 & 0.0472 & 37.476 & 4.777 & -- & -- \\
-            & EGP & $-$1.4840 & 0.0984 & 35.252 & 8.348 & -- & -- \\
-            & \cite{Opper2009} \\
-            & GP & $-$1.2970 & 0.0487 & 34.728 & 10.264 & -- & -- \\
-        \midrule
-        $\lstate^3 + \lstate^2 + \lstate$ 
-            & UGP & $-$2.1587 & 0.0681 & 26.946 & 5.936 & 36.043 & 4.971 \\
-            & EGP & $-$2.1595 & 0.0524 & 26.520 & 5.538 & 36.115 & 5.078 \\
-            & \cite{Opper2009} \\
-        \midrule
-        $\exp\!\brac{\lstate}$ 
-            & UGP & $-$1.2993 & 0.2028 & 129.22 & 76.450 & 173.28 & 27.692 \\
-            & EGP & $-$1.3136 & 0.1878 & 112.25 & 63.446 & 173.30 & 27.918 \\
-            & \cite{Opper2009} \\
-        \midrule
-        $\sin\!\brac{\lstate}$ 
-            & UGP & $-$0.8904 & 0.1214 & 151.16 & 30.212 & 858.74 & 104.04 \\
-            & EGP & $-$0.8170 & 0.1552 & 173.06 & 41.686 & 858.33 & 103.47 \\
-            & \cite{Opper2009} \\
-        \midrule
-        $\tanh\!\brac{2\lstate}$
-            & UGP & $-$0.6060 & 0.1240 & 354.57 & 66.352 & 604.98 & 62.572 \\
-            & EGP & $-$0.4592 & 0.1805 & 476.43 & 108.81 & 610.52 & 62.544 \\
-            & \cite{Opper2009} \\
-        \bottomrule
-    \end{tabular}
-\end{table}
 
-
+\textbf{TODO:} Discuss the experiment results.
 \textbf{TODO:} Discuss divergence behaviour of statistical linearization.
 
 
 \subsection{Binary Handwritten Digit Classification}
+
+For this experiment we evaluate the EGP and UGP on a more routine binary
+classification task, where we are just interested in a probabilistic prediction
+of class labels, and not the values of the latent function. The dataset we use
+is the USPS handwritten digits datasets with the task of distinguishing between
+`3' and `5' -- this is the same experiment from \cite{Rasmussen2006}. A
+logistic sigmoid is used as the forward model, $\nonlin{\cdot}$, in our
+algorithms. We test against derived-for-the-task Laplace and expectation
+propagation GP classifiers (from the GPML matlab toolbox), a support vector
+machine (with probabilistic outputs), and logistic regression (both from the
+scikits-learn python library). We report performance as the average negative
+log-likelihood of a Bernoulli distribution, $ - \frac{1}{N\test}$, and also
+error rate as the percent incorrectly misclassified labels in the test set
+(once the probabilistic outputs have been thresholded at 0.5). 
 
 We use the error rate (percent incorrectly predicted labels) and average 
 negative log Bernoulli likelihood to asses performance,
@@ -738,7 +760,7 @@ Other experimental settings,
     \caption[]{Binary Gaussian process classifier performance on the USPS
         handwritten-digits dataset for numbers `3' and `5'.}
     \begin{tabular}{r| c c c c}
-        Algorithm & Av.\ neg.\ ll. & Error rate (\%) 
+        Algorithm & Av.\ neg.\ ll.\ $\obss\test$ & Error rate (\%) 
             & $\log\!\brac{\sigma_\text{se}}$ & $\log\!\brac{l_\text{se}}$ \\
         \toprule
         GP -- Laplace & 0.11528 & 2.9754 & 2.5855 & 2.5823 \\
