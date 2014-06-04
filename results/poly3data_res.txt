@@ -2,10 +2,10 @@ f**3 + f**2 + f:
 
 Final result:
 	 Statistical linearisation --
-		 -ll(f): av = -2.1402, std = 0.0604
-		 smse(f): av = 2.7725e-03, std = 6.0968e-04
-		 smse(y): av = 3.6239e-03, std = 5.0887e-04
+		 -ll(f): av = -2.1587, std = 0.0681
+		 smse(f): av = 2.6946e-03, std = 5.9360e-04
+		 smse(y): av = 3.6043e-03, std = 4.9711e-04
 	 Taylor linearisation  --
-		 -ll(f): av = 10.1842, std = 1.9443
-		 smse(f): av = 3.1094e-03, std = 9.1929e-04
-		 smse(y): av = 3.6991e-03, std = 5.8689e-04
+		 -ll(f): av = -2.1595, std = 0.0524
+		 smse(f): av = 2.6520e-03, std = 5.5383e-04
+		 smse(y): av = 3.6115e-03, std = 5.0784e-04

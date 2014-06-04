@@ -14,22 +14,14 @@
 \bibliography{nips2014lin}
 
 
-\title{Variational Inference for Extended and Unscented Gaussian Processes}
+\title{Extended and Unscented Gaussian Processes}
 
 
 \author{
-David S.~Hippocampus\thanks{Use footnote for providing further information
-about author (webpage, alternative address)---\emph{not} for acknowledging
-funding agencies.} \\
-Department of Computer Science\\
-Cranberry-Lemon University\\
-Pittsburgh, PA 15213 \\
-\texttt{hippo@cs.cranberry-lemon.edu} \\
-\And
-Coauthor \\
-Affiliation \\
-Address \\
-\texttt{email} \\
+    Daniel M.~Steinberg, Edwin V.~Bonilla \\
+    NICTA \\
+    Sydney, Australia\\
+    \texttt{\{daniel.steinberg,edwin.bonilla\}@nicta.com.au}
 }
 
 % The \author macro works with any number of authors. There are two commands
@@ -52,14 +44,50 @@ Address \\
 \maketitle
 
 \begin{abstract}
+
+    Two new methods for inference in Gaussian processes (GPs) with general
+    nonlinear likelihoods are presented. Inference is based on a variational
+    framework where a Gaussian posterior is assumed, then the likelihoods are
+    linearized about the variational posterior mean using either a first order
+    Taylor series expansion, or statistical linearization. We show that the
+    parameter updates obtained by these algorithms are equivalent to the state
+    update equations in the iterative extended and unscented Kalman filters
+    respectively, hence we refer to our algorithms as extended and
+    unscented GPs. The unscented GP treats the likelihood as a `black-box' by
+    not requiring its derivative for inference, and can even use
+    non-differentiable likelihood models. We demonstrate the algorithms on a
+    number of toy inversion problems, and a binary classification dataset.
+
 \end{abstract}
 
 \section{Introduction}
 
-TODO
+This is how we will tell the story, and the points we need to address,
+\begin{itemize}
+    \item Something on the general problem and examples of it (inverse
+        kinematics, navigation and state estimation).
+    \item We are interested in the values of a latent process, where we have
+        observations of this latent process that have been transformed through
+        a known nonlinear function or `forward model'.
+    \item We are also interesting in making predictions in both the latent
+        process and observation space.
+    \item Inference is intractable because we now have an arbitrary likelihood
+        based on the form of the forward model.
+    \item Like \cite{Opper2009} we use variational inference and assume a
+        Gaussian posterior, but unlike \cite{Opper2009} we linearize the
+        forward model to compute its expectation with respect the variational
+        posterior.
+    \item We show that using this variational framework we can derive the state
+        update steps for the iterated extended \cite{Bell1993} and
+        unscented \cite{Sibley2006} Kalman filters, depending on the 
+        linearization method chosen.
+    \item Ultimately we would like an algorithm that can use ``black-box''
+        likelihood functions where the algorithm does need a derivative, or the
+        likelihood may not even be differentiable.
+\end{itemize}
 
 Initially we formulate our model in \autoref{sec:gausmod} for the \emph{finite}
-Gaussian case because the linearization methods are more easily presentable and
+Gaussian case because the linearization methods are more generalised and
 comparable with existing algorithms. Then in \autoref{sec:gpmod} we
 specifically derive a factorising likelihood Gaussian process model using our
 framework, which we use for experiments in \autoref{sec:experiments}.
@@ -68,13 +96,11 @@ framework, which we use for experiments in \autoref{sec:experiments}.
 \section{Nonlinear Gaussian Models}
 \label{sec:gausmod}
 
-\textbf{TODO:} Tidy the following paragraph up given the intro
-
 Given some observable quantity $\obs \in \real{d}$, and a likelihood model for
 the system we are interested in, $\probC{\obs}{\lstate}$, in many situations it
 is desirable to know the latent input to the system, $\lstate\in\real{D}$, that
-generated the observation. Finding these inputs is an inversion problem and can
-be cast as an application of Bayes' rule in a probabilistic setting,
+generated the observation. Finding these inputs is an inversion problem and in
+a probabilistic setting can be cast as an application of Bayes' rule,
 \begin{equation}
     \probC{\lstate}{\obs} = \frac{\probC{\obs}{\lstate}\prob{\lstate}}
         {\prob{\obs}}.
@@ -580,7 +606,9 @@ Experimental setup:
         \nonlin{\lstate_\text{true}} + \epsilon$ where $\epsilon \sim \gaus{0,
             0.2^2}$.
     
-    \item Matern $\frac{5}{2}$ covariance functions are used. 
+    \item Matern $\frac{5}{2}$ covariance functions are used. All parameters
+        are initialised at 1.0, and lower-bounded at 0.1 except for the noise,
+        which is lower bounded at 0.01.
 
     \item Held out predictive negative log likelihood for the latent function
         is calculated as,
@@ -646,35 +674,29 @@ Experimental setup:
         & & mean & std. & mean & std. & mean & std.\\
         \toprule
         $\lstate$ 
-            & UGP & $-$1.4453 & 0.0601 & 36.471 & 7.309 & -- & -- \\
-            %& EGP & 14.2072 & 2.7953 & 54.674 & 8.890 & -- & -- \\
+            & UGP & $-$1.4437 & 0.0472 & 37.476 & 4.777 & -- & -- \\
+            & EGP & $-$1.4840 & 0.0984 & 35.252 & 8.348 & -- & -- \\
             & \cite{Opper2009} \\
-            & GP & $-$1.2793 & 0.0162 & 40.210 & 7.012 & -- & -- \\
+            & GP & $-$1.2970 & 0.0487 & 34.728 & 10.264 & -- & -- \\
         \midrule
         $\lstate^3 + \lstate^2 + \lstate$ 
-            & UGP & $-$2.1402 & 0.0604 & 27.725 & 6.097 & 36.239 
-                & 5.089 \\
-            %& EGP & 10.1842 & 1.9443 & 31.094 & 9.193 & 36.991 & 5.869 \\
+            & UGP & $-$2.1587 & 0.0681 & 26.946 & 5.936 & 36.043 & 4.971 \\
+            & EGP & $-$2.1595 & 0.0524 & 26.520 & 5.538 & 36.115 & 5.078 \\
             & \cite{Opper2009} \\
         \midrule
         $\exp\!\brac{\lstate}$ 
-            & UGP & $-$1.3858 & 0.2320 & 99.405 & 75.756 & 170.07 
-                & 27.490 \\
-            %& EGP & 15.1875 & 4.0084 & 235.10 & 82.551 & 174.70 & 26.181 \\
+            & UGP & $-$1.2993 & 0.2028 & 129.22 & 76.450 & 173.28 & 27.692 \\
+            & EGP & $-$1.3136 & 0.1878 & 112.25 & 63.446 & 173.30 & 27.918 \\
             & \cite{Opper2009} \\
         \midrule
         $\sin\!\brac{\lstate}$ 
-            & UGP & $-$0.8892 & 0.1259 & 152.75 & 32.744 & 858.63
-                & 104.26 \\
-            %& EGP & 20.1577 & 5.9408 & 387.67 & 131.13 & 889.80 & 127.22 \\
-            & EGP & $-$0.8377 & 0.1556 & 167.58 & 34.984 & 859.69 & 103.15 \\
+            & UGP & $-$0.8904 & 0.1214 & 151.16 & 30.212 & 858.74 & 104.04 \\
+            & EGP & $-$0.8170 & 0.1552 & 173.06 & 41.686 & 858.33 & 103.47 \\
             & \cite{Opper2009} \\
         \midrule
         $\tanh\!\brac{2\lstate}$
-            & UGP & $-$0.5903 & 0.1132 & 395.96 & 40.270 & 602.24 
-                & 60.622 \\
-            %& EGP & 23.7728 & 8.9093 & 894.32 & 523.64 & 606.16 & 64.206 \\
-            & EGP & $-$0.4667 & 0.1858 & 454.78 & 97.492 & 613.43 & 60.960 \\
+            & UGP & $-$0.6060 & 0.1240 & 354.57 & 66.352 & 604.98 & 62.572 \\
+            & EGP & $-$0.4592 & 0.1805 & 476.43 & 108.81 & 610.52 & 62.544 \\
             & \cite{Opper2009} \\
         \bottomrule
     \end{tabular}
@@ -699,6 +721,12 @@ classifications algorithms.
 A square exponential kernel with amplitude $\sigma_\text{se}$ and length
 scale $l_\text{se}$ is used for the Gaussian processes in this experiment.
 
+Other experimental settings,
+\begin{itemize}
+    \item Initial hyperparameters $\sigma_{\text{se},0} = l_{\text{se},0} = 1$, 
+        lower bounds are $0.1$. $\lstd_0 = 10^{-6}$, lower bound $10^{-7}$.
+\end{itemize}
+
 \begin{table}[htb]
     \centering
     \small
@@ -713,9 +741,12 @@ scale $l_\text{se}$ is used for the Gaussian processes in this experiment.
         SVM (RBF) & 0.08055 & 2.3286 & -- & -- \\
         Logistic Reg. & 0.11995 & 3.6223 & -- & -- \\
         \midrule
-        UGP & 0.11748 & 2.9754 &  2.8177 & 2.5504 \\
+        UGP & 0.06524 & 2.1992 & 1.5140 & 1.4257 \\
+        EGP & 0.12946 & 2.0699 & 3.3068 & 1.7480 \\
+        %UGP & 0.11748 & 2.9754 &  2.8177 & 2.5504 \\
         %EGP & 0.69293 & 42.4321 & 3.1268 & $-$0.1696 \\
-        EGP & 0.69315 & 54.0750 & 1.02810 & $-$2.1564 \\
+        %EGP & 0.69315 & 54.0750 & 1.1387 & $-$2.3530 \\
+        %EGP* & 0.1189 & 2.1992 & 3.4495 & 1.8866 \\
         \bottomrule
     \end{tabular}
 \end{table}
