@@ -56,7 +56,7 @@
     unscented GPs. The unscented GP treats the likelihood as a `black-box' by
     not requiring its derivative for inference, and can even use
     non-differentiable likelihood models. We demonstrate the algorithms on a
-    number of toy inversion problems, and a binary classification dataset.
+    number of toy inversion problems and a binary classification dataset.
 
 \end{abstract}
 
@@ -81,9 +81,9 @@ This is how we will tell the story, and the points we need to address,
         update steps for the iterated extended \cite{Bell1993} and
         unscented \cite{Sibley2006} Kalman filters, depending on the 
         linearization method chosen.
-    \item Ultimately we would like an algorithm that can use ``black-box''
-        likelihood functions where the algorithm does need a derivative, or the
-        likelihood may not even be differentiable.
+    \item Ultimately we end up with an algorithm (UGP) that can use
+        ``black-box'' likelihood functions where the algorithm does need a
+        derivative, or the likelihood may not even be differentiable.
 \end{itemize}
 
 Initially we formulate our model in \autoref{sec:gausmod} for the \emph{finite}
@@ -125,7 +125,7 @@ which also makes the posterior intractable to evaluate. Thus, we choose to
 approximate the posterior using variational inference \cite{Jordan1999}.
 
 
-\section{Variational Approximation}
+\subsection{Variational Approximation}
 
 Using variational inference, we can put a lower bound on the log-marginal
 likelihood using Jensen's inequality, 
@@ -167,7 +167,7 @@ of dealing with these expectations is presented in \cite{Opper2009}; we provide
 two alternatives based on methods of linearizing $\nonlin{\cdot}$.
 
 
-\subsection{Learning the Parameters}
+\subsection{Parameter Updates}
 
 To find the optimal posterior mean, $\pomean$, we need to find the derivative,
 \begin{equation}
@@ -483,12 +483,14 @@ Newton steps for the posterior mean,
 \begin{equation}
     \pomean_{k+1} = \brac{1-\step}\pomean_k 
         + \step\Kgain_k\brac{\obs - \intcpt_k}.
+    \label{eq:pomeangp}
 \end{equation}
 Also as before,
 \begin{equation}
     \Kgain_k = \KERNL\Linmat_k\brac{\Lvar + \Linmat_k\KERNL\Linmat_k}\inv
     \quad \text{and} \quad
     \pocov = \brac{\ident{N} - \Kgain\Linmat}\!\KERNL.
+    \label{eq:pocovgp}
 \end{equation}
 The values for $\Lins_n$ and $\intcpts_n$ for the Taylor series linearization
 are now,
@@ -549,29 +551,30 @@ which we find find works well in practice, see \autoref{fig:learnex} for a
 demonstration.
 
 
-\subsection{Learning}
+\subsection{Learning the Parameters and Hyperparameters}
 
 Learning the extended and unscented GPs consists of in an inner and outer loop.
 Much like the Laplace approximation for binary Gaussian Process classifiers
 \cite{Rasmussen2006}, the inner loop is for learning the posterior mean,
 $\pomean$, and the outer loop is to optimise the likelihood variance $\lvar$ 
-and kernel hyperparameters $\khypers$.
+and kernel hyperparameters, $\kfunc{\cdot}{\cdot|\khypers}$.
 
 A line search could be used to select an optimal value for the step length,
-$\step$. However, we find that setting $\step=1$, and then successively
-multiplying $\step$ by some number in $\brac{0, 1}$ until the MAP objective
-\eqref{eq:MAP} lowers, or some maximum number of iterations is exceeded, works 
-well in practice. If the maximum number of iterations is exceeded we call this
-a `diverge' condition, and terminate the search of $\pomean$ (and return the
-last good value). This only tends to happen for the unscented GP, and does not
-tend to impact the algorithms performance, as demonstrated in 
-\autoref{fig:learnex}.
+$\step$ in \eqref{eq:pomeangp}. However, we find that setting $\step=1$, and
+then successively multiplying $\step$ by some number in $\brac{0, 1}$ until the
+MAP objective \eqref{eq:MAP} lowers, or some maximum number of iterations is
+exceeded, works well in practice. If the maximum number of iterations is
+exceeded we call this a `diverge' condition, and terminate the search of
+$\pomean$ (and return the last good value). This only tends to happen for the
+unscented GP, and does not tend to impact the algorithms performance, as
+demonstrated in \autoref{fig:learnex}. The dominant computational cost in
+learning the parameters is the inversion in \eqref{eq:pocovgp}, and so the
+computational complexity of the EGP and UGP is about the same as for the
+Laplace GP approximation.
 
-\textbf{TODO: verify this --} The kernel hyperparameters,
-$\kfunc{\cdot}{\cdot|\khypers}$, can be learned by optimising the gradients
-$\partial\Fengy/\partial\khypers$. These gradients have both explicit and
-implicit components ($\pomean$ is dependent on $\lvar$ and $\khypers$). Where
-$\Fengy$ for the GPs is approximated as,
+To find the kernel hyperparameters (and $\lvar$), we use numerical techniques
+to find the gradients, $\partial\Fengy/\partial\khypers$, for both the extended
+and unscented algorithms, where $\Fengy$ is approximated as,
 \begin{equation}
     \Fengy \approx - \frac{1}{2} \bigg[
         N\log{2\pi\lvar} + \log\deter{\KERNL\pocov\inv}
@@ -582,18 +585,17 @@ $\Fengy$ for the GPs is approximated as,
     \bigg].
     \label{eq:fengygp}
 \end{equation}
-Finding the implicit gradients for the unscented GP requires knowledge of
-$\partial\nonlin{\lstates}\!/\partial\lstates$, which may not exist. We use
-numerical techniques to find these gradients for both the extended and
-unscented algorithms. In particular we use derivative-free optimisation methods
+In particular we use derivative-free optimisation methods
 from the NLopt library \cite{JohnsonNLOPT}, which we find fast and highly
-effective.
+effective. This also has the advantage of not requiring explicit knowledge of
+$\partial\nonlin{\lstates}\!/\partial\lstates$ or higher order derivatives for
+any potential implicit gradient terms. 
 
 
 \section{Experiments}
 \label{sec:experiments}
 
-\subsection{Various Nonlinear Functions}
+\subsection{Toy Inversion Problems}
 \label{sec:exptoy}
 
 Experimental setup:
@@ -622,7 +624,7 @@ Experimental setup:
 
 \end{itemize}
 
-\begin{figure}[htb]
+\begin{figure}[tb]
     \begin{subfigure}[b]{0.5\linewidth}
         \includegraphics[width=\linewidth]{fig/signdemo}
         \caption{$\nonlin{\lstate} = 2\times\text{sign}\!\brac{\lstate}
@@ -658,7 +660,7 @@ Experimental setup:
     \label{fig:learnex}
 \end{figure}
 
-\begin{table}[htb]
+\begin{table}[tb]
     \centering
     \small
     \caption[]{Results from running nonlinear likelihood GPs with various
@@ -725,9 +727,12 @@ Other experimental settings,
 \begin{itemize}
     \item Initial hyperparameters $\sigma_{\text{se},0} = l_{\text{se},0} = 1$, 
         lower bounds are $0.1$. $\lstd_0 = 10^{-6}$, lower bound $10^{-7}$.
+    \item Although performance is great, we do find the UGP and EGP sensitive
+        to starating values of the hyperparameters, and especially the
+        likelihood noise, $\lvar$, if it is not initialised to a small value.
 \end{itemize}
 
-\begin{table}[htb]
+\begin{table}[tb]
     \centering
     \small
     \caption[]{Binary Gaussian process classifier performance on the USPS
@@ -750,6 +755,7 @@ Other experimental settings,
         \bottomrule
     \end{tabular}
 \end{table}
+
 
 \section{Conclusion}
 
