@@ -2,10 +2,13 @@ np.sin(f):
 
 Final result:
 	 Statistical linearisation --
-		 -ll(f): av = -0.8904, std = 0.1214
-		 smse(f): av = 1.5116e-02, std = 3.0212e-03
-		 smse(y): av = 8.5874e-02, std = 1.0404e-02
+		 -ll(f): av = -0.45417, std = 0.22514
+		 smse(f): av = 3.9059e-02, std = 1.5695e-02
+		 smse(y): av = 1.1641e-01, std = 5.1263e-03
 	 Taylor linearisation  --
-		 -ll(f): av = -0.8170, std = 0.1552
-		 smse(f): av = 1.7306e-02, std = 4.1686e-03
-		 smse(y): av = 8.5833e-02, std = 1.0347e-02
+		 -ll(f): av = -0.52086, std = 0.21953
+		 smse(f): av = 3.7483e-02, std = 1.5409e-02
+		 smse(y): av = 1.1966e-01, std = 8.7165e-03
+
+& UGP & -0.45417 & 0.22514 & 0.03906 & 0.01570 & 0.11641 & 0.00513 \\
+& EGP & -0.52086 & 0.21953 & 0.03748 & 0.01541 & 0.11966 & 0.00872 \\

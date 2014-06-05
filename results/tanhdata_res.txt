@@ -2,10 +2,13 @@ np.tanh(2*f):
 
 Final result:
 	 Statistical linearisation --
-		 -ll(f): av = -0.6060, std = 0.1240
-		 smse(f): av = 3.5457e-02, std = 6.6352e-03
-		 smse(y): av = 6.0498e-02, std = 6.2572e-03
+		 -ll(f): av = 0.40569, std = 1.13758
+		 smse(f): av = 1.7859e-01, std = 8.2352e-02
+		 smse(y): av = 8.8273e-02, std = 3.9968e-03
 	 Taylor linearisation  --
-		 -ll(f): av = -0.4592, std = 0.1805
-		 smse(f): av = 4.7643e-02, std = 1.0881e-02
-		 smse(y): av = 6.1052e-02, std = 6.2544e-03
+		 -ll(f): av = 0.64846, std = 1.21329
+		 smse(f): av = 2.0196e-01, std = 8.4768e-02
+		 smse(y): av = 9.4246e-02, std = 2.5754e-03
+
+& UGP & 0.40569 & 1.13758 & 0.17859 & 0.08235 & 0.08827 & 0.00400 \\
+& EGP & 0.64846 & 1.21329 & 0.20196 & 0.08477 & 0.09425 & 0.00258 \\

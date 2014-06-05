@@ -2,10 +2,13 @@ f**3 + f**2 + f:
 
 Final result:
 	 Statistical linearisation --
-		 -ll(f): av = -2.1587, std = 0.0681
-		 smse(f): av = 2.6946e-03, std = 5.9360e-04
-		 smse(y): av = 3.6043e-03, std = 4.9711e-04
+		 -ll(f): av = -0.69047, std = 0.84512
+		 smse(f): av = 1.6469e-02, std = 4.3912e-03
+		 smse(y): av = 2.2815e-02, std = 5.4763e-03
 	 Taylor linearisation  --
-		 -ll(f): av = -2.1595, std = 0.0524
-		 smse(f): av = 2.6520e-03, std = 5.5383e-04
-		 smse(y): av = 3.6115e-03, std = 5.0784e-04
+		 -ll(f): av = -0.73100, std = 0.78334
+		 smse(f): av = 1.6508e-02, std = 5.0889e-03
+		 smse(y): av = 2.2773e-02, std = 5.4322e-03
+
+& UGP & -0.69047 & 0.84512 & 0.01647 & 0.00439 & 0.02281 & 0.00548 \\
+& EGP & -0.73100 & 0.78334 & 0.01651 & 0.00509 & 0.02277 & 0.00543 \\

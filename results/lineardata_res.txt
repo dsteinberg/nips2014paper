@@ -2,13 +2,17 @@ f:
 
 Final result:
 	 Statistical linearisation --
-		 -ll(f): av = -1.4437, std = 0.0472
-		 smse(f): av = 3.7476e-03, std = 4.7773e-04
-		 smse(y): av = 4.2648e-02, std = 4.9039e-03
+		 -ll(f): av = -0.76848, std = 0.05135
+		 smse(f): av = 1.5892e-02, std = 4.4156e-03
+		 smse(y): av = 4.9468e-02, std = 4.0241e-03
 	 Taylor linearisation  --
-		 -ll(f): av = -1.4840, std = 0.0984
-		 smse(f): av = 3.5252e-03, std = 8.3477e-04
-		 smse(y): av = 4.2310e-02, std = 5.1050e-03
+		 -ll(f): av = -0.76677, std = 0.05127
+		 smse(f): av = 1.5959e-02, std = 4.3177e-03
+		 smse(y): av = 4.9531e-02, std = 3.9429e-03
 	 Linear GP --
-		 -ll(f): av = -1.2970, std = 0.0487
-		 smse(f): av = 3.4728e-03, std = 1.0264e-03
+		 -ll(f): av = -0.79012, std = 0.04252
+		 smse(f): av = 1.2202e-02, std = 1.6025e-03
+
+& UGP & -0.76848 & 0.05135 & 0.01589 & 0.00442 & 0.04947 & 0.00402 \\
+& EGP & -0.76677 & 0.05127 & 0.01596 & 0.00432 & 0.04953 & 0.00394 \\
+& GP & -0.79012 & 0.04252 & 0.01220 & 0.00160 & -- & -- \\

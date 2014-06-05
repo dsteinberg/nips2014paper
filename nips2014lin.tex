@@ -630,59 +630,57 @@ scientific python \cite{JonesScipy} (scipy.integrate.quad) for quadrature.
 \label{sec:exptoy}
 
 In this experiment we wish to evaluate the performance of the EGP and UGP for
-inversion problems. We generate `latent' function data from
-$\lstate_{\text{true}}\!\brac{\inobs} = \sin\!\brac{\inobs} +
-\cos\!\brac{\pi\inobs}$, where $\inobs$ are drawn randomly from a uniform
-distribution between $[-2\pi, 2\pi]$. Observations used to test and train the
-GPs are then generated as $\obs = \nonlin{\lstate_\text{true}} + \epsilon$
-where $\epsilon \sim \gaus{0, 0.2^2}$. 500 points are generated in this manner,
-and we use 5-fold cross validation to train (400) and test (100) the GPs.  We
-use standardised mean squared error (SMSE) to test the predictions with the
-held out data in both the latent and observed spaces. We also use held-out
-average negative log-likelihood on the latent test data, which is calculated as
-$-\frac{1}{N\test} \sum_{n} \log \gausC{\lstates_n\test}{\pomeans_n\test,
-    \pocovs_n\test}$. All of the GPs use Matern $\frac{5}{2}$ covariance
-functions with the hyperparameters and $\lvar$ initialised at 1.0 and
-lower-bounded at 0.1 (and 0.01 for $\lvar$).
+inversion problems. We generate `latent' function data from $\lstate \sim
+\gaus{\mathbf{0}, \KERNL}$ where a Mat\'ern $\frac{5}{2}$ kernel function is
+used with amplitude $\sigma_{m52} = 0.8$ and length scale $l_{m52} = 0.6$ and
+$\inobs$ are drawn uniformly between $[-2\pi, 2\pi]$ to generate $\KERNL$.
+Observations used to test and train the GPs are then generated as $\obs =
+\nonlin{\lstate} + \epsilon$ where $\epsilon \sim \gaus{0, 0.2^2}$.  1000
+points are generated in this manner, and we use 5-fold cross validation to
+train (200) and test (800) the GPs.  We use standardised mean squared error
+(SMSE) to test the predictions with the held out data in both the latent and
+observed spaces. We also use held-out average negative log-likelihood on the
+latent test data, which is calculated as $-\frac{1}{N\test} \sum_{n} \log
+\gausC{\lstates_n\test}{\pomeans_n\test, \pocovs_n\test}$. All of the GPs use
+Mat\'ern $\frac{5}{2}$ covariance functions with the hyperparameters and
+$\lvar$ initialised at 1.0 and lower-bounded at 0.1 (and 0.01 for $\lvar$).
 
 \begin{table}[tb]
     \centering
     \small
-    \caption[]{Results from running nonlinear likelihood GPs with various
-        differentiable nonlinear functions. The true latent function is
-        $\lstate_{\text{true}}\!\brac{\inobs} = \sin\!\brac{\inobs} 
-            + \cos\!\brac{\pi\inobs}$.}
+    \caption[]{Prediction results from the non-linear GPs with various 
+        differentiable nonlinear functions.}
     \begin{tabular}{r|c| c c c c c c}
         \multirow{2}{*}{$\nonlin{\lstate}$} & \multirow{2}{*}{Algorithm} & 
             \multicolumn{2}{c}{Av.\ neg.\ ll.\ $\lstates\test$} &
-            \multicolumn{2}{c}{SMSE $\lstates\test$ (\expon{}{-4})} &
-            \multicolumn{2}{c}{SMSE $\obss\test$ (\expon{}{-4})} \\
+            \multicolumn{2}{c}{SMSE $\lstates\test$} &
+            \multicolumn{2}{c}{SMSE $\obss\test$} \\
         & & mean & std. & mean & std. & mean & std.\\
         \toprule
         $\lstate$ 
-            & UGP & $-$1.4437 & 0.0472 & 37.476 & 4.777 & -- & -- \\
-            & EGP & $-$1.4840 & 0.0984 & 35.252 & 8.348 & -- & -- \\
-            & \cite{Opper2009} \\
-            & GP & $-$1.2970 & 0.0487 & 34.728 & 10.264 & -- & -- \\
+& UGP & -0.76848 & 0.05135 & 0.01589 & 0.00442 & -- & -- \\
+& EGP & -0.76677 & 0.05127 & 0.01596 & 0.00432 & -- & -- \\
+& \cite{Opper2009} \\
+& GP & -0.79012 & 0.04252 & 0.01220 & 0.00160 & -- & -- \\
         \midrule
         $\lstate^3 + \lstate^2 + \lstate$ 
-            & UGP & $-$2.1587 & 0.0681 & 26.946 & 5.936 & 36.043 & 4.971 \\
-            & EGP & $-$2.1595 & 0.0524 & 26.520 & 5.538 & 36.115 & 5.078 \\
+& UGP & -0.69047 & 0.84512 & 0.01647 & 0.00439 & 0.02281 & 0.00548 \\
+& EGP & -0.73100 & 0.78334 & 0.01651 & 0.00509 & 0.02277 & 0.00543 \\
             & \cite{Opper2009} \\
         \midrule
         $\exp\!\brac{\lstate}$ 
-            & UGP & $-$1.2993 & 0.2028 & 129.22 & 76.450 & 173.28 & 27.692 \\
-            & EGP & $-$1.3136 & 0.1878 & 112.25 & 63.446 & 173.30 & 27.918 \\
+& UGP & -0.80156 & 0.23634 & 0.13859 & 0.04809 & 0.04204 & 0.00662 \\
+& EGP & -0.78524 & 0.24073 & 0.14025 & 0.04786 & 0.04227 & 0.00667 \\
             & \cite{Opper2009} \\
         \midrule
         $\sin\!\brac{\lstate}$ 
-            & UGP & $-$0.8904 & 0.1214 & 151.16 & 30.212 & 858.74 & 104.04 \\
-            & EGP & $-$0.8170 & 0.1552 & 173.06 & 41.686 & 858.33 & 103.47 \\
+& UGP & -0.45417 & 0.22514 & 0.03906 & 0.01570 & 0.11641 & 0.00513 \\
+& EGP & -0.52086 & 0.21953 & 0.03748 & 0.01541 & 0.11966 & 0.00872 \\
             & \cite{Opper2009} \\
         \midrule
         $\tanh\!\brac{2\lstate}$
-            & UGP & $-$0.6060 & 0.1240 & 354.57 & 66.352 & 604.98 & 62.572 \\
-            & EGP & $-$0.4592 & 0.1805 & 476.43 & 108.81 & 610.52 & 62.544 \\
+& UGP & 0.40569 & 1.13758 & 0.17859 & 0.08235 & 0.08827 & 0.00400 \\
+& EGP & 0.64846 & 1.21329 & 0.20196 & 0.08477 & 0.09425 & 0.00258 \\
             & \cite{Opper2009} \\
         \bottomrule
     \end{tabular}
@@ -787,10 +785,6 @@ is set relatively large for this task~(e.g.~$1.0$).
         \midrule
         UGP & 0.06524 & 2.1992 & 1.5140 & 1.4257 \\
         EGP & 0.12946 & 2.0699 & 3.3068 & 1.7480 \\
-        %UGP & 0.11748 & 2.9754 &  2.8177 & 2.5504 \\
-        %EGP & 0.69293 & 42.4321 & 3.1268 & $-$0.1696 \\
-        %EGP & 0.69315 & 54.0750 & 1.1387 & $-$2.3530 \\
-        %EGP* & 0.1189 & 2.1992 & 3.4495 & 1.8866 \\
         \bottomrule
     \end{tabular}
     \label{tab:class}
@@ -813,14 +807,10 @@ derivatives of the forward model.
 
 Withheld for review.
 
-\subsubsection*{References}
+%\subsubsection*{References}
 %\printbibliography[heading=none]
-
-\bibliographystyle{plain}
+\bibliographystyle{IEEEtran}
 \bibliography{nips2014lin}
-
-
-
 
 
 \end{document}
