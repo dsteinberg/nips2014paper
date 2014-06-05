@@ -724,31 +724,23 @@ of class labels, and not the values of the latent function. The dataset we use
 is the USPS handwritten digits datasets with the task of distinguishing between
 `3' and `5' -- this is the same experiment from \cite{Rasmussen2006}. A
 logistic sigmoid is used as the forward model, $\nonlin{\cdot}$, in our
-algorithms. We test against derived-for-the-task Laplace and expectation
-propagation GP classifiers (from the GPML matlab toolbox), a support vector
-machine (with probabilistic outputs), and logistic regression (both from the
-scikits-learn python library). We report performance as the average negative
-log-likelihood of a Bernoulli distribution, $ - \frac{1}{N\test}$, and also
-error rate as the percent incorrectly misclassified labels in the test set
-(once the probabilistic outputs have been thresholded at 0.5). 
-
-We use the error rate (percent incorrectly predicted labels) and average 
-negative log Bernoulli likelihood to asses performance,
-\begin{equation}
-    - \frac{1}{N\test} \sum^{N\test}_{n} \obss\test_n 
-        \log\brac{\pi\test_n}
-    + \brac{1-\obss\test_n}\log\brac{1 - \pi\test_n},
-\end{equation}
-where $\pi\test_n = \expec{}{\prob{\obss\test_n = 1}}$ is predicted from the
-classifications algorithms.
-
-A square exponential kernel with amplitude $\sigma_\text{se}$ and length
-scale $l_\text{se}$ is used for the Gaussian processes in this experiment.
+algorithms. We test against Laplace and expectation propagation GP classifiers
+(from the GPML matlab toolbox), a support vector machine (with probabilistic
+outputs), and logistic regression (both from the scikits-learn python library).
+We report performance as the average negative log-likelihood of a Bernoulli
+distribution, $-\frac{1}{N\test} \sum_n \log \bernC{\obss_n\test}{\pi\test_n}$
+where $\pi\test_n = \expec{}{\prob{\obss\test_n = 1}}$ is the probabilistic
+output of the classifier. We also report the error rate as the percent
+incorrectly misclassified labels in the test set (once the probabilistic
+outputs have been thresholded at $0.5$). A square exponential kernel with
+amplitude $\sigma_\text{se}$ and length scale $l_\text{se}$ is used for the
+Gaussian processes in this experiment. We initialise these hyperparameters at
+$1.0$, and put a lower bound of $0.1$ on them.  We initialise $\lvar$ at
+$10^{-12}$ in the EGP and UGP, and place a lower bound at $10^{-14}$ (the
+optimised values are near these values).
 
 Other experimental settings,
 \begin{itemize}
-    \item Initial hyperparameters $\sigma_{\text{se},0} = l_{\text{se},0} = 1$, 
-        lower bounds are $0.1$. $\lstd_0 = 10^{-6}$, lower bound $10^{-7}$.
     \item Although performance is great, we do find the UGP and EGP sensitive
         to starating values of the hyperparameters, and especially the
         likelihood noise, $\lvar$, if it is not initialised to a small value.
