@@ -150,18 +150,19 @@ because the nonlinear function makes the likelihood and prior non-conjugate,
     \label{eq:marglike}
 \end{equation}
 which also makes the posterior intractable to evaluate. Thus, we choose to
-approximate the posterior using variational inference \cite{Jordan1999}.
+approximate the posterior and marginal likelihood using variational inference
+\cite{Jordan1999}.
 
 
 \subsection{Variational Approximation}
 
-Using variational inference, we can put a lower bound on the log-marginal
-likelihood using Jensen's inequality, 
+Using variational inference procedures we can put a lower bound on the
+log-marginal likelihood using Jensen's inequality, 
 \begin{equation}
     \log \prob{\obs} \geq \int \qrob{\lstate} \log 
         \frac{\prob{\obs, \lstate}}{\qrob{\lstate}} d\lstate,
 \end{equation}
-with equality iff $\KL{\qrob{\lstate}}{\probC{\lstate}{\obs}} = 0$, and
+with equality iff $\KL{\qrob{\lstate}}{\probC{\lstate}{\obs}} = 0$, and where
 $\qrob{\lstate}$ is an approximation to the true posterior,
 \probC{\lstate}{\obs}. This lower bound is often referred to as `free energy',
 and can be re-written as follows
@@ -179,20 +180,20 @@ Gaussian form,
 Now we can evaluate the expectation and KL term in \eqref{eq:fengy},
 \begin{align}
     \expec{q\lstate}{\log \probC{\obs}{\lstate}}
-        =& - \frac{1}{2} \sbrac{ 
+        =& - \frac{1}{2} \bigg[ 
             D\log{2\pi} + \log\deter{\lcov} 
             + \expec{q\lstate}{\brac{\obs - \nonlin{\lstate}}\transpose\lcov\inv
-            \brac{\obs - \nonlin{\lstate}}}},
+            \brac{\obs - \nonlin{\lstate}}}\bigg],
             \label{eq:qlike} \\
      - \KL{\qrob{\lstate}}{\prob{\lstate}}
-        =& - \frac{1}{2} \sbrac{\log\deter{\prcov\pocov\inv}
+        =& - \frac{1}{2} \bigg[\log\deter{\prcov\pocov\inv}
             + \brac{\pomean - \prmean}\transpose\prcov\inv
             \brac{\pomean - \prmean}
-            + \trace{\prcov\inv\pocov} - D } \label{eq:qkl}.
+            + \trace{\prcov\inv\pocov} - D\bigg] \label{eq:qkl}.
 \end{align}
 where the expectation involving $\nonlin{\cdot}$ may be intractable. One method
 of dealing with these expectations is presented in \cite{Opper2009}; we provide
-two alternatives based on methods of linearizing $\nonlin{\cdot}$.
+two alternatives based on linearizing $\nonlin{\cdot}$ about $\pomean$.
 
 
 \subsection{Parameter Updates}
@@ -207,8 +208,9 @@ To find the optimal posterior mean, $\pomean$, we need to find the derivative,
             \brac{\obs - \nonlin{\lstate}}},
 \end{equation}
 where all terms in $\Fengy$ independent of $\pomean$ have been dropped, and we
-have placed the quadratic term from the KL term, \eqref{eq:qkl}, back into the
-expectation. We can represent this as an augmented Gaussian,
+have placed the quadratic and trace terms from the KL component,
+\eqref{eq:qkl}, back into the expectation. We can represent this as an
+augmented Gaussian,
 \begin{equation}
     \frac{\partial\Fengy}{\partial\pomean} = -\frac{1}{2}
         \frac{\partial}{\pomean}
@@ -226,16 +228,15 @@ where
     \augcov = \begin{bmatrix} \lcov & \mathbf{0} \\ \mathbf{0} & \prcov 
         \end{bmatrix}.
 \end{equation}
-Now we can see solving for $\pomean$ is essentially a non-linear least squares 
+Now we can see solving for $\pomean$ is essentially a nonlinear least squares 
 problem\footnote{$-\frac{1}{2}
         \frac{\partial}{\partial\lstate}
         \brac{\augobs - \augnonlin{\lstate}}\transpose\augcov\inv
         \brac{\augobs - \augnonlin{\lstate}} = 0$.}, but about
 the expected posterior value of $\lstate$. Even without the expectation, there
 is no solution closed form solution to $\partial\Fengy/\partial\pomean = 0$.
-To find a solution to this problem for the optimal $\pomean$ we can use the
-Newton algorithm. It begins with an initial guess, $\pomean_0$, then proceeds
-with the iterations,
+However, we can use the iterative Newton algorithm to find $\pomean$. It begins
+with an initial guess, $\pomean_0$, then proceeds with the iterations,
 \begin{equation}
     \pomean_{k+1} = \pomean_k -
     \step\brac{\nabla_\pomean\nabla_\pomean\Fengy}\inv \nabla_\pomean\Fengy,
@@ -270,7 +271,7 @@ identity we get,
 where $\Kgain_k$ is a ``Kalman gain'' term,
 \begin{equation}
     \Kgain_k = \prcov\Linmat_k\transpose\brac{\lcov +
-        \Linmat_k\prcov\Linmat_k\transpose}\inv.
+        \Linmat_k\prcov\Linmat_k\transpose}\inv,
     \label{eq:kgain}
 \end{equation}
 and we have assumed that the linearization $\Linmat_k$ and intercept,
@@ -285,9 +286,8 @@ posterior covariance by setting $\partial\Fengy/\partial\pocov = 0$ where,
     } 
     + \frac{1}{2} \frac{\partial}{\partial\pocov} \log \deter{\pocov}.
 \end{equation}
-Again we do not have an analytic solution to this because we need to take
-expectations and derivatives of terms involving $\nonlin{\lstate}$, so we use
-the approximation in \eqref{eq:linearize} to get,
+Again we do not have an analytic solution to this, so we once more apply the 
+approximation in \eqref{eq:linearize} to get,
 \begin{equation}
     \pocov = \sbrac{\prcov\inv + \Linmat\transpose\lcov\inv\Linmat}\inv
         = - \brac{\nabla_\pomean \nabla_\pomean \Fengy}\inv.
@@ -298,13 +298,13 @@ Using the Woodbury identity,
     \pocov = \brac{\ident{D} - \Kgain\Linmat}\!\prcov
     \label{eq:pocov}
 \end{equation}
-where the converged values of $\Linmat$ and $\Kgain$ are used.
+where the \emph{converged} values of $\Linmat$ and $\Kgain$ are used.
 
 
 \subsection{Taylor Series Linearization}
 
 Now we need to find expressions for the linearization terms $\Linmat$ and
-$\intcpt$. One method is to use a $1$st order Taylor Series Expansion to 
+$\intcpt$. One method is to use a first order Taylor Series expansion to 
 linearize $\nonlin{\cdot}$ about the last calculation of the posterior mean, 
 $\pomean_k$,
 \begin{equation}
@@ -344,8 +344,8 @@ Another method for linearizing $\nonlin{\cdot}$ is \emph{statistical
     linearization} \cite{Geist2010}. Statistical linearization finds a least
 squares best fit to $\nonlin{\cdot}$ about a point; in our case this point is
 the \emph{posterior} mean, $\pomean$. The advantage of this method is that it
-does not require derivatives $\partial\nonlin{\lstate}/\partial\lstate$. To
-obtain the fit multiple observations of $\nonlin{\cdot}$ are required for
+does not require derivatives $\partial\nonlin{\lstate}\!/\partial\lstate$. To
+obtain the fit, multiple observations of $\nonlin{\cdot}$ are required for
 different input points. One method of obtaining these points is the unscented
 transform \cite{Julier2004}, which defines $2D+1$ `sigma' points,
 \begin{align}
@@ -377,10 +377,10 @@ where,
         \quad \text{for} \quad i = 1 \ldots 2D,
     \label{eq:slweights}
 \end{equation}
-for a free parameter $\scoef$\footnote{Setting $\scoef = 0.5$ yields
-    uniform weights.}. According to \cite{Julier2004} various settings of
+for a free parameter. According to \cite{Julier2004} various settings of
 $\scoef$ can capture information about the higher order moments of the
-distribution of $\obs$. The objective of statistical linearization is,
+distribution of $\obs$; or setting $\scoef = 0.5$ yields uniform weights. The
+objective of statistical linearization is,
 \begin{equation}
     \argmin_{\Linmat, \intcpt} \sum^{2D}_{i=0} 
         \lnorm{2}{\Sobs_i - \brac{\Linmat\Sfunc_i + \intcpt}}^2.
@@ -463,7 +463,7 @@ the algorithms performance since we always make sure to improve $\Fengy$.
 \label{sec:gpmod}
 
 We now present two predictive the Gaussian Process (GP) models
-\cite{Rasmussen2006} with arbitrary non-linear likelihoods using the framework
+\cite{Rasmussen2006} with arbitrary nonlinear likelihoods using the framework
 presented previously. The Gaussian process has the following likelihood and
 prior,
 \begin{equation}
@@ -648,7 +648,7 @@ $\lvar$ initialised at 1.0 and lower-bounded at 0.1 (and 0.01 for $\lvar$).
 \begin{table}[tb]
     \centering
     \small
-    \caption[]{Prediction results from the non-linear GPs with various 
+    \caption[]{Prediction results from the nonlinear GPs with various 
         differentiable nonlinear functions.}
     \begin{tabular}{r|c| c c c c c c}
         \multirow{2}{*}{$\nonlin{\lstate}$} & \multirow{2}{*}{Algorithm} & 
@@ -715,7 +715,7 @@ $\lvar$ initialised at 1.0 and lower-bounded at 0.1 (and 0.01 for $\lvar$).
         function in (\subref{sub:sign}). In this figure we show the predicitve
         distribution of $\expec{q\lstates\test}{\obss\test}$ using
         \eqref{eq:slpred}. A typical trace from the MAP objective function used
-        to learn $\pomean$ from the non-linear function in (\subref{sub:sign})
+        to learn $\pomean$ from the nonlinear function in (\subref{sub:sign})
         is shown in (\subref{sub:mape}. The optimisation shown terminated
         because of a `divergence' condition, which was typical for this
         example.}
