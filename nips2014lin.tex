@@ -636,11 +636,11 @@ In this experiment we wish to evaluate the performance of the EGP and UGP for
 inversion problems. We generate `latent' function data from $\lstate \sim
 \gaus{\mathbf{0}, \KERNL}$ where a Mat\'ern $\frac{5}{2}$ kernel function is
 used with amplitude $\sigma_{m52} = 0.8$, length scale $l_{m52} = 0.6$ and
-$\inobs$ are drawn uniformly between $[-2\pi, 2\pi]$ to generate $\KERNL$.
-Observations used to test and train the GPs are then generated as $\obs =
-\nonlin{\lstate} + \epsilon$ where $\epsilon \sim \gaus{0, 0.2^2}$.  1000
-points are generated in this manner, and we use 5-fold cross validation to
-train (200) and test (800) the GPs.  We use standardised mean squared error
+$\inobs \in \real{}$ are uniformly spaced between $[-2\pi, 2\pi]$ to generate
+$\KERNL$. Observations used to test and train the GPs are then generated as
+$\obs = \nonlin{\lstate} + \epsilon$ where $\epsilon \sim \gaus{0, 0.2^2}$.
+1000 points are generated in this manner, and we use 5-fold cross validation to
+train (200) and test (800) the GPs. We use standardised mean squared error
 (SMSE) to test the predictions with the held out data in both the latent and
 observed spaces. We also use held-out average negative log-likelihood on the
 latent test data, which is calculated as $-\frac{1}{N\test} \sum_{n} \log
@@ -709,7 +709,7 @@ $\lvar$ initialised at 1.0 and lower-bounded at 0.1 (and 0.01 for $\lvar$).
     %\end{subfigure}
     \begin{subfigure}[b]{0.5\linewidth}
         \includegraphics[width=\linewidth]{fig/trace_end}
-        \caption{MAP trace -- near optimal hyperprameter values}
+        \caption{MAP trace from learning $\pomean$}
         \label{sub:mape}
         \vspace{1.5mm}
     \end{subfigure}
@@ -719,7 +719,7 @@ $\lvar$ initialised at 1.0 and lower-bounded at 0.1 (and 0.01 for $\lvar$).
         distribution of $\expec{q\lstates\test}{\obss\test}$ using
         \eqref{eq:slpred}. A typical trace from the MAP objective function used
         to learn $\pomean$ from the nonlinear function in (\subref{sub:sign})
-        is shown in (\subref{sub:mape}. The optimisation shown terminated
+        is shown in (\subref{sub:mape}). The optimisation shown terminated
         because of a `divergence' condition, which was typical for this
         example.}
 
@@ -734,9 +734,11 @@ which no derivative exists at the zero crossing points. Also shown is a typical
 objective function trace for learning the posterior mean which terminated on a
 `divergence' condition. We use quadrature for the predictions in observation
 space in \autoref{tab:toy} and the unscented transform for the predictions in
-\autoref{fig:learnex}.
+\autoref{fig:learnex}. Interestingly there is almost no difference in
+performance between the EGP and UGP in these experiments, even though the EGP
+has access to the derivatives of the forward models and the UGP does not.
 
-\textbf{TODO:} Discuss the experiment results.
+\textbf{TODO:} Discuss the experiment results w.r.t.\ \cite{Opper2009}.
 
 
 \subsection{Binary Handwritten Digit Classification}
@@ -747,23 +749,23 @@ of class labels, and not the values of the latent function. The dataset we use
 is the USPS handwritten digits datasets with the task of distinguishing between
 `3' and `5' -- this is the same experiment from \cite{Rasmussen2006}. A
 logistic sigmoid is used as the forward model, $\nonlin{\cdot}$, in our
-algorithms. We test against Laplace and expectation propagation GP classifiers
-(from the GPML Matlab toolbox), a support vector machine with a radial basis
-function kernel (and with probabilistic outputs \cite{Platt1999}), and logistic
-regression (both from the scikit-learn python library \cite{scikit-learn}).
-We report performance as the average negative log-likelihood of a Bernoulli
-distribution, $-\frac{1}{N\test} \sum_n \log \bernC{\obss_n\test}{\pi\test_n}$
-where $\pi\test_n = \expec{}{\prob{\obss\test_n = 1}}$ is the probabilistic
-output of the classifier. We also report the error rate as the percent
-incorrectly misclassified labels in the test set (once the probabilistic
-outputs have been thresholded at $0.5$). A square exponential kernel with
-amplitude $\sigma_\text{se}$ and length scale $l_\text{se}$ is used for the
-Gaussian processes in this experiment. We initialise these hyperparameters at
-$1.0$, and put a lower bound of $0.1$ on them. We initialise $\lvar$ at
-$10^{-12}$ in the EGP and UGP, and place a lower bound at $10^{-14}$ (the
-optimized values are near these values). The hyperparameters for the support
-vector classifier are learned using grid search with three-fold cross
-validation. 
+algorithms. We test against Laplace and expectation propagation logistic GP
+classifiers (from the GPML Matlab toolbox \cite{Rasmussen2006}), a support
+vector machine with a radial basis kernel function (and probabilistic outputs
+\cite{Platt1999}), and logistic regression (both from the scikit-learn python
+library \cite{scikit-learn}).  We report performance as the average negative
+log-likelihood of a Bernoulli distribution, $-\frac{1}{N\test} \sum_n \log
+\bernC{\obss_n\test}{\pi\test_n}$ where $\pi\test_n =
+\expec{}{\prob{\obss\test_n = 1}}$ is the probabilistic output of the
+classifier. We also report the error rate as the percent incorrectly
+misclassified labels in the test set (once the probabilistic outputs have been
+thresholded at $0.5$). A square exponential kernel with amplitude
+$\sigma_\text{se}$ and length scale $l_\text{se}$ is used for the Gaussian
+processes in this experiment. We initialise these hyperparameters at $1.0$, and
+put a lower bound of $0.1$ on them. We initialise $\lvar$ at $10^{-12}$ in the
+EGP and UGP, and place a lower bound at $10^{-14}$ (the optimized values are
+near these values). The hyperparameters for the support vector classifier are
+learned using grid search with three-fold cross validation. 
 
 The results are summarised in \autoref{tab:class}, along with learned
 hyperparameter values for the GPs. Surprisingly, the EGP and UGP outperform the
@@ -796,13 +798,16 @@ is set relatively large for this task~(e.g.~$1.0$).
 
 \section{Conclusion}
 
-\textbf{TODO}
-
-As future work we would like to create multi-task EGPs and UGPs, which would
-extend their applicability to inverse kinematic inference and other inversion
-problems where the forward models have multiple inputs and outputs. We also
-wish to further investigate hyperprameter learning to ascertain if there are
-more effective methods of learning the hyperparameters that do not rely upon
+We have presented a variational inference framework with linearization for
+Gaussian models with nonlinear likelihood functions, which we show can be used
+to derive updates for the iEKF, and those that resemble the iSPKF. We also used
+it to derive the EGP and UGP. The UGP does not use derivatives of the nonlinear
+forward model, yet performs as well as the EGP for inversion and classification
+problems.  As future work we would like to create multi-task EGPs and UGPs.
+This would extend their applicability to inversion problems where the forward
+models have multiple inputs and outputs, such as inverse kinematics. We also
+wish to further investigate hyperparameter learning to ascertain if there are
+other effective methods of learning the hyperparameters that do not rely upon
 derivatives of the forward model. 
 
 
