@@ -575,10 +575,10 @@ $\bar\obss\test$ by evaluating the one-dimensional integral,
         \nonlin{\lstates\test} \gausC{\lstates\test}{\pomeans\test,
             \pocovs\test} d\lstates\test,
 \end{equation}
-for which we can use quadrature. Alternatively, if we were to use the UGP we
-can use another application of the unscented transform to approximate the
-predictive distribution $\obss\test \sim \gaus{\bar\obss\test,
-    \lvar_{\obss\test}}$ where,
+for which we use quadrature (specifically the scipy.integrate.quad routine
+\cite{JonesScipy}). Alternatively, if we were to use the UGP we can use another
+application of the unscented transform to approximate the predictive
+distribution $\obss\test \sim \gaus{\bar\obss\test, \lvar_{\obss\test}}$ where,
 \begin{equation}
     \bar\obss\test = \sum^2_{i=0} \Sw_i \Sfunc_i\test, \qquad 
     \lvar_{\obss\test} = \sum^2_{i=0} \Sw_i \brac{\Sobs_i\test -
@@ -613,7 +613,7 @@ and unscented algorithms, where $\Fengy$ is approximated as,
     \bigg].
     \label{eq:fengygp}
 \end{equation}
-In particular we use derivative-free optimisation methods
+In particular we use derivative-free optimisation methods (e.g. BOBYQA)
 from the NLopt library \cite{JohnsonNLOPT}, which we find fast and highly
 effective. This also has the advantage of not requiring explicit knowledge of
 $\partial\nonlin{\lstates}\!/\partial\lstates$ or higher order derivatives for
@@ -623,30 +623,30 @@ any implicitly dependent gradient terms between $\lstate$ and $\khypers$.
 \section{Experiments}
 \label{sec:experiments}
 
-For the experiments in this paper, we have implemented both the EGP and UGP, as
-well as regular GP for regression in python code. We use NLopt
-\cite{JohnsonNLOPT} for derivative-free hyperparameter learning (BOBYQA), and
-scientific python \cite{JonesScipy} (scipy.integrate.quad) for quadrature.
+%We have implemented both the EGP and UGP, as well as regular GP in python code
+%using NLopt~\cite{JohnsonNLOPT} for hyperparameter learning (BOBYQA) and scipy
+%\cite{JonesScipy} (scipy.integrate.quad) for quadrature.
 
 
 \subsection{Toy Inversion Problems}
 \label{sec:exptoy}
 
-In this experiment we wish to evaluate the performance of the EGP and UGP for
-inversion problems. We generate `latent' function data from $\lstate \sim
-\gaus{\mathbf{0}, \KERNL}$ where a Mat\'ern $\frac{5}{2}$ kernel function is
-used with amplitude $\sigma_{m52} = 0.8$, length scale $l_{m52} = 0.6$ and
-$\inobs \in \real{}$ are uniformly spaced between $[-2\pi, 2\pi]$ to generate
-$\KERNL$. Observations used to test and train the GPs are then generated as
-$\obs = \nonlin{\lstate} + \epsilon$ where $\epsilon \sim \gaus{0, 0.2^2}$.
-1000 points are generated in this manner, and we use 5-fold cross validation to
-train (200) and test (800) the GPs. We use standardised mean squared error
-(SMSE) to test the predictions with the held out data in both the latent and
-observed spaces. We also use held-out average negative log-likelihood on the
-latent test data, which is calculated as $-\frac{1}{N\test} \sum_{n} \log
-\gausC{\lstates_n\test}{\pomeans_n\test, \pocovs_n\test}$. All of the GPs use
-Mat\'ern $\frac{5}{2}$ covariance functions with the hyperparameters and
-$\lvar$ initialised at 1.0 and lower-bounded at 0.1 (and 0.01 for $\lvar$).
+In this experiment we evaluate the performance of the EGP and UGP for inversion
+problems. All of our code is in python, and we generate `latent' function data
+from $\lstate \sim \gaus{\mathbf{0}, \KERNL}$ where a Mat\'ern $\frac{5}{2}$
+kernel function is used with amplitude $\sigma_{m52} = 0.8$, length scale
+$l_{m52} = 0.6$ and $\inobs \in \real{}$ are uniformly spaced between $[-2\pi,
+2\pi]$ to generate $\KERNL$. Observations used to test and train the GPs are
+then generated as $\obs = \nonlin{\lstate} + \epsilon$ where $\epsilon \sim
+\gaus{0, 0.2^2}$.  1000 points are generated in this manner, and we use 5-fold
+cross validation to train (200) and test (800) the GPs. We use standardised
+mean squared error (SMSE) to test the predictions with the held out data in
+both the latent and observed spaces. We also use held-out average negative
+log-likelihood on the latent test data, which is calculated as
+$-\frac{1}{N\test} \sum_{n} \log \gausC{\lstates_n\test}{\pomeans_n\test,
+    \pocovs_n\test}$. All of the GPs use Mat\'ern $\frac{5}{2}$ covariance
+functions with the hyperparameters and $\lvar$ initialised at 1.0 and
+lower-bounded at 0.1 (and 0.01 for~$\lvar$).
 
 \begin{table}[tb]
     \centering
@@ -737,7 +737,6 @@ space in \autoref{tab:toy} and the unscented transform for the predictions in
 \autoref{fig:learnex}. Interestingly there is almost no difference in
 performance between the EGP and UGP in these experiments, even though the EGP
 has access to the derivatives of the forward models and the UGP does not.
-
 \textbf{TODO:} Discuss the experiment results w.r.t.\ \cite{Opper2009}.
 
 
