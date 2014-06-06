@@ -111,7 +111,7 @@ or quadrature.
 We present two alternatives to this algorithm that are also underpinned by
 variational principles but  are based on linearizing the nonlinear likelihood models
 about the posterior mean. These methods are also straight-forwardly applicable
-to non-factorising likelihoods and would retain computational efficiency,
+to non-factorizing likelihoods and would retain computational efficiency,
 unlike \cite{Opper2009} which would require evaluation of multidimensional
 intractable integrals. One of our algorithms, based on statistical
 linearization, does not even require derivatives of the likelihood model (like
@@ -122,7 +122,7 @@ Initially we formulate our models in \autoref{sec:gausmod} for the
 and comparable with existing algorithms. In fact we show we can derive the
 update steps of the iterative EKF \cite{Bell1993} and similar updates to the
 iterative UKF \cite{Sibley2006} using our variational inference procedures.
-Then in \autoref{sec:gpmod} we specifically derive a factorising likelihood
+Then in \autoref{sec:gpmod} we specifically derive a factorizing likelihood
 Gaussian process model using our framework, which we use for experiments in
 \autoref{sec:experiments}.
 
@@ -353,7 +353,7 @@ around the posterior mean.
 \end{remark}
 Having derived the updates in our variational framework, the proof of this is trivial by 
 making  $\step =1$, and using \eqref{eq:pomean_ekf} -- \eqref{eq:pocov_ekf} 
-ase the iterative updates.
+as the iterative updates.
 %
 \subsection{Statistical Linearization}
 %
@@ -467,7 +467,7 @@ the expected likelihood, $\trace{\Linmat\transpose\lcov\inv\Linmat\pocov} = D -
 \trace{\prcov\inv\pocov}$ once we have linearized $\nonlin{\cdot}$ and
 substituted \eqref{eq:pocovi}. In practice we only calculate this approximation
 $\Fengy$ if we need to optimize some model hyperparameters, like for a Gaussian
-process as described in section \ref{sec:gpmod} . For optimising $\pomean$, the only  
+process as described in section \ref{sec:gpmod} . For optimizing $\pomean$, the only  
 terms  of $\Fengy$ dependent on $\pomean$ are:
 \begin{equation}
     -\frac{1}{2} \brac{\obs - \nonlin{\pomean}}\transpose
@@ -492,7 +492,7 @@ $\brac{0, 1}$ until the MAP objective \eqref{eq:MAP} decreases, or some maximum
 number of iterations is exceeded is fast and works well in practice. If the
 maximum number of iterations is exceeded we call this a `diverge' condition,
 and terminate the search for $\pomean$ (and return the last good value). This
-only tends to happen for statistical linearisation, but does not tend to impact
+only tends to happen for statistical linearization, but does not tend to impact
 the algorithms performance since we always make sure to improve $\Fengy$.
 
 \section{Variational Inference in Gaussian Process Models through Linearization}
@@ -515,7 +515,7 @@ kernel matrix, where each element $\kernl_{ij} = \kernl\!\brac{\inobs_i,
 $\inobs \in \real{D}$, in a pair-wise manner. It is also important to note that
 the likelihood noise model is \emph{isotropic} with a variance of $\lvar$. This
 is not a necessary condition, and we can use a correlated noise likelihood
-model, however the factorised likelihood case is still useful and provides some
+model, however the factorized likelihood case is still useful and provides some
 computational benefits. 
     
 As before, we make the approximation that the posterior is Gaussian,
@@ -648,7 +648,7 @@ and unscented algorithms, where $\Fengy$ is approximated as,
     \bigg].
     \label{eq:fengygp}
 \end{equation}
-In particular we use derivative-free optimisation methods (e.g. BOBYQA)
+In particular we use derivative-free optimization methods (e.g. BOBYQA)
 from the NLopt library \cite{JohnsonNLOPT}, which we find fast and highly
 effective. This also has the advantage of not requiring explicit knowledge of
 $\partial\nonlin{\lstates}\!/\partial\lstates$ or higher order derivatives for
@@ -680,7 +680,7 @@ both the latent and observed spaces. We also use held-out average negative
 log-likelihood on the latent test data, which is calculated as
 $-\frac{1}{N\test} \sum_{n} \log \gausC{\lstates_n\test}{\pomeans_n\test,
     \pocovs_n\test}$. All of the GPs use Mat\'ern $\frac{5}{2}$ covariance
-functions with the hyperparameters and $\lvar$ initialised at 1.0 and
+functions with the hyperparameters and $\lvar$ initialized at 1.0 and
 lower-bounded at 0.1 (and 0.01 for~$\lvar$).
 
 \begin{table}[tb]
@@ -795,13 +795,13 @@ classifier. We also report the error rate as the percentage of incorrectly
 misclassified labels in the test set (once the probabilistic outputs have been
 thresholded at $0.5$). A square exponential kernel with amplitude
 $\sigma_\text{se}$ and length scale $l_\text{se}$ is used for the Gaussian
-processes in this experiment. We initialise these hyperparameters at $1.0$, and
-put a lower bound of $0.1$ on them. We initialise $\lvar$ at $10^{-12}$ in the
+processes in this experiment. We initialize these hyperparameters at $1.0$, and
+put a lower bound of $0.1$ on them. We initialize $\lvar$ at $10^{-12}$ in the
 EGP and UGP, and place a lower bound at $10^{-14}$ (the optimized values are
 near these values). The hyperparameters for the support vector classifier are
 learned using grid search with three-fold cross validation. 
 
-The results are summarised in \autoref{tab:class}, along with learned
+The results are summarized in \autoref{tab:class}, along with learned
 hyperparameter values for the GPs. Surprisingly, the EGP and UGP outperform the
 other classifiers on this dataset, despite the other classifiers being
 specifically formulated for this task. However, we find that our algorithms do
