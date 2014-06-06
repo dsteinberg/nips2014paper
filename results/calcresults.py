@@ -7,10 +7,10 @@ from glob import glob
 
 # Choose which test to calculate results for
 #testname = 'linear'
-#testname = 'poly'
+testname = 'poly'
 #testname = 'sin'
 #testname = 'tanh'
-testname = 'exp'
+#testname = 'exp'
 
 # Find data and result files
 dataname = glob('../data/*{}*'.format(testname))
@@ -42,6 +42,10 @@ SMSEy = []
 navllf = []
 
 for i, oppfname in enumerate(oppres):
+
+    # Leave out the bung result for opper - had issues converging
+    if (testname is 'poly') and (i == 1):
+        continue
 
     print "iter {}, opper fold {}".format(i, oppfname)
 
