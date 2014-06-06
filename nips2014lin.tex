@@ -514,10 +514,10 @@ where $\Linmat = \diag{\sbrac{\Lins_1, \ldots, \Lins_N}}$ and $\Lvar =
 \diag{\sbrac{\lvar, \ldots, \lvar}}$. Because of the factorising likelihood we
 obtain $\pocov\inv = \KERNL\inv + \Linmat\Lvar\inv\Linmat$, that is, the
 inverse posterior covariance is just the prior inverse covariance, but with a
-modified diagonal. This means if we were to use the natural parameterisation of
-the Gaussian, we only have to infer $2N$ parameters (not $N + N^2$), which a
-similar result to \cite{Opper2009}.  Straight-forwardly we can obtain the
-Newton steps for the posterior mean,
+modified diagonal. This means if we were to use this inverse parameterisation
+of the Gaussian, which is used in \cite{Opper2009} and is also known as the
+information form, we only have to infer $2N$ parameters (not $N + N^2$).
+Straight-forwardly we can obtain the iterative steps for $\pomean$,
 \begin{equation}
     \pomean_{k+1} = \brac{1-\step}\pomean_k 
         + \step\Kgain_k\brac{\obs - \intcpt_k}.
@@ -547,19 +547,19 @@ and for statistical linearization,
 $\pocovs_{nn}$ is the $n$th diagonal element of $\pocov$ and
 $\xcovs_{\pomeans\obss,n}$ and $\bar\obss_n$ are calculated the same way as
 \eqref{eq:spoint0} -- \eqref{eq:slweights} where the sigma points for each
-observation $n \in N$ are $\Sfunc_{n} = \big\{\pomeans_n,~\pomeans_n +
+observation, $n$, are $\Sfunc_{n} = \big\{\pomeans_n,~\pomeans_n +
 \sqrt{\brac{1 + \scoef}\pocovs_{nn}},~\pomeans_n - \sqrt{\brac{1 +
-        \scoef}\pocovs_{nn}}\big\}$ and the dimensionality is~1. We refer to
-the Taylor series linearized GP as the \emph{extended} GP (EGP), and the
-statistically linearized GP as the \emph{unscented} GP (UGP) to be consistent
-with the literature on the EKF and UKF.
+        \scoef}\pocovs_{nn}}\big\}$. We refer to the Taylor series linearized
+GP as the \emph{extended} GP (EGP), and the statistically linearized GP as the
+\emph{unscented} GP (UGP) to be consistent with the literature on the EKF and
+UKF.
+
 
 \subsection{Prediction}
 
 To find the distribution for a test point, $\lstates\test$, we follow the
-procedure in \cite{Rasmussen2006} for a Laplace GP classifier\footnote{More
-    detail is provided in the supplementary material}. This gives
-$\lstates\test \sim \gaus{\pomeans\test, \pocovs\test}$ where,
+procedure laid out in \cite{Rasmussen2006} for a Laplace GP classifier. This
+gives $\lstates\test \sim \gaus{\pomeans\test, \pocovs\test}$ where,
 \begin{equation}
     \pomeans\test = \Kernl\testT\KERNL\inv\pomean,
     \qquad
@@ -732,7 +732,7 @@ models, $\nonlin{\cdot}$. We also test the EGP and UGP on a linear model
 \autoref{fig:learnex} we show the results of the UGP using a forward model for
 which no derivative exists at the zero crossing points. Also shown is a typical
 objective function trace for learning the posterior mean which terminated on a
-`divergence' condition. We use quadrature for the predictions in observations
+`divergence' condition. We use quadrature for the predictions in observation
 space in \autoref{tab:toy} and the unscented transform for the predictions in
 \autoref{fig:learnex}.
 
