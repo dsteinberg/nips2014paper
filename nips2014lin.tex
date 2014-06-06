@@ -48,19 +48,19 @@
 
 \begin{abstract}
 
-    We present two new methods for inference in Gaussian process (GP) models with
-    general nonlinear likelihoods. Inference is based on a variational
+    We present two new methods for inference in Gaussian process (GP) models
+    with general nonlinear likelihoods. Inference is based on a variational
     framework where a Gaussian posterior is assumed and the likelihood is
     linearized about the variational posterior mean using either a %first order
-    Taylor series expansion, or statistical linearization. We show that the
+    Taylor series expansion or statistical linearization. We show that the
     parameter updates obtained by these algorithms are equivalent to the state
     update equations in the iterative extended and unscented Kalman filters
     respectively, hence we refer to our algorithms as extended and unscented
     GPs. The unscented GP treats the likelihood as a `black-box' by not
     requiring its derivative for inference, so it also applies to
-    non-differentiable likelihood models. We evaluate the performance 
-    of our algorithms on a  number of synthetic inversion problems and 
-    a binary classification dataset.
+    non-differentiable likelihood models. We evaluate the performance of our
+    algorithms on a  number of synthetic inversion problems and a binary
+    classification dataset.
     
 \end{abstract}
 
@@ -68,54 +68,52 @@
 \section{Introduction}
 
 Nonlinear inversion problems, where we wish to infer the latent inputs to a
-system given observations of its output and the system's
-forward-model, have a long history in the natural sciences, dynamical modeling
-and estimation. An example is the robot-arm inverse kinematics problem, where
-we wish to infer how to drive the robot's joints (i.e.~joint torques) in order
-to place the end-effector in a particular position, given we can measure its
-position and know the forward kinematics of the arm. Most of the existing
-algorithms either estimate the system inputs at a particular point in time like
-the Levenberg-Marquardt algorithm \cite{Marquardt1963}, or in a recursive
-manner such as the extended and unscented Kalman filters (EKF, UKF)
-\cite{Julier2004}. 
+system given observations of its output and the system's forward-model, have a
+long history in the natural sciences, dynamical modeling and estimation. An
+example is the robot-arm inverse kinematics problem, where we wish to infer how
+to drive the robot's joints (i.e.~joint torques) in order to place the
+end-effector in a particular position, given we can measure its position and
+know the forward kinematics of the arm. Most of the existing algorithms either
+estimate the system inputs at a particular point in time like the
+Levenberg-Marquardt algorithm \cite{Marquardt1963}, or in a recursive manner
+such as the extended and unscented Kalman filters (EKF, UKF) \cite{Julier2004}. 
 
-In many problems, such as the robotic arm example, we  have a
-continuous process, such as a smooth trajectory, and so non-parametric
-regression techniques, such as Gaussian processes \cite{Rasmussen2006} seem
-applicable, and have been used in linear inversion problems \cite{Reid2013}.
-Similarly, Gaussian processes have been used to learn inverse kinematics and
-predict the motion of a dynamical system such as robot arms
-\cite{Rasmussen2006, Williams2008} and a human's gait \cite{Lawrence2003,
-    Wang2005, Wang2008}. However, in \cite{Rasmussen2006, Williams2008} the
-inputs (torques) to the system are observables (not latent) and are used to
-train the GPs, whereas  \cite{Wang2005, Wang2008} 
-are not concerned with inference over the 
-original latent inputs, but rather they want to find a low dimensional
-representation of high dimensional outputs for prediction using 
-Gaussian process latent variable models \cite{Lawrence2003}. In this paper we
-introduce inference algorithms for GPs that can infer and predict the original
-latent inputs to a system, without having to be explicitly trained on them.
+In many inversion problems we have a continuous process; a smooth trajectory of
+a robot arm for example. Non-parametric regression techniques like Gaussian
+processes \cite{Rasmussen2006} seem applicable, and have been used in linear
+inversion problems \cite{Reid2013}. Similarly, Gaussian processes have been
+used to learn inverse kinematics and predict the motion of a dynamical system
+such as robot arms \cite{Rasmussen2006, Williams2008} and a human's gait
+\cite{Lawrence2003, Wang2005, Wang2008}.  However, in \cite{Rasmussen2006,
+    Williams2008} the inputs (torques) to the system are observable (not
+latent) and are used to train the GPs. Whereas \cite{Wang2005, Wang2008} are
+not concerned with inference over the original latent inputs, but rather they
+want to find a low dimensional representation of high dimensional outputs for
+prediction using Gaussian process latent variable models \cite{Lawrence2003}.
+In this paper we introduce inference algorithms for GPs that can infer and
+predict the original latent inputs to a system, without having to be explicitly
+trained on them.
 
-Even if we do not need to know the latent inputs to a system, it can be useful
-to incorporate domain/system specific information into an algorithm in terms of
-a likelihood model specific to the task at hand, such as non-parametric
-classification or robust regression problems. It is useful to have an inference
-procedure that does not require re-derivation for each new likelihood model
-without having to resort to MCMC. An example of this is the variational algorithm
-presented in \cite{Opper2009} for factorizing likelihood models, where
- a Gaussian posterior is assumed, and the 
-expectations arising from the use of arbitrary (non-conjugate) likelihoods are
-only one-dimensional, and so they can be easily evaluated using sampling techniques
-or quadrature. 
+If we do not need to infer the latent inputs to a system it is desirable to
+still incorporate domain/system specific information into an algorithm in terms
+of a likelihood model specific to the task at hand. For example, non-parametric
+classification or robust regression problems. In these situations it is useful
+to have an inference procedure that does not require re-derivation for each new
+likelihood model without having to resort to MCMC. An example of this is the
+variational algorithm presented in \cite{Opper2009} for factorizing likelihood
+models. In this model, the expectations arising from the use of arbitrary
+(non-conjugate) likelihoods are only one-dimensional, and so they can be easily
+evaluated using sampling techniques or quadrature. 
 %
 We present two alternatives to this algorithm that are also underpinned by
-variational principles but  are based on linearizing the nonlinear likelihood models
-about the posterior mean. These methods are also straight-forwardly applicable
-to non-factorizing likelihoods and would retain computational efficiency,
-unlike \cite{Opper2009} which would require evaluation of multidimensional
-intractable integrals. One of our algorithms, based on statistical
-linearization, does not even require derivatives of the likelihood model (like
-\cite{Opper2009}) and so non-differentiable likelihoods can be incorporated.
+variational principles but  are based on linearizing the nonlinear likelihood
+models about the posterior mean. These methods are straight-forwardly
+applicable to non-factorizing likelihoods and would retain computational
+efficiency, unlike \cite{Opper2009} which would require evaluation of
+multidimensional intractable integrals. One of our algorithms, based on
+statistical linearization, does not even require derivatives of the likelihood
+model (like \cite{Opper2009}) and so non-differentiable likelihoods can be
+incorporated.
 
 Initially we formulate our models in \autoref{sec:gausmod} for the
 \emph{finite} Gaussian case because the linearization methods are more general
