@@ -427,7 +427,7 @@ $\Kgain_k$ and $\pocov_k$ have the same form as \eqref{eq:kgain} and
 \eqref{eq:pocov} respectively. 
 %
 \begin{remark}
-A single step of the  iterated sigma-point Kalman filter (iSPKF, \cite{Sibley2006}) can be seen as an 
+A single step of the  iterated unscented sigma-point Kalman filter (iSPKF, \cite{Sibley2006}) can be seen as an 
 ad hoc approximation to an update in our statistically linearized variational framework. 
 \end{remark}
 
@@ -480,7 +480,7 @@ terms  of $\Fengy$ dependent on $\pomean$ are:
     \label{eq:MAP}
 \end{equation}
 for the Taylor series linearization case. This is also the \emph{maximum
-    a-posteriori} objective, and optimising this using the Gauss-Newton method
+    a-posteriori} objective, and optimizing this using the Gauss-Newton method
 will lead $\pomean$ to converge to the true posterior mean as long as the
 initial $\pomean_0$ is sufficiently close \cite{Nocedal2006}. No such
 guarantees exist for statistical linearization, though monitoring
@@ -495,10 +495,10 @@ and terminate the search for $\pomean$ (and return the last good value). This
 only tends to happen for statistical linearisation, but does not tend to impact
 the algorithms performance since we always make sure to improve $\Fengy$.
 
-\section{Linearized Gaussian Processes}
+\section{Variational Inference in Gaussian Process Models through Linearization}
 \label{sec:gpmod}
 
-We now present two predictive Gaussian Process (GP) models \cite{Rasmussen2006}
+We now present two inference methods for Gaussian Process (GP) models \cite{Rasmussen2006}
 with arbitrary nonlinear likelihoods using the framework presented previously.
 Both Gaussian process models have the following likelihood and prior,
 \begin{equation}
@@ -522,8 +522,9 @@ As before, we make the approximation that the posterior is Gaussian,
 $\qrobC{\lstate}{\pomean, \pocov} = \gausC{\lstate}{\pomean, \pocov}$ where
 $\pomean \in \real{N}$ is the mean posterior latent function, and $\pocov \in
 \real{N \times N}$ is the posterior covariance. Since the likelihood is
-isotropic and factorises over $N$ we have the following expectation under
-variational inference,
+isotropic and factorizes over the $N$  observations 
+we have the following expectation under
+our variational inference framework:
 \begin{equation*}
     \expec{q\lstate}{\log\probC{\obs}{\lstate}} =
         - \frac{N}{2}\log{2\pi\lvar}
@@ -544,13 +545,13 @@ Using this we can derive the approximate gradients,
     -\Linmat\Lvar\inv\Linmat,
 \end{equation}
 where $\Linmat = \diag{\sbrac{\Lins_1, \ldots, \Lins_N}}$ and $\Lvar =
-\diag{\sbrac{\lvar, \ldots, \lvar}}$. Because of the factorising likelihood we
+\diag{\sbrac{\lvar, \ldots, \lvar}}$. Because of the factorizing likelihood we
 obtain $\pocov\inv = \KERNL\inv + \Linmat\Lvar\inv\Linmat$, that is, the
 inverse posterior covariance is just the prior inverse covariance, but with a
-modified diagonal. This means if we were to use this inverse parameterisation
-of the Gaussian, which is used in \cite{Opper2009} and is also known as the
-information form, we only have to infer $2N$ parameters (not $N + N^2$).
-Straight-forwardly we can obtain the iterative steps for $\pomean$,
+modified diagonal. This means if we were to use this inverse parameterization
+of the Gaussian, which is also used in \cite{Opper2009}, we would
+ only have to infer $2N$ parameters (not $N + N^2$).
+ We can obtain the iterative steps for $\pomean$ straightforwardly:
 \begin{equation}
     \pomean_{k+1} = \brac{1-\step}\pomean_k 
         + \step\Kgain_k\brac{\obs - \intcpt_k}.
@@ -590,8 +591,9 @@ UKF.
 
 \subsection{Prediction}
 
-To find the distribution for a test point, $\lstates\test$, we follow the
-procedure laid out in \cite{Rasmussen2006} for a Laplace GP classifier. This
+To find the distribution for a test point, $\lstates\test$, 
+we only need to combine our approximate Gaussian posterior with 
+our GP prior. This
 gives $\lstates\test \sim \gaus{\pomeans\test, \pocovs\test}$ where,
 \begin{equation}
     \pomeans\test = \Kernl\testT\KERNL\inv\pomean,
@@ -618,18 +620,18 @@ distribution $\obss\test \sim \gaus{\bar\obss\test, \lvar_{\obss\test}}$ where,
         \bar\obss\test}^2.
     \label{eq:slpred}
 \end{equation}
-which we find find works well in practice, see \autoref{fig:learnex} for a
+which works well in practice, see \autoref{fig:learnex} for a
 demonstration.
 
 
-\subsection{Learning the GPs}
+\subsection{Learning the Linearized GPs}
 
-Learning the extended and unscented GPs consists of in an inner and outer loop.
+Learning the extended and unscented GPs consists of  an inner and outer loop.
 Much like the Laplace approximation for binary Gaussian Process classifiers
 \cite{Rasmussen2006}, the inner loop is for learning the posterior mean,
-$\pomean$, and the outer loop is to optimize the likelihood variance $\lvar$
+$\pomean$, and the outer loop is to optimize the likelihood parameters (e.g.~the variance $\lvar$)
 and kernel hyperparameters, $\kfunc{\cdot}{\cdot|\khypers}$. The dominant
-computational cost in learning the parameters is the inversion in
+computational cost in learning the parameters is the inversion in Equation
 \eqref{eq:pocovgp}, and so the computational complexity of the EGP and UGP is
 about the same as for the Laplace GP approximation.
 
@@ -671,8 +673,8 @@ kernel function is used with amplitude $\sigma_{m52} = 0.8$, length scale
 $l_{m52} = 0.6$ and $\inobs \in \real{}$ are uniformly spaced between $[-2\pi,
 2\pi]$ to generate $\KERNL$. Observations used to test and train the GPs are
 then generated as $\obs = \nonlin{\lstate} + \epsilon$ where $\epsilon \sim
-\gaus{0, 0.2^2}$.  1000 points are generated in this manner, and we use 5-fold
-cross validation to train (200) and test (800) the GPs. We use standardised
+\gaus{0, 0.2^2}$.  1000 points are generated in this way, and we use 5-fold
+cross validation to train (200 points) and test (800 points) the GPs. We use standardized
 mean squared error (SMSE) to test the predictions with the held out data in
 both the latent and observed spaces. We also use held-out average negative
 log-likelihood on the latent test data, which is calculated as
@@ -747,12 +749,12 @@ lower-bounded at 0.1 (and 0.01 for~$\lvar$).
         \vspace{1.5mm}
     \end{subfigure}
 
-    \caption[]{Example of learning the UGP with a non-differentiable nonlinear
-        function in (\subref{sub:sign}). In this figure we show the predicitve
+    \caption[]{Example of learning the unscented Gaussian process (UGP) with a non-differentiable nonlinear
+        function in (\subref{sub:sign}). In this figure we show the predictive
         distribution of $\expec{q\lstates\test}{\obss\test}$ using
-        \eqref{eq:slpred}. A typical trace from the MAP objective function used
+        Equation \eqref{eq:slpred}. A typical trace from the MAP objective function used
         to learn $\pomean$ from the nonlinear function in (\subref{sub:sign})
-        is shown in (\subref{sub:mape}). The optimisation shown terminated
+        is shown in (\subref{sub:mape}). The optimization shown terminated
         because of a `divergence' condition, which was typical for this
         example.}
 
@@ -770,7 +772,7 @@ space in \autoref{tab:toy} and the unscented transform for the predictions in
 \autoref{fig:learnex}. Interestingly there is almost no difference in
 performance between the EGP and UGP in these experiments, even though the EGP
 has access to the derivatives of the forward models and the UGP does not.
-\textbf{TODO:} Discuss the experiment results w.r.t.\ \cite{Opper2009}.
+\textbf{TODO:} Discuss the experiment results w.r.t.\ \cite{Opper2009}. \marginpar{FIX}
 
 
 \subsection{Binary Handwritten Digit Classification}
@@ -789,7 +791,7 @@ library \cite{scikit-learn}).  We report performance as the average negative
 log-likelihood of a Bernoulli distribution, $-\frac{1}{N\test} \sum_n \log
 \bernC{\obss_n\test}{\pi\test_n}$ where $\pi\test_n =
 \expec{}{\prob{\obss\test_n = 1}}$ is the probabilistic output of the
-classifier. We also report the error rate as the percent incorrectly
+classifier. We also report the error rate as the percentage of incorrectly
 misclassified labels in the test set (once the probabilistic outputs have been
 thresholded at $0.5$). A square exponential kernel with amplitude
 $\sigma_\text{se}$ and length scale $l_\text{se}$ is used for the Gaussian
@@ -832,8 +834,11 @@ is set relatively large for this task~(e.g.~$1.0$).
 
 We have presented a variational inference framework with linearization for
 Gaussian models with nonlinear likelihood functions, which we show can be used
-to derive updates for the iEKF, and those that resemble the iSPKF. We also used
-it to derive the EGP and UGP. The UGP does not use derivatives of the nonlinear
+to derive updates for the extended and unscented Kalman filter algorithms,
+the iEKF and the iSPKF. 
+We then generalize these results and develop two
+inference algorithms for Gaussian process, the EGP and UGP. 
+The UGP does not use derivatives of the nonlinear
 forward model, yet performs as well as the EGP for inversion and classification
 problems.  As future work we would like to create multi-task EGPs and UGPs.
 This would extend their applicability to inversion problems where the forward
@@ -843,9 +848,12 @@ other effective methods of learning the hyperparameters that do not rely upon
 derivatives of the forward model. 
 
 
-\subsubsection*{Acknowledgments}
+% \subsubsection*{Acknowledgments}
+% 
+% Withheld for review.
+% EVB would like to thank his wife, daughter and cat for coping with his absence at hoe :-)
 
-Withheld for review.
+
 
 %\subsubsection*{References}
 %\printbibliography[heading=none]
