@@ -768,24 +768,27 @@ lower-bounded at 0.1 (and 0.01 for~$\lvar$).
     \label{fig:learnex}
 \end{figure}
 
-In \autoref{tab:toy} we present results for multiple differentiable forward
+\autoref{tab:toy} shows results for multiple differentiable forward
 models, $\nonlin{\cdot}$. We test the EGP and UGP against the model in
 \cite{Opper2009} -- which uses 10,000 samples to evaluate the one dimensional
-expectations. We also test against normal GP regression for a linear forward
+expectations. We have used this number of  samples so the running times 
+of the algorithm in \cite{Opper2009} are comparable to ours.
+We also test against normal GP regression for a linear forward
 model ($\nonlin{\lstate} = \lstate$). In \autoref{fig:learnex} we show the
 results of the UGP using a forward model for which no derivative exists at the
 zero crossing points. Also shown is a typical objective function trace for
 learning the posterior mean which terminated on a `divergence' condition. We
 use quadrature for the predictions in observation space in \autoref{tab:toy}
 and the unscented transform for the predictions in \autoref{fig:learnex}.
-Interestingly there is almost no difference in performance between the EGP and
-UGP in these experiments, even though the EGP has access to the derivatives of
+Interestingly, there is almost no difference in performance between the EGP and
+UGP, even though the EGP has access to the derivatives of
 the forward models and the UGP does not. Both the UGP and EGP outperform
 \cite{Opper2009}, apart from the $\tanh$ experiment for inversion. We also
-found that \cite{Opper2009} would not run on the non-differentiable forward
-model in \autoref{fig:learnex}, but the authors do state that their algorithm
-does require smooth likelihood models.
-
+found that the method in \cite{Opper2009} would suffer from numerical 
+problems  on the non-differentiable forward
+model in \autoref{fig:learnex}. This agrees with the authors who state that their algorithm
+requires smooth likelihood models.
+%
 
 \subsection{Binary Handwritten Digit Classification}
 
