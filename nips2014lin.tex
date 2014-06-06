@@ -320,7 +320,7 @@ $\pomean_k$,
 \end{equation}
 where $\jacob{\pomean_k}$ is the Jacobian $\partial\nonlin{\pomean_k}\!/
 \partial\pomean_k$. By linearizing the function in this way we end up with a
-Gauss-Newton optimization procedure for finding $\pomean$ (see e.g.~\cite{Nocedal2006}).
+Gauss-Newton optimization procedure for finding $\pomean$. % (see e.g.~\cite{Nocedal2006}).
 Equating coefficients with Equation \eqref{eq:linearize} we have that:
 \begin{equation}
     \Linmat = \jacob{\pomean_k}, \qquad \intcpt = \nonlin{\pomean_k} -
@@ -777,7 +777,8 @@ has access to the derivatives of the forward models and the UGP does not.
 
 \subsection{Binary Handwritten Digit Classification}
 
-For this experiment we evaluate the EGP and UGP on a more routine binary
+For this experiment we evaluate the EGP and UGP on a %more routine 
+binary
 classification task, where we are just interested in a probabilistic prediction
 of class labels, and not the values of the latent function. The dataset we use
 is the USPS handwritten digits datasets with the task of distinguishing between
