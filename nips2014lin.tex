@@ -46,16 +46,16 @@
 
 \begin{abstract}
 
-    Two new methods for inference in Gaussian processes (GPs) with general
-    nonlinear likelihoods are presented. Inference is based on a variational
-    framework where a Gaussian posterior is assumed, then the likelihoods are
+    We present two new methods for inference in Gaussian processes (GPs) with
+    general nonlinear likelihoods. Inference is based on a variational
+    framework where a Gaussian posterior is assumed and the likelihoods are
     linearized about the variational posterior mean using either a first order
     Taylor series expansion, or statistical linearization. We show that the
     parameter updates obtained by these algorithms are equivalent to the state
     update equations in the iterative extended and unscented Kalman filters
-    respectively, hence we refer to our algorithms as extended and
-    unscented GPs. The unscented GP treats the likelihood as a `black-box' by
-    not requiring its derivative for inference, and can even use
+    respectively, hence we refer to our algorithms as extended and unscented
+    GPs. The unscented GP treats the likelihood as a `black-box' by not
+    requiring its derivative for inference, so it can even use
     non-differentiable likelihood models. We demonstrate the algorithms on a
     number of toy inversion problems and a binary classification dataset.
 
