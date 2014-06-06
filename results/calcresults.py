@@ -6,8 +6,8 @@ from glob import glob
 #import matplotlib.pyplot as plt
 
 # Choose which test to calculate results for
-#testname = 'linear'
-testname = 'poly'
+testname = 'linear'
+#testname = 'poly'
 #testname = 'sin'
 #testname = 'tanh'
 #testname = 'exp'
