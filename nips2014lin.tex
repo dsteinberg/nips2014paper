@@ -12,6 +12,8 @@
 \usepackage{graphicx}
 \usepackage{caption,subcaption}
 
+\newtheorem{remark}{Remark}
+
 
 \title{Extended and Unscented Gaussian Processes}
 
@@ -46,27 +48,28 @@
 
 \begin{abstract}
 
-    We present two new methods for inference in Gaussian processes (GPs) with
+    We present two new methods for inference in Gaussian process (GP) models with
     general nonlinear likelihoods. Inference is based on a variational
-    framework where a Gaussian posterior is assumed and the likelihoods are
-    linearized about the variational posterior mean using either a first order
+    framework where a Gaussian posterior is assumed and the likelihood is
+    linearized about the variational posterior mean using either a %first order
     Taylor series expansion, or statistical linearization. We show that the
     parameter updates obtained by these algorithms are equivalent to the state
     update equations in the iterative extended and unscented Kalman filters
     respectively, hence we refer to our algorithms as extended and unscented
     GPs. The unscented GP treats the likelihood as a `black-box' by not
-    requiring its derivative for inference, so it can even use
-    non-differentiable likelihood models. We demonstrate the algorithms on a
-    number of toy inversion problems and a binary classification dataset.
-
+    requiring its derivative for inference, so it also applies to
+    non-differentiable likelihood models. We evaluate the performance 
+    of our algorithms on a  number of synthetic inversion problems and 
+    a binary classification dataset.
+    
 \end{abstract}
 
 
 \section{Introduction}
 
 Nonlinear inversion problems, where we wish to infer the latent inputs to a
-system given observations of the output of the system and a system
-forward-model, have a long history in the natural sciences, dynamical modelling
+system given observations of its output and the system's
+forward-model, have a long history in the natural sciences, dynamical modeling
 and estimation. An example is the robot-arm inverse kinematics problem, where
 we wish to infer how to drive the robot's joints (i.e.~joint torques) in order
 to place the end-effector in a particular position, given we can measure its
@@ -76,34 +79,37 @@ the Levenberg-Marquardt algorithm \cite{Marquardt1963}, or in a recursive
 manner such as the extended and unscented Kalman filters (EKF, UKF)
 \cite{Julier2004}. 
 
-In many problems, such as the robotic arm example, we actually have a
+In many problems, such as the robotic arm example, we  have a
 continuous process, such as a smooth trajectory, and so non-parametric
 regression techniques, such as Gaussian processes \cite{Rasmussen2006} seem
 applicable, and have been used in linear inversion problems \cite{Reid2013}.
 Similarly, Gaussian processes have been used to learn inverse kinematics and
 predict the motion of a dynamical system such as robot arms
 \cite{Rasmussen2006, Williams2008} and a human's gait \cite{Lawrence2003,
-    Wang2005, Wang2008}. However, for \cite{Rasmussen2006, Williams2008} the
-inputs (torques) to the system are measurable (not latent) and are used to
-train the GPs, whereas \cite{Wang2005, Wang2008} do not wish to infer the
-original latent inputs, but rather wish to find a low dimensional
-representation for prediction of high dimensional outputs using modified
+    Wang2005, Wang2008}. However, in \cite{Rasmussen2006, Williams2008} the
+inputs (torques) to the system are observables (not latent) and are used to
+train the GPs, whereas  \cite{Wang2005, Wang2008} 
+are not concerned with inference over the 
+original latent inputs, but rather they want to find a low dimensional
+representation of high dimensional outputs for prediction using 
 Gaussian process latent variable models \cite{Lawrence2003}. In this paper we
 introduce inference algorithms for GPs that can infer and predict the original
 latent inputs to a system, without having to be explicitly trained on them.
 
-Even if we don't need to know the latent inputs to a system, it can be useful
+Even if we do not need to know the latent inputs to a system, it can be useful
 to incorporate domain/system specific information into an algorithm in terms of
 a likelihood model specific to the task at hand, such as non-parametric
 classification or robust regression problems. It is useful to have an inference
 procedure that does not require re-derivation for each new likelihood model
-without having to resort to MCMC. An example is the variational algorithm
-presented in \cite{Opper2009} for factorizing likelihood models. In
-\cite{Opper2009} a Gaussian posterior is assumed, and the intractable
+without having to resort to MCMC. An example of this is the variational algorithm
+presented in \cite{Opper2009} for factorizing likelihood models, where
+ a Gaussian posterior is assumed, and the 
 expectations arising from the use of arbitrary (non-conjugate) likelihoods are
-only one-dimensional, and so can be easily evaluated using sampling techniques
-or quadrature. We present two alternatives to this algorithm using the same
-variational framework but based on linearizing the nonlinear likelihood models
+only one-dimensional, and so they can be easily evaluated using sampling techniques
+or quadrature. 
+%
+We present two alternatives to this algorithm that are also underpinned by
+variational principles but  are based on linearizing the nonlinear likelihood models
 about the posterior mean. These methods are also straight-forwardly applicable
 to non-factorising likelihoods and would retain computational efficiency,
 unlike \cite{Opper2009} which would require evaluation of multidimensional
@@ -126,7 +132,7 @@ Gaussian process model using our framework, which we use for experiments in
 
 Given some observable quantity $\obs \in \real{d}$, and a likelihood model for
 the system we are interested in, $\probC{\obs}{\lstate}$, in many situations it
-is desirable to know the latent input to the system, $\lstate\in\real{D}$, that
+is desirable to reason about the latent input to the system, $\lstate\in\real{D}$, that
 generated the observation. Finding these inputs is an inversion problem and in
 a probabilistic setting can be cast as an application of Bayes' rule,
 \begin{equation}
@@ -192,8 +198,9 @@ Now we can evaluate the expectation and KL term in \eqref{eq:fengy},
             + \trace{\prcov\inv\pocov} - D\bigg] \label{eq:qkl}.
 \end{align}
 where the expectation involving $\nonlin{\cdot}$ may be intractable. One method
-of dealing with these expectations is presented in \cite{Opper2009}; we provide
-two alternatives based on linearizing $\nonlin{\cdot}$ about $\pomean$.
+of dealing with these expectations is presented in \cite{Opper2009} by assuming 
+that the likelihood factorizes across observations. Here we provide
+two alternatives based on linearizing $\nonlin{\cdot}$ about  the posterior mean $\pomean$.
 
 
 \subsection{Parameter Updates}
@@ -234,7 +241,7 @@ problem\footnote{$-\frac{1}{2}
         \brac{\augobs - \augnonlin{\lstate}}\transpose\augcov\inv
         \brac{\augobs - \augnonlin{\lstate}} = 0$.}, but about
 the expected posterior value of $\lstate$. Even without the expectation, there
-is no solution closed form solution to $\partial\Fengy/\partial\pomean = 0$.
+is no  closed form solution to $\partial\Fengy/\partial\pomean = 0$.
 However, we can use the iterative Newton algorithm to find $\pomean$. It begins
 with an initial guess, $\pomean_0$, then proceeds with the iterations,
 \begin{equation}
@@ -268,7 +275,7 @@ identity we get,
         + \step\Kgain_k\brac{\obs - \intcpt_k - \Linmat_k\prmean},
     \label{eq:pomean}
 \end{equation}
-where $\Kgain_k$ is a ``Kalman gain'' term,
+where $\Kgain_k$ is usually referred to as  a ``Kalman gain'' term,
 \begin{equation}
     \Kgain_k = \prcov\Linmat_k\transpose\brac{\lcov +
         \Linmat_k\prcov\Linmat_k\transpose}\inv,
@@ -313,8 +320,8 @@ $\pomean_k$,
 \end{equation}
 where $\jacob{\pomean_k}$ is the Jacobian $\partial\nonlin{\pomean_k}\!/
 \partial\pomean_k$. By linearizing the function in this way we end up with a
-Gauss-Newton optimization procedure for finding $\pomean$ \cite{Nocedal2006}.
-Equating coefficients with \eqref{eq:linearize},
+Gauss-Newton optimization procedure for finding $\pomean$ (see e.g.~\cite{Nocedal2006}).
+Equating coefficients with Equation \eqref{eq:linearize} we have that:
 \begin{equation}
     \Linmat = \jacob{\pomean_k}, \qquad \intcpt = \nonlin{\pomean_k} -
     \jacob{\pomean_k}\pomean_k.
@@ -335,20 +342,33 @@ where,
     \label{eq:pocov_ekf}
 \end{equation}
 Here $\jacob{\pomean}$ and $\Kgain$ without the $k$ subscript are constructed
-about the converged posterior, $\pomean$. It is worth noting that when $\step =
-1$, \eqref{eq:pomean_ekf} -- \eqref{eq:pocov_ekf} are the \emph{same} as a
-single step of the iterated extended Kalman filter~\cite{Bell1993, Sibley2006}.
-
-
+about the converged posterior, $\pomean$. 
+%
+\begin{remark}
+A single step of the  iterated extended Kalman filter~\cite{Bell1993, Sibley2006}
+corresponds to an update  in our variational framework when using
+the Taylor series linearization 
+of the non-linear forward model $g(\cdot)$ 
+around the posterior mean.
+\end{remark}
+Having derived the updates in our variational framework, the proof of this is trivial by 
+making  $\step =1$, and using \eqref{eq:pomean_ekf} -- \eqref{eq:pocov_ekf} 
+ase the iterative updates.
+%
 \subsection{Statistical Linearization}
-
+%
 Another method for linearizing $\nonlin{\cdot}$ is \emph{statistical
-    linearization} \cite{Geist2010}. Statistical linearization finds a least
+    linearization} (see e.g.~\cite{Geist2010}). Statistical linearization finds a least
 squares best fit to $\nonlin{\cdot}$ about a point; in our case this point is
 the \emph{posterior} mean, $\pomean$. The advantage of this method is that it
-does not require derivatives $\partial\nonlin{\lstate}\!/\partial\lstate$. To
-obtain the fit, multiple observations of $\nonlin{\cdot}$ are required for
-different input points. One method of obtaining these points is the unscented
+does not require derivatives $\partial\nonlin{\lstate}\!/\partial\lstate$. 
+To
+obtain the fit, multiple observations of the forward model  $\nonlin{\cdot}$ 
+at  different input points are required. Hence, the key question is where to evaluate our 
+forward model so as to obtain representative samples to 
+carry out the linearization. 
+%
+One method of obtaining these points is the unscented
 transform \cite{Julier2004}, which defines $2D+1$ `sigma' points,
 \begin{align}
     \Sfunc_0 &= \pomean,
@@ -361,7 +381,7 @@ transform \cite{Julier2004}, which defines $2D+1$ `sigma' points,
     \Sobs_i &= \nonlin{\Sfunc_i}.
 \end{align}
 Here $(\sqrt{\cdot})_i$ refers to columns of the matrix square root, we follow
-\cite{Julier2004} and use the Cholesky. Unlike the usual unscented transform,
+\cite{Julier2004} and use the Cholesky decomposition. Unlike the usual unscented transform,
 which uses the prior to create the sigma points, here we have used the
 posterior because of the expectation in \eqref{eq:augsys}. Using these points
 we can define the following statistics,
@@ -379,9 +399,9 @@ where,
         \quad \text{for} \quad i = 1 \ldots 2D,
     \label{eq:slweights}
 \end{equation}
-for a free parameter. According to \cite{Julier2004} various settings of
+for a free parameter $\scoef$. According to \cite{Julier2004} various settings of
 $\scoef$ can capture information about the higher order moments of the
-distribution of $\obs$; or setting $\scoef = 0.5$ yields uniform weights. The
+distribution of $\obs$; or setting $\scoef = 0.5$ yields uniform weights. Therefore, the
 objective of statistical linearization is,
 \begin{equation}
     \argmin_{\Linmat, \intcpt} \sum^{2D}_{i=0} 
@@ -401,14 +421,27 @@ Substituting $\intcpt$ back into \eqref{eq:pomean}, we obtain,
 \end{equation}
 Here $\Kgain_k$, $\Linmat_k$ and $\bar\obs_k$ have been evaluated using the
 statistics from the $k$th iteration. This implies that the posterior
-covariance, $\pocov_k$, is now estimated at every iteration of
+covariance, $\pocov_k$, is now estimated at every iteration of Equation
 \eqref{eq:pomean_sl} since we use it to form $\Linmat_k$ and $\intcpt_k$, and 
 $\Kgain_k$ and $\pocov_k$ have the same form as \eqref{eq:kgain} and
-\eqref{eq:pocov} respectively. Equations \eqref{eq:pomean_sl} and
-\eqref{eq:pocov} are similar to the equations for a single update of the
-iterated sigma-point Kalman filter (iSPKF) \cite{Sibley2006} for $\step = 1$,
-however we have the term $\bar\obs_k$ appearing in \eqref{eq:pomean_sl} as
-opposed to $\nonlin{\pomean_k}$. Our method is more similar to the regular
+\eqref{eq:pocov} respectively. 
+%
+\begin{remark}
+A single step of the  iterated sigma-point Kalman filter (iSPKF, \cite{Sibley2006}) can be seen as an 
+ad hoc approximation to an update in our statistically linearized variational framework. 
+\end{remark}
+
+Equations \eqref{eq:pomean_sl} and
+\eqref{eq:pocov} are equivalent to the equations for a single update of the
+iterated sigma-point Kalman filter (iSPKF)  for $\step = 1$,
+except for the term $\bar\obs_k$ appearing in \eqref{eq:pomean_sl} as
+opposed to $\nonlin{\pomean_k}$. The main difference is that we have 
+derived our updates from first principles using a variational approximation. 
+Furthermore, we have found experimentally that the updates in Equations
+ \eqref{eq:pomean_sl} and \eqref{eq:pocov} provide better results consistently 
+ across a wide variety of problems.
+%
+These updates  are also similar to the regular
 recursive unscented Kalman filter \cite{Julier2004}, and statistically 
 linearized recursive least squares \cite{Geist2010}.
 
@@ -434,8 +467,8 @@ the expected likelihood, $\trace{\Linmat\transpose\lcov\inv\Linmat\pocov} = D -
 \trace{\prcov\inv\pocov}$ once we have linearized $\nonlin{\cdot}$ and
 substituted \eqref{eq:pocovi}. In practice we only calculate this approximation
 $\Fengy$ if we need to optimize some model hyperparameters, like for a Gaussian
-process. For optimising $\pomean$, the only dependent parts of $\Fengy$ on
-$\pomean$ are,
+process as described in section \ref{sec:gpmod} . For optimising $\pomean$, the only  
+terms  of $\Fengy$ dependent on $\pomean$ are:
 \begin{equation}
     -\frac{1}{2} \brac{\obs - \nonlin{\pomean}}\transpose
             \lcov\inv
@@ -453,9 +486,9 @@ initial $\pomean_0$ is sufficiently close \cite{Nocedal2006}. No such
 guarantees exist for statistical linearization, though monitoring
 \eqref{eq:MAP} works well in practice (see the experiment in
 \autoref{sec:exptoy}). A line search could be used to select an optimal value
-for the step length, $\step$ in \eqref{eq:pomean}. However, we find that
+for the step length, $\step$ in Equation \eqref{eq:pomean}. However, we find that
 setting $\step=1$, and then successively multiplying $\step$ by some number in
-$\brac{0, 1}$ until the MAP objective \eqref{eq:MAP} lowers, or some maximum
+$\brac{0, 1}$ until the MAP objective \eqref{eq:MAP} decreases, or some maximum
 number of iterations is exceeded is fast and works well in practice. If the
 maximum number of iterations is exceeded we call this a `diverge' condition,
 and terminate the search for $\pomean$ (and return the last good value). This
