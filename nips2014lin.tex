@@ -814,10 +814,10 @@ outputs \cite{Platt1999}), and logistic regression (both from the scikit-learn
 python library \cite{scikit-learn}). A square exponential kernel with amplitude
 $\sigma_\text{se}$ and length scale $l_\text{se}$ is used for the GPs in this
 experiment. We initialize these hyperparameters at $1.0$, and put a lower bound
-of $0.1$ on them. We initialize $\lvar$ at $10^{-14}$ in the EGP and UGP, and
-place a lower bound at $10^{-14}$ (the optimized values are near or at this
-values). The hyperparameters for the SVM are learned using grid search with
-three-fold cross validation. 
+of $0.1$ on them. We initialize $\lvar$ and place a lower bound at $10^{-14}$
+for the EGP and UGP (the optimized values are near or at this value). The
+hyperparameters for the SVM are learned using grid search with three-fold cross
+validation. 
 
 %of a Bernoulli distribution, $-\frac{1}{N\test} \sum_n \log
 %\bernC{\obss_n\test}{\pi\test_n}$ where $\pi\test_n =
