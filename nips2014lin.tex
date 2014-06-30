@@ -125,7 +125,7 @@ Gaussian process model using our framework, which we use for experiments in
 \autoref{sec:experiments}.
 
 
-\section{Nonlinear Gaussian Models}
+\section{Variational Inference in Nonlinear Gaussian Models with Linearization}
 \label{sec:gausmod}
 
 Given some observable quantity $\obs \in \real{d}$, and a likelihood model for
@@ -427,8 +427,9 @@ $\Kgain_k$ and $\pocov_k$ have the same form as \eqref{eq:kgain} and
 \eqref{eq:pocov} respectively. 
 %
 \begin{remark}
-A single step of the  iterated unscented sigma-point Kalman filter (iSPKF, \cite{Sibley2006}) can be seen as an 
-ad hoc approximation to an update in our statistically linearized variational framework. 
+A single step of the  iterated unscented sigma-point Kalman filter (iSPKF,
+\cite{Sibley2006}) can be seen as an ad hoc approximation to an update in our
+statistically linearized variational framework. 
 \end{remark}
 
 Equations \eqref{eq:pomean_sl} and
@@ -495,7 +496,7 @@ and terminate the search for $\pomean$ (and return the last good value). This
 only tends to happen for statistical linearization, but does not tend to impact
 the algorithms performance since we always make sure to improve $\Fengy$.
 
-\section{Variational Inference in Gaussian Process Models through Linearization}
+\section{Variational Inference in Gaussian Process Models with Linearization}
 \label{sec:gpmod}
 
 We now present two inference methods for Gaussian Process (GP) models \cite{Rasmussen2006}
