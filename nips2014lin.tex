@@ -129,11 +129,10 @@ Gaussian process model using our framework, which we use for experiments in
 \label{sec:gausmod}
 
 Given some observable quantity $\obs \in \real{d}$, and a likelihood model for
-the system of interest, %we are interested in, , $\probC{\obs}{\lstate}$,
- in many situations it
-is desirable to reason about the latent input to the system, $\lstate\in\real{D}$, that
-generated the observations. Finding these inputs is an inversion problem and in
-a probabilistic setting it can be cast as an application of Bayes' rule.
+the system of interest, in many situations it is desirable to reason about the
+latent input to the system, $\lstate\in\real{D}$, that generated the
+observations. Finding these inputs is an inversion problem and in a
+probabilistic setting it can be cast as an application of Bayes' rule.
 %\begin{equation}
  %   \probC{\lstate}{\obs} = \frac{\probC{\obs}{\lstate}\prob{\lstate}}
  %       {\prob{\obs}}.
@@ -198,9 +197,10 @@ Now we can evaluate the expectation and KL term in \eqref{eq:fengy},
             + \trace{\prcov\inv\pocov} - D\bigg] \label{eq:qkl}.
 \end{align}
 where the expectation involving $\nonlin{\cdot}$ may be intractable. One method
-of dealing with these expectations is presented in \cite{Opper2009} by assuming 
-that the likelihood factorizes across observations. Here we provide
-two alternatives based on linearizing $\nonlin{\cdot}$ about  the posterior mean $\pomean$.
+of dealing with these expectations is presented in \cite{Opper2009} by assuming
+that the likelihood factorizes across observations. Here we provide two
+alternatives based on linearizing $\nonlin{\cdot}$ about  the posterior mean
+$\pomean$.
 
 
 \subsection{Parameter Updates}
@@ -320,8 +320,8 @@ $\pomean_k$,
 \end{equation}
 where $\jacob{\pomean_k}$ is the Jacobian $\partial\nonlin{\pomean_k}\!/
 \partial\pomean_k$. By linearizing the function in this way we end up with a
-Gauss-Newton optimization procedure for finding $\pomean$. % (see e.g.~\cite{Nocedal2006}).
-Equating coefficients with Equation \eqref{eq:linearize} we have that:
+Gauss-Newton optimization procedure for finding $\pomean$.  Equating
+coefficients with Equation \eqref{eq:linearize} we have that:
 \begin{equation}
     \Linmat = \jacob{\pomean_k}, \qquad \intcpt = \nonlin{\pomean_k} -
     \jacob{\pomean_k}\pomean_k.
@@ -345,31 +345,29 @@ Here $\jacob{\pomean}$ and $\Kgain$ without the $k$ subscript are constructed
 about the converged posterior, $\pomean$. 
 %
 \begin{remark}
-A single step of the  iterated extended Kalman filter~\cite{Bell1993, Sibley2006}
-corresponds to an update  in our variational framework when using
-the Taylor series linearization 
-of the non-linear forward model $g(\cdot)$ 
-around the posterior mean.
+A single step of the  iterated extended Kalman filter~\cite{Bell1993,
+    Sibley2006} corresponds to an update  in our variational framework when
+using the Taylor series linearization of the non-linear forward model
+$g(\cdot)$ around the posterior mean.
 \end{remark}
-Having derived the updates in our variational framework, the proof of this is trivial by 
-making  $\step =1$, and using \eqref{eq:pomean_ekf} -- \eqref{eq:pocov_ekf} 
-as the iterative updates.
+Having derived the updates in our variational framework, the proof of this is
+trivial by making  $\step =1$, and using \eqref{eq:pomean_ekf} --
+\eqref{eq:pocov_ekf} as the iterative updates.
 %
 \subsection{Statistical Linearization}
 %
 Another method for linearizing $\nonlin{\cdot}$ is \emph{statistical
-    linearization} (see e.g.~\cite{Geist2010}). Statistical linearization finds a least
-squares best fit to $\nonlin{\cdot}$ about a point; in our case this point is
-the \emph{posterior} mean, $\pomean$. The advantage of this method is that it
-does not require derivatives $\partial\nonlin{\lstate}\!/\partial\lstate$. 
-To
-obtain the fit, multiple observations of the forward model  $\nonlin{\cdot}$ 
-at  different input points are required. Hence, the key question is where to evaluate our 
-forward model so as to obtain representative samples to 
-carry out the linearization. 
+    linearization} (see e.g.~\cite{Geist2010}). Statistical linearization finds
+a least squares best fit to $\nonlin{\cdot}$ about a point; in our case this
+point is the \emph{posterior} mean, $\pomean$. The advantage of this method is
+that it does not require derivatives
+$\partial\nonlin{\lstate}\!/\partial\lstate$.  To obtain the fit, multiple
+observations of the forward model  $\nonlin{\cdot}$ at  different input points
+are required. Hence, the key question is where to evaluate our forward model so
+as to obtain representative samples to carry out the linearization. 
 %
-One method of obtaining these points is the unscented
-transform \cite{Julier2004}, which defines $2D+1$ `sigma' points,
+One method of obtaining these points is the unscented transform
+\cite{Julier2004}, which defines $2D+1$ `sigma' points,
 \begin{align}
     \Sfunc_0 &= \pomean,
         \label{eq:spoint0} \\
@@ -381,10 +379,10 @@ transform \cite{Julier2004}, which defines $2D+1$ `sigma' points,
     \Sobs_i &= \nonlin{\Sfunc_i}.
 \end{align}
 Here $(\sqrt{\cdot})_i$ refers to columns of the matrix square root, we follow
-\cite{Julier2004} and use the Cholesky decomposition. Unlike the usual unscented transform,
-which uses the prior to create the sigma points, here we have used the
-posterior because of the expectation in \eqref{eq:augsys}. Using these points
-we can define the following statistics,
+\cite{Julier2004} and use the Cholesky decomposition. Unlike the usual
+unscented transform, which uses the prior to create the sigma points, here we
+have used the posterior because of the expectation in \eqref{eq:augsys}. Using
+these points we can define the following statistics,
 \begin{equation}
     \bar\obs = \sum^{2D}_{i=0} \Sw_i \Sobs_i,
     \qquad
@@ -399,10 +397,10 @@ where,
         \quad \text{for} \quad i = 1 \ldots 2D,
     \label{eq:slweights}
 \end{equation}
-for a free parameter $\scoef$. According to \cite{Julier2004} various settings of
-$\scoef$ can capture information about the higher order moments of the
-distribution of $\obs$; or setting $\scoef = 0.5$ yields uniform weights. Therefore, the
-objective of statistical linearization is,
+for a free parameter $\scoef$. According to \cite{Julier2004} various settings
+of $\scoef$ can capture information about the higher order moments of the
+distribution of $\obs$; or setting $\scoef = 0.5$ yields uniform weights.
+Therefore, the objective of statistical linearization is,
 \begin{equation}
     \argmin_{\Linmat, \intcpt} \sum^{2D}_{i=0} 
         \lnorm{2}{\Sobs_i - \brac{\Linmat\Sfunc_i + \intcpt}}^2.
@@ -432,19 +430,18 @@ A single step of the  iterated unscented sigma-point Kalman filter (iSPKF,
 statistically linearized variational framework. 
 \end{remark}
 
-Equations \eqref{eq:pomean_sl} and
-\eqref{eq:pocov} are equivalent to the equations for a single update of the
-iterated sigma-point Kalman filter (iSPKF)  for $\step = 1$,
-except for the term $\bar\obs_k$ appearing in \eqref{eq:pomean_sl} as
-opposed to $\nonlin{\pomean_k}$. The main difference is that we have 
-derived our updates from  variational principles. 
-Furthermore, we have found experimentally that the updates in Equations
- \eqref{eq:pomean_sl} and \eqref{eq:pocov} provide better results consistently 
- across a wide variety of problems.
+Equations \eqref{eq:pomean_sl} and \eqref{eq:pocov} are equivalent to the
+equations for a single update of the iterated sigma-point Kalman filter (iSPKF)
+for $\step = 1$, except for the term $\bar\obs_k$ appearing in
+\eqref{eq:pomean_sl} as opposed to $\nonlin{\pomean_k}$. The main difference is
+that we have derived our updates from  variational principles.  Furthermore, we
+have found experimentally that the updates in Equations \eqref{eq:pomean_sl}
+and \eqref{eq:pocov} provide better results consistently across a wide variety
+of problems.
 %
-These updates  are also similar to the regular
-recursive unscented Kalman filter \cite{Julier2004}, and statistically 
-linearized recursive least squares \cite{Geist2010}.
+These updates  are also similar to the regular recursive unscented Kalman
+filter \cite{Julier2004}, and statistically linearized recursive least squares
+\cite{Geist2010}.
 
 
 \subsection{Optimizing the Posterior}
@@ -468,8 +465,8 @@ the expected likelihood, $\trace{\Linmat\transpose\lcov\inv\Linmat\pocov} = D -
 \trace{\prcov\inv\pocov}$ once we have linearized $\nonlin{\cdot}$ and
 substituted \eqref{eq:pocovi}. In practice we only calculate this approximation
 $\Fengy$ if we need to optimize some model hyperparameters, like for a Gaussian
-process as described in section \ref{sec:gpmod} . For optimizing $\pomean$, the only  
-terms  of $\Fengy$ dependent on $\pomean$ are:
+process as described in section \ref{sec:gpmod} . For optimizing $\pomean$, the
+only  terms  of $\Fengy$ dependent on $\pomean$ are:
 \begin{equation}
     -\frac{1}{2} \brac{\obs - \nonlin{\pomean}}\transpose
             \lcov\inv
@@ -487,21 +484,23 @@ initial $\pomean_0$ is sufficiently close \cite{Nocedal2006}. No such
 guarantees exist for statistical linearization, though monitoring
 \eqref{eq:MAP} works well in practice (see the experiment in
 \autoref{sec:exptoy}). A line search could be used to select an optimal value
-for the step length, $\step$ in Equation \eqref{eq:pomean}. However, we find that
-setting $\step=1$, and then successively multiplying $\step$ by some number in
-$\brac{0, 1}$ until the MAP objective \eqref{eq:MAP} decreases, or some maximum
-number of iterations is exceeded is fast and works well in practice. If the
-maximum number of iterations is exceeded we call this a `diverge' condition,
-and terminate the search for $\pomean$ (and return the last good value). This
-only tends to happen for statistical linearization, but does not tend to impact
-the algorithms performance since we always make sure to improve $\Fengy$.
+for the step length, $\step$ in Equation \eqref{eq:pomean}. However, we find
+that setting $\step=1$, and then successively multiplying $\step$ by some
+number in $\brac{0, 1}$ until the MAP objective \eqref{eq:MAP} decreases, or
+some maximum number of iterations is exceeded is fast and works well in
+practice. If the maximum number of iterations is exceeded we call this a
+`diverge' condition, and terminate the search for $\pomean$ (and return the
+last good value). This only tends to happen for statistical linearization, but
+does not tend to impact the algorithms performance since we always make sure to
+improve $\Fengy$.
 
 \section{Variational Inference in Gaussian Process Models with Linearization}
 \label{sec:gpmod}
 
-We now present two inference methods for Gaussian Process (GP) models \cite{Rasmussen2006}
-with arbitrary nonlinear likelihoods using the framework presented previously.
-Both Gaussian process models have the following likelihood and prior,
+We now present two inference methods for Gaussian Process (GP) models
+\cite{Rasmussen2006} with arbitrary nonlinear likelihoods using the framework
+presented previously.  Both Gaussian process models have the following
+likelihood and prior,
 \begin{equation}
     \obs \sim \gaus{\nonlin{\lstate}, \lvar\ident{N}}, \qquad
     \lstate \sim \gaus{\mathbf{0}, \KERNL}.
@@ -631,11 +630,12 @@ demonstration.
 Learning the extended and unscented GPs consists of  an inner and outer loop.
 Much like the Laplace approximation for binary Gaussian Process classifiers
 \cite{Rasmussen2006}, the inner loop is for learning the posterior mean,
-$\pomean$, and the outer loop is to optimize the likelihood parameters (e.g.~the variance $\lvar$)
-and kernel hyperparameters, $\kfunc{\cdot}{\cdot|\khypers}$. The dominant
-computational cost in learning the parameters is the inversion in Equation
-\eqref{eq:pocovgp}, and so the computational complexity of the EGP and UGP is
-about the same as for the Laplace GP approximation.
+$\pomean$, and the outer loop is to optimize the likelihood parameters
+(e.g.~the variance $\lvar$) and kernel hyperparameters,
+$\kfunc{\cdot}{\cdot|\khypers}$. The dominant computational cost in learning
+the parameters is the inversion in Equation \eqref{eq:pocovgp}, and so the
+computational complexity of the EGP and UGP is about the same as for the
+Laplace GP approximation.
 
 To find the kernel hyperparameters (and $\lvar$), we use numerical techniques
 to find the gradients, $\partial\Fengy/\partial\khypers$, for both the extended
@@ -676,10 +676,10 @@ $l_{m52} = 0.6$ and $\inobs \in \real{}$ are uniformly spaced between $[-2\pi,
 2\pi]$ to generate $\KERNL$. Observations used to test and train the GPs are
 then generated as $\obs = \nonlin{\lstate} + \epsilon$ where $\epsilon \sim
 \gaus{0, 0.2^2}$. 1000 points are generated in this way, and we use 5-fold
-cross validation to train (200 points) and test (800 points) the GPs. We use standardized
-mean squared error (SMSE) to test the predictions with the held out data in
-both the latent and observed spaces. We also use held-out average negative
-log-likelihood on the latent test data, which is calculated as
+cross validation to train (200 points) and test (800 points) the GPs. We use
+standardized mean squared error (SMSE) to test the predictions with the held
+out data in both the latent and observed spaces. We also use held-out average
+negative log-likelihood on the latent test data, which is calculated as
 $-\frac{1}{N\test} \sum_{n} \log \gausC{\lstates_n\test}{\pomeans_n\test,
     \pocovs_n\test}$. All of the GPs use Mat\'ern $\frac{5}{2}$ covariance
 functions with the hyperparameters and $\lvar$ initialized at 1.0 and
@@ -778,27 +778,25 @@ lower-bounded at 0.1 (and 0.01 for~$\lvar$).
     \label{fig:learnex}
 \end{figure}
 
-\autoref{tab:toy} shows results for multiple differentiable forward
-models, $\nonlin{\cdot}$. We test the EGP and UGP against the model in
-\cite{Opper2009} -- which uses 10,000 samples to evaluate the one dimensional
-expectations. We have used this number of  samples so the running times 
-of the algorithm in \cite{Opper2009} are comparable to ours.
-We also test against normal GP regression for a linear forward
-model ($\nonlin{\lstate} = \lstate$). In \autoref{fig:learnex} we show the
-results of the UGP using a forward model for which no derivative exists at the
-zero crossing points. Also shown is a typical objective function trace for
-learning the posterior mean which terminated on a `divergence' condition. We
-use quadrature for the predictions in observation space in \autoref{tab:toy}
-and the unscented transform for the predictions in \autoref{fig:learnex}.
-Interestingly, there is almost no difference in performance between the EGP and
-UGP, even though the EGP has access to the derivatives of
-the forward models and the UGP does not. Both the UGP and EGP outperform
-\cite{Opper2009}, apart from the $\tanh$ experiment for inversion. We also
-found that the method in \cite{Opper2009} would suffer from numerical 
-problems  on the non-differentiable forward
-model in \autoref{fig:learnex}. This agrees with the authors who state that their algorithm
-requires smooth likelihood models.
-%
+\autoref{tab:toy} shows results for multiple differentiable forward models,
+$\nonlin{\cdot}$. We test the EGP and UGP against the model in \cite{Opper2009}
+-- which uses 10,000 samples to evaluate the one dimensional expectations. We
+have used this number of  samples so the running times of the algorithm in
+\cite{Opper2009} are comparable to ours.  We also test against normal GP
+regression for a linear forward model ($\nonlin{\lstate} = \lstate$). In
+\autoref{fig:learnex} we show the results of the UGP using a forward model for
+which no derivative exists at the zero crossing points. Also shown is a typical
+objective function trace for learning the posterior mean which terminated on a
+`divergence' condition. We use quadrature for the predictions in observation
+space in \autoref{tab:toy} and the unscented transform for the predictions in
+\autoref{fig:learnex}.  Interestingly, there is almost no difference in
+performance between the EGP and UGP, even though the EGP has access to the
+derivatives of the forward models and the UGP does not. Both the UGP and EGP
+outperform \cite{Opper2009}, apart from the $\tanh$ experiment for inversion.
+We also found that the method in \cite{Opper2009} would suffer from numerical
+problems  on the non-differentiable forward model in \autoref{fig:learnex}.
+This agrees with the authors who state that their algorithm requires smooth
+likelihood models.
 
 \subsection{Binary Handwritten Digit Classification}
 
