@@ -208,7 +208,7 @@ $\pomean$.
 To find the optimal posterior mean, $\pomean$, we need to find the derivative,
 \begin{equation}
     \frac{\partial\Fengy}{\partial\pomean} = -\frac{1}{2}
-    \frac{\partial}{\pomean} \expec{q\lstate}{
+    \frac{\partial}{\partial\pomean} \expec{q\lstate}{
         \brac{\lstate - \prmean}\transpose\prcov\inv
         \brac{\lstate - \prmean}
         + \brac{\obs - \nonlin{\lstate}}\transpose \lcov\inv
@@ -220,7 +220,7 @@ have placed the quadratic and trace terms from the KL component,
 augmented Gaussian,
 \begin{equation}
     \frac{\partial\Fengy}{\partial\pomean} = -\frac{1}{2}
-        \frac{\partial}{\pomean}
+        \frac{\partial}{\partial\pomean}
         \expec{q\lstate}{
         \brac{\augobs - \augnonlin{\lstate}}\transpose\augcov\inv
         \brac{\augobs - \augnonlin{\lstate}}

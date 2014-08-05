@@ -1,0 +1,551 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><title>
+	Reviews For Paper
+</title>
+<style>
+body
+{
+	font-family:verdana,arial,helvetica;
+}
+#header
+{
+    width: 100%;
+    font-size: small;
+    background-color:#F7F7F7;
+}
+.headerSeparator
+{
+    background-color: #105586;
+}
+.printThemeText
+{
+    font-size:small;
+}
+.printThemeTable td
+{
+    vertical-align:top;
+}
+.printThemeGrid th
+{
+    color:white;
+    background:#5D7B9D;
+    font-weight:bold;
+}
+.printThemeGrid
+{
+    border-collapse:collapse;
+}
+.printThemeGrid td, .printThemeGrid th
+{
+    border:solid 1px #D6D3CE;
+    padding:4px 4px 4px 4px;
+}
+.printThemeGrid .row
+{ 
+    background-color:#F7F6F3;
+    color:#333333;
+    vertical-align:top;
+}
+.printThemeGrid .altrow
+{ 
+    background-color:White;
+    color:#284775;
+    vertical-align:top;
+}
+.cellprompt
+{
+	font-weight:bold;
+	white-space:nowrap;
+    width:100px;	
+}
+.paperHeader
+{
+    background-color:#dee3e7;
+    margin:5px 5px 15px 0px;
+    width:99%;
+    font-family:Verdana;
+    font-size:medium;
+    font-weight:bold;
+}
+.sectionHeader
+{
+    background-color:#dee3e7;
+    padding:5px 5px 5px 0px;
+    width:99%;
+    text-decoration:underline;
+    font-family:Verdana;
+    font-size:small;
+    font-weight:bold;
+}
+.underlineheader
+{
+    text-decoration:underline;
+    font-weight:bold;
+    padding:5px 0px;
+}
+.response
+{
+    padding:5px 0px;
+}
+.reviewerlabel
+{
+    padding-right:20px;
+}
+.pageTitle
+{
+    background-color:#dee3e7;
+    padding:5px 5px 5px 5px;
+    margin-top:10px;
+    width:99%;
+    font-family:Verdana;
+    font-size:medium;
+    font-weight:bold;
+}
+.submissionDetailsView
+{
+}
+.submissionDetailsView tr
+{
+    vertical-align:top;
+}
+.submissionDetailsView td.prompt
+{
+    font-weight:bold;
+}
+.submissionDetailsView tr.sectionSeparator
+{
+
+}
+.submissionDetailsView tr.sectionSeparator td
+{
+    background-color:#dee3e7;
+    padding:5px 5px 5px 5px;
+    font-family:Verdana;
+    font-size:small;
+    font-weight:bold;
+    color:Navy;
+}
+/*CSS Grid View General Definitions*/
+.CssGridView
+{
+    font-size:small; 
+}
+
+.CssGridView td, .CssGridView th
+{
+    padding:4px 4px 4px 4px;
+}
+
+/*CSS Compact Grid View General Definitions*/
+.CssGridViewCompact img
+{
+    border-style:none;
+    border-width:0px;
+}
+
+.CssGridViewCompact
+{
+    font-size:1em;
+    border-style:solid;
+    border-color:#D6D3CE;
+    border-width:1px;
+}
+
+.CssGridViewCompact .hrow a
+{
+    font-size:1em;
+}
+
+.CssGridViewCompact .row a, .CssGridViewCompact .altrow a
+{
+    font-size:0.8em;
+}
+
+.CssGridViewCompact .row .normal a, .CssGridViewCompact .row .normal, .CssGridViewCompact .altrow .normal a, .CssGridViewCompact .altrow .normal
+{
+    font-size:1em;
+}
+
+/*CSS Grid View Header Styles*/
+.CssGridView .hrow, .CssGridViewCompact .hrow
+{ 
+    background-color:#5D7B9D;
+    font-weight:bold;
+    color:White;
+}
+
+
+.CssGridViewCompact .hrow td
+{ 
+    border-bottom-width:0px;
+}
+
+.CssGridViewCompact .hrow th
+{ 
+    border-top-width:0px;
+    font-size:0.8em;
+    vertical-align:top;
+    border-left-width:0px;
+    border-right-width:0px;
+}
+
+.CssGridViewCompact .smaller
+{
+    font-size:0.8em;
+}
+
+/*CSS Grid View Row Styles*/
+.CssGridViewCompact .row, .CssGridViewCompact .altrow
+{
+    border-top-style:solid;
+    border-top-color:#D6D3CE;
+    border-top-width:1px;
+    border-bottom-style:solid;
+    border-bottom-color:#D6D3CE;
+    border-bottom-width:1px;
+}
+
+/*CSS Grid View Header Styles*/
+.CssGridViewCompact .hrow .leftborder, .CssGridViewCompact .row .leftborder, .CssGridViewCompact .altrow .leftborder
+{
+    border-left-width:1px;
+    border-left-color:#D6D3CE;
+    border-left-style:solid;
+}
+
+.CssGridViewCompact .hrow .rightborder, .CssGridViewCompact .row .rightborder, .CssGridViewCompact .altrow .rightborder
+{
+    border-right-width:1px;
+    border-right-color:#D6D3CE;
+    border-right-style:solid;
+}
+
+.CssGridView .hrow a, .CssGridViewCompact .hrow a
+{ 
+    color:White;
+}
+ 
+.CssGridView .row, .CssGridViewCompact .row
+{ 
+    background-color:#F7F6F3;
+    color:#333333;
+    vertical-align:top;
+}
+
+.CssGridView .altrow, .CssGridViewCompact .altrow
+{ 
+    vertical-align:top;
+}
+
+.CssGridViewCompact .row td
+{ 
+    border-left-width:0px;
+    border-right-width:0px;
+}
+ 
+.CssGridViewCompact .altrow
+{ 
+    background-color:White;
+    color:#284775;
+    vertical-align:top;
+}
+
+.CssGridView .altrow tr, .CssGridViewCompact .altrow tr, .CssGridView .row tr, .CssGridViewCompact .row tr
+{ 
+    vertical-align:top;
+}
+</style>
+</head>
+<body>
+<form name="aspnetForm" method="post" action="ViewReviewsForPaper.aspx?paperId=706" id="aspnetForm">
+<div>
+<input name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKMTAxNDM4ODU3Ng9kFgJmD2QWAgIDD2QWAmYPZBYCAgUPDxYCHgdWaXNpYmxlZ2QWBgIBD2QWAmYPZBYEAgMPDxYCHgRUZXh0BQM3MDZkZAIFDw8WAh8BBSlFeHRlbmRlZCBhbmQgVW5zY2VudGVkIEdhdXNzaWFuIFByb2Nlc3Nlc2RkAgMPDxYCHwBoZGQCBQ8WAh4LXyFJdGVtQ291bnQCAxYGZg9kFgYCAw9kFgJmDxUBFEFzc2lnbmVkX1Jldmlld2VyXzE1ZAIHDzwrAA0BAA8WBB4LXyFEYXRhQm91bmRnHwICBWQWAmYPZBYMAgEPZBYEZg8PFgIfAQX3AUNvbW1lbnRzIHRvIGF1dGhvcihzKS4gIEZpcnN0IHByb3ZpZGUgYSBzdW1tYXJ5IG9mIHRoZSBwYXBlciwgYW5kIHRoZW4gYWRkcmVzcyB0aGUgZm9sbG93aW5nIGNyaXRlcmlhOiAgUXVhbGl0eSwgY2xhcml0eSwgb3JpZ2luYWxpdHkgYW5kIHNpZ25pZmljYW5jZS4gICAoRm9yIGRldGFpbGVkIHJldmlld2luZyBndWlkZWxpbmVzLCBzZWUgaHR0cDovL25pcHMuY2MvUGFwZXJJbmZvcm1hdGlvbi9SZXZpZXdlckluc3RydWN0aW9ucylkZAIBD2QWAmYPFQGbFFRoZSBhdXRob3JzIHByZXNlbnQgdHdvIHNpbWlsYXIgbWV0aG9kcyBmb3IgYXBwcm94aW1hdGUgaW5mZXJlbmNlIGluIGxhdGVudCBHYXVzc2lhbiBtb2RlbHMuIFRoZXkgY29uc2lkZXIgbW9kZWxzIG9mIGEgcGFydGljdWxhciBmb3JtLCB3aGVyZSB0aGUgbGlrZWxpaG9vZCBpcyBHYXVzc2lhbiBhZnRlciBhIG5vbmxpbmVhciB0cmFuc2Zvcm0gb2YgdGhlIGxhdGVudCB2YWx1ZXMuIFRoaXMgbW9kZWwgY2xhc3MgbGVhZHMgdGhlbSB0byBjb25zaWRlciBsaW5lYXJpc2F0aW9uIG9mIHRoZSB0cmFuc2Zvcm1hdGlvbiwgd2hpY2ggaW4gdHVybiBsZWFkcyB0byBhbGdvcml0aG1zIGZvciB2YXJpYXRpb25hbCB1cGRhdGVzIHdoaWNoIHJlc2VtYmUgdGhlIGV4dGVuZGVkIGFuZCB1bnNjZW50ZWQgS2FsbWFuIGZpbHRlci4gPGJyIC8+PGJyIC8+UHJvczxiciAvPi0tPGJyIC8+V2hhdCBhbiBpbnRlcmVzdGluZyByZWFkLiBJIHRob3Vyb3VnaGx5IGVuam95ZWQgcmV2aWV3aW5nIHRoaXMgcGFwZXIuIEl0IHByZXNlbnRzIHRoZSBpZGVhcyBjbGVhcmx5IGFuZCB0aG91cm91Z2hseSwgSSBmZWVsIGxpa2UgSSBjb3VsZCBpbXBsZW1lbnQgdGhlc2UgaWRlYXMgcXVpY2tseSBnaXZlbiB0aGUgZGV0YWlsIHByZXNlbnRlZC4gPGJyIC8+PGJyIC8+PGJyIC8+SSB0aGluayB0aGUgYXV0aG9ycyBzaG91bGQgcGVyaGFwcyBoYXZlIG1hZGUgbW9yZSBvZiB0aGUgcGFydGljdWxhciBtb2RlbCBjbGFzcyB0aGV5IGhhdmUgY2hvc2VuLCB3aGljaCBpcyByZWFsbHkgaW50ZXJlc3RpbmcuIFRhYmxlIDEgc2hvd3MgdGhhdCB0aGUgbWV0aG9kIHdvcmsgd2VsbCBmb3IgYSByYW5nZSBvZiBkaWZmZXJlbmNlIG5vbmxpbmVhcml0aWVzLiBJdCdzIGEgc2hhbWUgdGhlcmUncyBubyBtZW50aW9uIG9mIGxlYXJuaW5nIHRoZSBub25saW5lYXIgZnVuY3Rpb24gYW55d2hlcmUgKGFzaWRlIGZyb20gdGhlIG5vaXNlIHZhcmlhbmNlKSwgSSB3b3VsZCB0aGluayB0aGF0IHdvdWxkIGJlIG9mIGdyZWF0IGludGVyZXN0LiA8YnIgLz48YnIgLz5HaXZlbiB0aGUgbW9kZWwgY2xhc3MsIEknbSBzdXJlIHRoZXJlIGlzIGEgcmVsYXRpb25zaGlwIHdpdGggdGhlIFdhcnBlZCBHUCB3b3JrIG9mIEVkIFNuZWxzb24/IFBlcmhhcHMgdGhpcyBpcyB3b3J0aCBhIG1lbnRpb24/PGJyIC8+PGJyIC8+Q3JpdGlzaXNtPGJyIC8+LS08YnIgLz5saW5lIDE2Ni4gdGhlIGF1dGhvcnMgZGVzY3JpYmUgdGhlaXIgbWV0aG9kIGFzICd2YXJpYXRpb25hbCB1cGRhdGVzJy4gSSB0aGluayB0aGlzIGlzIGEgbGl0bGUgbWlzbGVhZGluZywgc2luY2UgdmFyaWF0aW9uYWwgdXBkYXRlcyBhcmUgZ3VhcmFudGVlZCB0byBpbmNyZWFzZSB0aGUgb2JqZWN0aXZlIGZ1bmN0aW9uLCBhbmQgdGh1cyByZWR1Y2UgdGhlIEtMLiBIZXJlLCB0aGlzIGlzbjt0IHRoZSBjYXNlLiBHaXZlbiB0aGUgcmVsYXRpb25zaGlwIHdpdGggdGhlIHVuc2NlbnRlZC9leHRlbmRlZCBrYWxtYW4gZmlsdGVyLCBJdCB3b3VsZCBiZSBncmVhdCB0byBrbm93IGEgbGl0bGUgYWJvdXQgdGhlIGNvbnZlcmdlY2UgcHJvcGVydGllcyBvZiB0aGUgYXBwcm94aW1hdGlvbnMuIElzIGNvbnZlcmdlbmNlIGd1YXJhbnRlZWQ/PGJyIC8+PGJyIC8+VGFibGUgMiBjb21wYXJlcyB0aGUgbmVnYXRpdmUgbG9nIHByb2JhYmlsaXR5IG9mIHRoZSBtZXRob2Qgd2l0aCBHUCBjbGFzc2lmaWNhdGlvbiBmcm9tIHRoZSBHUE1MIHRvb2xib3guIEkgdGhpbmsgdGhpcyBpcyB2ZXJ5IG1pc2xlYWRpbmc6IHRoZSB0d28gbWV0aG9kcyBhcmUgdXNpbmcgZGlmZmVyZW50IG1vZGVscywgYW5kIHNvIHRoZXNlIG51bWJlcnMgcmVhbGx5IGNhbm5vdCBiZSBjb21wYXJlZC4gSSBzdHJvbmdseSByZWNvbW1lbmQgcmVtb3ZpbmcgdGhpcy4gPGJyIC8+PGJyIC8+SXQncyBhIHNoYW1lIHRoYXQgdGhlIG1ldGhvZCBkb2Vzbid0IGdpdmUgZ3JhZGllbnQgb2YgdGhlIGh5cGVyLXBhcmFtZXRlcnMgZm9yIG9wdGltaXphdGlvbi4gSSBzdXBwb3NlIHRoZSBhdXRob3JzIGFyZSB1cC1mcm9udCBhYm91dCB0aGlzLCBidXQgSSB0aGluayB0aGlzIHdpbGwgcHV0IHBlb3BsZSBvZmYgYWRvcHRpbmcgdGhlIGFwcHJvYWNoIGluIGdlbmVyYWwuIDxiciAvPjxiciAvPldoYXQncyBnb2luZyBvbiBpbiBGaWd1cmUgMSAoYik/IHRoaXMgaXMgZm9yIG9uZSBwYXJ0aWN1bGFyIGlubmVyIGxvb3A/IFNlZW1zIGxpa2UgYSByZWxhdGl2ZWx5IHVuaW5mb3JtYXRpdmUgcGxvdCB0byBtZS4gPGJyIC8+PGJyIC8+VGFibGUgMSwgZmlyc3Qgcm93LCBjb250YWlucyBhIHdpZXJkIHJlc3VsdCwgaW4gdGhhdCB0aGUgR1AgbWV0aG9kIGFuZCB0aGUgWzldIG1ldGhvZCBkaWZmZXIuIEkgdGhpbmsgaW4gdGhpcyBjYXNlLCBwb3N0ZXJpb3IgaXMgR2F1c3NpYW4gYW5kIHRoZSBhcHByb3hpbWF0aW9uIGluIFs5XSBpcyBleGFjdCwgeWV0IHRoZSByZXN1bHRzIGFyZSBkaWZmZXJlbnQgdG8gdGhlIEdQIHJlc3VsdC4gV2hhdCBnaXZlcz88YnIgLz48YnIgLz48YnIgLz5UeXBvczxiciAvPi0tPGJyIC8+ZXF1YXRpb25zIDgsOSwgbWlzc2luZyBhIFxwYXJ0aWFsIHN5bWJvbCBvbiB0aGUgZGVub21pbmF0b3JkAgIPZBYEZg8PFgIfAQUtUGxlYXNlIHN1bW1hcml6ZSB5b3VyIHJldmlldyBpbiAxLTIgc2VudGVuY2VzZGQCAQ9kFgJmDxUBywNTdW1tYXJ5PGJyIC8+LS08YnIgLz5FeGNlbGxlbnQgYXV0aG9yc2hpcCBhbmQgYW4gZW50ZXJ0YWluaW5nIHBhcGVyLiBXb3VsZCBiZSBpbXByb3ZlZCBieSBkaXNjdXNzaW9uIG9mIHRoZSBjb252ZXJnZW5jZSBwcm9wZXJ0aWVzIG9mIHRoZSBtZXRob2QgYW5kIGEgY29tcGVsbGluZyBhcHBsaWNhdGlvbiBvZiB0aGUgbW9kZWwuPGJyIC8+PGJyIC8+SSBmZWVsIHRoYXQgdGhlIGNvbXBhcmlzb24gb2YgdGhlIGxvZyBsaWtlbGlob29kcyBhY3Jvc3MgdHdvIGRpZmZlcmVudCBtb2RlbHMgaXMgdW5mYWlyLCBhbmQgc2hvdWxkIGJlIHJlbW92ZWQuIHRoZSBkaXNjcmVwYW5jeSBiZXR3ZWVuIHRoZSBleGFjdCBHUCBhbmQgdGhlIHZhcmlhdGlvbmFsIG1ldGhvZCBpcyB2ZXJ5IHN0cmFuZ2UuIDxiciAvPjxiciAvPlByZXBhcmVkIHRvIGluY3JlYXNlIG15IHNjb3JlIGlmIGlzc3VlcyBhcmUgYWRkcmVzc2VkLiBkAgMPZBYEZg8PFgIfAQU4UXVhbGl0eSBTY29yZSAtIERvZXMgdGhlIHBhcGVyIGRlc2VydmVzIHRvIGJlIHB1Ymxpc2hlZD9kZAIBD2QWAmYPFQEsNTogTWFyZ2luYWxseSBiZWxvdyB0aGUgYWNjZXB0YW5jZSB0aHJlc2hvbGRkAgQPZBYEZg8PFgIfAQXCAUltcGFjdCBTY29yZSAtIEluZGVwZW5kZW50bHkgb2YgdGhlIFF1YWxpdHkgU2NvcmUgYWJvdmUsIHRoaXMgaXMgeW91ciBvcHBvcnR1bml0eSB0byBpZGVudGlmeSBwYXBlcnMgdGhhdCBhcmUgdmVyeSBkaWZmZXJlbnQsIG9yaWdpbmFsLCBvciBvdGhlcndpc2UgcG90ZW50aWFsbHkgaW1wYWN0ZnVsIGZvciB0aGUgTklQUyBjb21tdW5pdHkuZGQCAQ9kFgJmDxUBeTE6IFRoaXMgd29yayBpcyBpbmNyZW1lbnRhbCBhbmQgdW5saWtlbHkgdG8gaGF2ZSBtdWNoIGltcGFjdCBldmVuIHRob3VnaCBpdCBtYXkgYmUgdGVjaG5pY2FsbHkgY29ycmVjdCBhbmQgd2VsbCBleGVjdXRlZC5kAgUPZBYEZg8PFgIfAQUKQ29uZmlkZW5jZWRkAgEPZBYCZg8VATM0OiBSZXZpZXdlciBpcyBjb25maWRlbnQgYnV0IG5vdCBhYnNvbHV0ZWx5IGNlcnRhaW5kAgYPDxYCHwBoZGQCCA8VAQBkAgEPZBYGAgMPZBYCZg8VARRBc3NpZ25lZF9SZXZpZXdlcl80M2QCBw88KwANAQAPFgQfA2cfAgIFZBYCZg9kFgwCAQ9kFgRmDw8WAh8BBfcBQ29tbWVudHMgdG8gYXV0aG9yKHMpLiAgRmlyc3QgcHJvdmlkZSBhIHN1bW1hcnkgb2YgdGhlIHBhcGVyLCBhbmQgdGhlbiBhZGRyZXNzIHRoZSBmb2xsb3dpbmcgY3JpdGVyaWE6ICBRdWFsaXR5LCBjbGFyaXR5LCBvcmlnaW5hbGl0eSBhbmQgc2lnbmlmaWNhbmNlLiAgIChGb3IgZGV0YWlsZWQgcmV2aWV3aW5nIGd1aWRlbGluZXMsIHNlZSBodHRwOi8vbmlwcy5jYy9QYXBlckluZm9ybWF0aW9uL1Jldmlld2VySW5zdHJ1Y3Rpb25zKWRkAgEPZBYCZg8VAdsUVGhlIGF1dGhvcnMgcHJlc2VudCBhIHNpbXBsZSBpZGVhIGZvciBhcHByb3hpbWF0aW5nIHRoZSB2YXJpYXRpb25hbCBsb3dlciBib3VuZCBvbiB0aGUgbWFyZ2luYWwgbGlrZWxpaG9vZCBmb3IgR1BzIGluIHRoZSBjYXNlIG9mIGFuIGludHJhY3RhYmxlIGxpa2VsaWhvb2QgcCh5IHwgZikgd2l0aCBhIHBhcnRpY3VsYXIgZm9ybSAtLS0gIHRoZSBvYnNlcnZhdGlvbnMgeSBlcXVhbCBhbiBhcmJpdHJhcnkgbm9ubGluZWFyIGZ1bmN0aW9uIGcoZikgd2l0aCBhZGRpdGl2ZSBHYXVzc2lhbiBub2lzZS4gVGhlIGxvd2VyIGJvdW5kIHJlcXVpcmVzIHNvbHZpbmcgYW4gZXhwZWN0YXRpb24gaW52b2x2aW5nIHRoZSBub25saW5lYXIgZnVuY3Rpb24gZyhmKSwgd2hpY2ggY2FuJ3QgYmUgZG9uZSBhbmFseXRpY2FsbHkuIFRoZSBhdXRob3JzIHN1Z2dlc3QgbGluZWFyaXNpbmcgdGhlIGZ1bmN0aW9uIGFib3V0IHRoZSBjdXJyZW50IGVzdGltYXRlIG9mIHRoZSBwb3N0ZXJpb3IgbWVhbiBvbiBmLiBUaGUgcGFwZXIgY29udGFpbnMgdHdvIG1ldGhvZHMgZm9yIHBlcmZvcm1pbmcgdGhlIGxpbmVhcmlzYXRpb246IGJ5IGRpZmZlcmVudGlhdGlvbiBvZiBnIChhcyBpbiB0aGUgZXh0ZW5kZWQgS2FsbWFuIGZpbHRlciksIGFuZCBieSB1c2Ugb2YgYHNpZ21hIHBvaW50cycgKGFzIGluIHRoZSB1bnNjZW50ZWQgdHJhbnNmb3JtKS4gVGhlIGF1dGhvcnMgc2hvdyBob3cgdmFyaWF0aW9uYWwgaW5mZXJlbmNlIGNhbiB0aGVuIGJlIGNhcnJpZWQgb3V0IHdpdGggdGhlaXIgYXBwcm94aW1hdGlvbnMgYWxvbmcgd2l0aCBsZWFybmluZyBvZiB0aGUgR1AgaHlwZXJwYXJhbWV0ZXJzLCBhbmQgbWFraW5nIHByZWRpY3Rpb25zIGF0IG5ldyB0ZXN0IHBvaW50cy4gRW1waXJpY2FsIGV2YWx1YXRpb24gaXMgcHJvdmlkZWQgYnkgdXNpbmcgdGhlaXIgbWV0aG9kIGZvciByZWdyZXNzaW9uIHdpdGggNCBkaWZmZXJlbnQgbm9ubGluZWFyIGZ1bmN0aW9ucyBnKGYpLCBhbmQgZm9yIGNsYXNzaWZpY2F0aW9uIG9uIHRoZSBVU1BTIGRhdGFzZXQgdXNpbmcgYSBsb2dpc3RpYyBsaWtlbGlob29kLjxiciAvPjxiciAvPkFsdGhvdWdoIHRoZSBpZGVhIGlzIGZhaXJseSBzaW1wbGUgaXQgaXMgc3RpbGwgYSB3b3J0aHkgYWRkaXRpb24gdG8gdGhlIGZhbWlseSBvZiBhcHByb3hpbWF0ZSBHUCBpbmZlcmVuY2UgbWV0aG9kcyBmb3IgaW50cmFjdGFibGUgbGlrZWxpaG9vZHMuIEJ5IGFwcHJveGltYXRpbmcgdGhlIGxvd2VyIGJvdW5kIHRoZSBtZXRob2QgZG9lcyBsb3NlIG1hbnkgb2YgdGhlIG5pY2Ugc3RhdGlzdGljYWwgcHJvcGVydGllcyBvZiB2YXJpYXRpb25hbCBpbmZlcmVuY2UgYW5kIHRoZSBwYXBlciBjb3VsZCBiZW5lZml0IGZyb20gc29tZSBkaXNjdXNzaW9uIG9mIHRoaXMuPGJyIC8+PGJyIC8+VGhlIHBhcGVyIGlzIG1vc3RseSB3ZWxsIHdyaXR0ZW4gYW5kIHByb3ZpZGVzIGEgY2xlYXIgZXhwb3NpdGlvbi4gSSB3b3VsZCBsaWtlIHRoZSBhdXRob3JzIHRvIHByb3ZpZGUgc29tZSBkaXNhbWJpZ3VhdGlvbiBhcm91bmQgdGhlIHRlcm1zIGBpbnB1dCcgYW5kICdpbnZlcnNlIG1vZGVsJyBob3dldmVyOiBpbiBzZWN0aW9uIDIgdGhlIGxhdGVudCB2YXJpYWJsZSBmIGlzIHJlZmVycmVkIHRvIGFzIHRoZSBpbnB1dCwgd2hlcmVhcyBpbiBzZWN0aW9uIDMgd2Ugbm93IGhhdmUgeCB3aGljaCBpcyB0aGUgaW5wdXQuIFRoaXMgaXMgY29tcG91bmRlZCBieSB0aGUgZGlzY3Vzc2lvbiBvZiBpbnZlcnNlIG1vZGVscywgYnkgd2hpY2ggdGhlIGF1dGhvcnMgbWVhbiB0aGUgbWFwcGluZyBmcm9tIHRoZSBvYnNlcnZhdGlvbnMgeSB0byB0aGUgbGF0ZW50IHZhcmlhYmxlIGYgYnV0IHdoaWNoIGNvdWxkIGVhc2lseSBiZSB1bmRlcnN0b29kIGluIHRoZSBHUCBzZXR0aW5nIHRvIG1lYW4gdGhlIG1hcHBpbmcgZnJvbSB0aGUgYG91dHB1dCcgZiAob3IgeSkgdG8gdGhlIGBpbnB1dCcgeC4gT3RoZXIgdGhhbiB0aGlzIEkgZmluZCB0aGUgcGFwZXIgdG8gYmUgZW1pbmVudGx5IHVuZGVyc3RhbmRhYmxlLjxiciAvPjxiciAvPlRoZSBleHBlcmltZW50cyBzZWVtIGEgbGl0dGxlIHN1c3BlY3QgdG8gbWUuIFRoZXJlIGlzIHZlcnkgbGl0dGxlIGRpc2N1c3Npb24gb2YgdGhlIHJlc3VsdHMgcHJlc2VudGVkIGluIHRhYmxlIDEsIHdoaWNoIHRoZSBwYXBlciB3b3VsZCBiZW5lZml0IGZyb20gYXMgdmVyeSBmZXcgb2YgdGhlIHJlc3VsdHMgYXBwZWFyIHRvIGJlIHNpZ25pZmljYW50LCBnaXZlbiB0aGUgcXVvdGVkIHN0YW5kYXJkIGRldmlhdGlvbnMgLS0tIGZvciBOTEwgYGV4cChmKScgYW5kIGBzaW4oZiknIG1pZ2h0IGJlIHNpZ25pZmljYW50IGJ1dCB0aGUgcG9seW5vbWlhbCBhbmQgdGFuaCBmdW5jdGlvbnMgZG9uJ3QgYXBwZWFyIHRvIGJlLiBJcyB0aGlzIGFsc28gdGhlIGNhc2UgZm9yIHRoZSByZXN1bHRzIGluIHRhYmxlIDI/IFRoZSBlcnJvciBiYXJzIGFyZSBub3QgcmVwb3J0ZWQgaGVyZS4gVGhlIGF1dGhvcnMgc2hvdWxkIGFsc28gY29tcGFyZSwgYm90aCB0aGVvcmV0aWNhbGx5IGFuZCBleHBlcmltZW50YWxseSwgdG8gdGhlIHZhcmlhdGlvbmFsIGNsYXNzaWZpY2F0aW9uIG1ldGhvZCBpbXBsZW1lbnRlZCBpbiB0aGUgR1BNTCB0b29sYm94IGZvciB0aGUgbG9naXN0aWMgbGlrZWxpaG9vZC5kAgIPZBYEZg8PFgIfAQUtUGxlYXNlIHN1bW1hcml6ZSB5b3VyIHJldmlldyBpbiAxLTIgc2VudGVuY2VzZGQCAQ9kFgJmDxUB+wJUaGUgcGFwZXIgYXBwcm94aW1hdGVseSBjb21wdXRlcyB0aGUgdmFyaWF0aW9uYWwgbG93ZXIgYm91bmQgb24gR1AgaW5mZXJlbmNlIHdpdGggbGlrZWxpaG9vZHMgb2YgdGhlIGZvcm0gcCh5IHxmKSA9IE4oZyhmKSwgUykgZm9yIGFyYml0cmFyeSwgbm9ubGluZWFyIGZ1bmN0aW9ucyBnLCBieSBsaW5lYXJpc2luZyBnKGYpLiBUaGUgbWV0aG9kIGlzIHNpbXBsZSBidXQgc3RpbGwgaW50ZXJlc3RpbmcgYW5kIHRoZSBwYXBlciBpcyBtb3N0bHkgY2xlYXIgYW5kIHVuZGVyc3RhbmRhYmxlIGFsdGhvdWdoIGl0IHdvdWxkIGJlbmVmaXQgZnJvbSBzb21lIGRlZXBlciB0aGVvcmV0aWNhbCBjb21wYXJpc29ucyBhbmQgZGlzY3Vzc2lvbiBvZiB0aGUgZXhwZXJpbWVudHMuZAIDD2QWBGYPDxYCHwEFOFF1YWxpdHkgU2NvcmUgLSBEb2VzIHRoZSBwYXBlciBkZXNlcnZlcyB0byBiZSBwdWJsaXNoZWQ/ZGQCAQ9kFgJmDxUBFTc6IEdvb2QgcGFwZXIsIGFjY2VwdGQCBA9kFgRmDw8WAh8BBcIBSW1wYWN0IFNjb3JlIC0gSW5kZXBlbmRlbnRseSBvZiB0aGUgUXVhbGl0eSBTY29yZSBhYm92ZSwgdGhpcyBpcyB5b3VyIG9wcG9ydHVuaXR5IHRvIGlkZW50aWZ5IHBhcGVycyB0aGF0IGFyZSB2ZXJ5IGRpZmZlcmVudCwgb3JpZ2luYWwsIG9yIG90aGVyd2lzZSBwb3RlbnRpYWxseSBpbXBhY3RmdWwgZm9yIHRoZSBOSVBTIGNvbW11bml0eS5kZAIBD2QWAmYPFQF5MTogVGhpcyB3b3JrIGlzIGluY3JlbWVudGFsIGFuZCB1bmxpa2VseSB0byBoYXZlIG11Y2ggaW1wYWN0IGV2ZW4gdGhvdWdoIGl0IG1heSBiZSB0ZWNobmljYWxseSBjb3JyZWN0IGFuZCB3ZWxsIGV4ZWN1dGVkLmQCBQ9kFgRmDw8WAh8BBQpDb25maWRlbmNlZGQCAQ9kFgJmDxUBMzQ6IFJldmlld2VyIGlzIGNvbmZpZGVudCBidXQgbm90IGFic29sdXRlbHkgY2VydGFpbmQCBg8PFgIfAGhkZAIIDxUBAGQCAg9kFgYCAw9kFgJmDxUBE0Fzc2lnbmVkX1Jldmlld2VyXzhkAgcPPCsADQEADxYEHwNnHwICBWQWAmYPZBYMAgEPZBYEZg8PFgIfAQX3AUNvbW1lbnRzIHRvIGF1dGhvcihzKS4gIEZpcnN0IHByb3ZpZGUgYSBzdW1tYXJ5IG9mIHRoZSBwYXBlciwgYW5kIHRoZW4gYWRkcmVzcyB0aGUgZm9sbG93aW5nIGNyaXRlcmlhOiAgUXVhbGl0eSwgY2xhcml0eSwgb3JpZ2luYWxpdHkgYW5kIHNpZ25pZmljYW5jZS4gICAoRm9yIGRldGFpbGVkIHJldmlld2luZyBndWlkZWxpbmVzLCBzZWUgaHR0cDovL25pcHMuY2MvUGFwZXJJbmZvcm1hdGlvbi9SZXZpZXdlckluc3RydWN0aW9ucylkZAIBD2QWAmYPFQHfElRoaXMgaXMgYW4gaW50ZXJlc3RpbmcgYW5kIHdlbGwgd3JpdHRlbiBwYXBlciB1c2luZyB2YXJpYXRpb25hbDxiciAvPmFwcHJveGltYXRpb25zIHRvIGRlYWwgd2l0aCBub24tR2F1c3NpYW4gbGlrZWxpaG9vZHMuPGJyIC8+PGJyIC8+VGhlIGlkZWFzIGluIHRoZSBwYXBlciBhcmUgdmVyeSB3ZWxsIGV4cGxhaW5lZCBhbmQgdGhlIGNvbm5lY3Rpb25zIHRvPGJyIC8+dGhlIGV4aXN0aW5nIGxpdGVyYXR1cmUgYXJlIGdvb2QuIFRoZSBjb25uZWN0aW9ucyB0byB0aGUgRUtGIGFuZCBVS0Y8YnIgLz5hcmUgaW50ZXJlc3RpbmcuPGJyIC8+PGJyIC8+SW4gc2VjdGlvbiAxIGFuZCBpbiBzZWN0aW9uIDMsIGl0IGlzIGNsYWltZWQgdGhhdCB0aGUgcHJvcG9zZWQ8YnIgLz5tZXRob2RvbG9neSB3b3VsZCBiZSBhcHBsaWNhYmxlIHRvIHByb2JsZW1zIHdpdGggbm9uLWZhY3Rvcml6aW5nPGJyIC8+bGlrZWxpaG9vZHMsIGJ1dCBubyBmdXJ0aGVyIGRldGFpbHMgYXJlIHByb3ZpZGVkIGFib3V0IHRoaXMsIGFuZCBubzxiciAvPmV4cGVyaW1lbnRzIGRlYWwgd2l0aCB0aGlzIGNhc2UuIFBlcmhhcHMgaXQgd291bGQgYmUgY2xlYXJlciBpZiB0aGVzZTxiciAvPm5vdGVzIHdlcmUgbGVmdCB0byB0aGUgY29uY2x1c2lvbnMgKGFuZCBvdXRsb29rKSBmaW5hbCBzZWN0aW9uPzxiciAvPjxiciAvPlRoZSBleHBlcmltZW50YWwgc2VjdGlvbiBpcyBnb29kLCBpbmNsdWRpbmcgYSBmYWlybHkgd2lkZSB2YXJpZXR5IG9mPGJyIC8+bm9uLWxpbmVhciAiZyIgZnVuY3Rpb25zLiBUaGUgY29tcGFyaXNvbiB0byByZWYgWzldIGlzIGdvb2QsIGhvd2V2ZXIsPGJyIC8+aXQgd291bGQgYmUgbmljZSB0byBrbm93ICp3aHkqIHRoYXQgbWV0aG9kIGlzIGJlaW5nIG91dHBlcmZvcm1lZDxiciAvPihleGNlcHQgaW4gdGhlIHRhbmggY2FzZSkuIENhbiB5b3UgcHJvdmlkZSBhbnkgaW5zaWdodCBhcyB0byB3aHkgYW5kPGJyIC8+d2hlbiB3aGljaCBtZXRob2QgaXMgdGhlIGJlc3QgYXBwcm94aW1hdGlvbj8gVGhlIGV4cGVyaW1lbnRhbCBzZWN0aW9uPGJyIC8+Y291bGQgYmUgZnVydGhlciBzdHJlbmd0aGVuZWQgYnkgaW5jbHVkaW5nIG90aGVyIGNvbXBldGl0aXZlPGJyIC8+YWxnb3JpdGhtcyBpbiB0YWJsZSAxOiBob3cgd291bGQgTGFwbGFjZSdzIG1ldGhvZCBjb21wYXJlLCBhbmQgY291bGQ8YnIgLz5FeHBlY3RhdGlvbiBQcm9wYWdhdGlvbiAoRVApIGJlIGFwcGxpZWQ/PGJyIC8+PGJyIC8+VGhlIGJpbmFyeSBjbGFzc2lmaWNhdGlvbiBleGFtcGxlIGlzIGFsc28gZ29vZCB3aXRoIGdvb2Q8YnIgLz5jb21wYXJpc29ucy4gU2luY2UgdGhlIGxpa2VsaWhvb2QgdXNlZCBieSB0aGUgRUdQIGFuZCBVR1AgbWV0aG9kcyBpbjxiciAvPm5vbi1zdGFuZGFyZCAoc2lnbW9pZCArIEdhdXNzaWFuIG5vaXNlKSBpdCB3b3VsZCBiZSByZWxldmFudCBleHBsYWluPGJyIC8+d2hhdCBoYXBwZW5zLCBpZSwgd2hhdCBpcyB0aGUgaW5mZXJyZWQgbm9pc2UgbGV2ZWwsIHdoYXQgaGFwcGVucyB3aXRoPGJyIC8+dGhlIHByb2JhYmlsaXR5IG1hc3Mgd2hpY2ggZXhjZWVkcyB0aGUgYmluYXJ5IGxhYmVscywgY2FuIHRoaXMganVzdCBiZTxiciAvPmlnbm9yZWQ/IEl0IGlzIGEgYml0IHVuY2xlYXIgaG93IHRoZSBwcmVkaWN0aXZlIGNsYXNzIGxhYmVsIGlzPGJyIC8+ZGVmaW5lZC4uLiBlcXVhdGlvbiAoNDIpIGp1c3QgZ2l2ZXMgdGhlIHByZWRpY3RpdmUgKm1lYW4qLCB3aGF0IGFib3V0PGJyIC8+dGhlIHByZWRpY3RpdmUgdW5jZXJ0YWludHksIHBscyBlbGFib3JhdGUuPGJyIC8+PGJyIC8+VGhlIG1ldGhvZCB1c2VzIGdyYWRpZW50IGZyZWUgaHlwZXJwYXJhbWV0ZXIgbGVhcm5pbmcsIHdoaWNoIGlzIG5vdDxiciAvPnRoZSBub3JtIGZvciBjb21wYXJhYmxlIGFsZ29yaXRobXMuIFBscyBnaXZlIGEgZmV3IG1vcmUgZGV0YWlscyBhYm91dDxiciAvPnRoaXMuIEluIHRoZSBleGFtcGxlcyBwcm92aWRlZCBvbmx5IHZlcnkgZmV3IGh5cGVycGFyYW1ldGVycyBhcmU8YnIgLz51c2VkLi4uIHBlcmhhcHMgaW4gdGhpcyBjYXNlIGdyYWRpZW50IGZyZWUgaHlwZXJwYXJhbWV0ZXIgb3B0aW1pemF0aW9uPGJyIC8+aXMgb2suLi4gd291bGQgeW91IGV4cGVjdCBpdCB0byB3b3JrIHdlbGwgaWYgdGhlcmUgd2VyZSBtb3JlIChlZyAxMHMpPGJyIC8+b2YgaHlwZXJwYXJhbWV0ZXJzPyBQbHMgZWxhYm9yYXRlLjxiciAvPjxiciAvPm1pbm9yIHBvaW50OiBpdCBtYXkgYmUgaGVscGZ1bCB0byBzdGF0ZSByaWdodCBhd2F5IHdoYXQgaXMgbWVhbnQgYnk8YnIgLz50aGUgdGVybSAibm9uLWxpbmVhciBsaWtlbGlob29kIiAod2hlbiB0aGlzIGJlY2FtZSBjbGVhciBpbiBzZWN0aW9uPGJyIC8+MiwgSSBoYWQgdG8gZ28gYmFjayBhbiByZS1yZWFkIHNlY3Rpb24gMSkuPGJyIC8+ZAICD2QWBGYPDxYCHwEFLVBsZWFzZSBzdW1tYXJpemUgeW91ciByZXZpZXcgaW4gMS0yIHNlbnRlbmNlc2RkAgEPZBYCZg8VAcYDVGhpcyBpcyBhIGdvb2QsIGludGVyZXN0aW5nIGFuZCBjbGVhcmx5IHdyaXR0ZW4gcGFwZXIgb24gdGhlIHVzZSBvZjxiciAvPnRoZSB2YXJpYXRpb25hbCBhcHByb3hpbWF0aW9uIGZyYW1ld29yayB0byBHUCBpbmZlcmVuY2Ugd2l0aDxiciAvPm5vbi1HYXVzc2lhbiBsaWtlbGlob29kcy4gVGhlIGV4cG9zaXRpb24gb2YgdGhlIG1ldGhvZCBpcyBnb29kLCBhbmQ8YnIgLz50aGUgZXhwZXJpbWVudGFsIHNlY3Rpb24gaXMgY2xlYXIgYW5kIHdlbGwgcHJlc2VudGVkLiBHb29kIGNvbXBhcmlzb25zPGJyIC8+YXJlIGNob3NlbjsgdGhlc2UgY291bGQgYmUgc3RyZW5ndGhlbmVkIGJ5IGluY2x1ZGluZyBvdGhlcjxiciAvPmNvbXBldGl0b3JzLCBlZyBMYXBsYWNlJ3MgbWV0aG9kIGFuZCBwb3NzaWJseSBFUC4gQSBnb29kIGNvbnRyaWJ1dGlvbjxiciAvPnRvIHRoZSBHUCBsaXRlcmF0dXJlLjxiciAvPmQCAw9kFgRmDw8WAh8BBThRdWFsaXR5IFNjb3JlIC0gRG9lcyB0aGUgcGFwZXIgZGVzZXJ2ZXMgdG8gYmUgcHVibGlzaGVkP2RkAgEPZBYCZg8VASI4OiBUb3AgNTAlIG9mIGFjY2VwdGVkIE5JUFMgcGFwZXJzZAIED2QWBGYPDxYCHwEFwgFJbXBhY3QgU2NvcmUgLSBJbmRlcGVuZGVudGx5IG9mIHRoZSBRdWFsaXR5IFNjb3JlIGFib3ZlLCB0aGlzIGlzIHlvdXIgb3Bwb3J0dW5pdHkgdG8gaWRlbnRpZnkgcGFwZXJzIHRoYXQgYXJlIHZlcnkgZGlmZmVyZW50LCBvcmlnaW5hbCwgb3Igb3RoZXJ3aXNlIHBvdGVudGlhbGx5IGltcGFjdGZ1bCBmb3IgdGhlIE5JUFMgY29tbXVuaXR5LmRkAgEPZBYCZg8VAX8yOiBUaGlzIHdvcmsgaXMgZGlmZmVyZW50IGVub3VnaCBmcm9tIHR5cGljYWwgc3VibWlzc2lvbnMgdG8gcG90ZW50aWFsbHkgaGF2ZSBhIG1ham9yIGltcGFjdCBvbiBhIHN1YnNldCBvZiB0aGUgTklQUyBjb21tdW5pdHkuZAIFD2QWBGYPDxYCHwEFCkNvbmZpZGVuY2VkZAIBD2QWAmYPFQEhNTogUmV2aWV3ZXIgaXMgYWJzb2x1dGVseSBjZXJ0YWluZAIGDw8WAh8AaGRkAggPFQEAZBgDBR9jdGwwMCRjcGgkZ3ZSZXZpZXdzJGN0bDAyJGN0bDAwDzwrAAoBCAIBZAUfY3RsMDAkY3BoJGd2UmV2aWV3cyRjdGwwMSRjdGwwMA88KwAKAQgCAWQFH2N0bDAwJGNwaCRndlJldmlld3MkY3RsMDAkY3RsMDAPPCsACgEIAgFkKCWAiI3M3Zt/vSNqC6jDCQQgsj8=" type="hidden">
+</div>
+
+<table id="header">
+<tbody><tr>
+<td width="100%"><a href="http://nips.cc/" target="_blank">NIPS</a><br><b>Neural Information Processing Systems</b><br>8-11th December 2014, Montreal, Canada</td>
+</tr>
+<tr class="headerSeparator">
+    <td style="height:5px"></td>
+</tr>
+</tbody></table>
+<table id="content"><tbody><tr><td class="contentBorder">&nbsp;</td><td class="contentContainer">
+<span id="ctl00_cph_Label4" style="font-size:Small;font-weight:bold;">Reviews For Paper</span>
+<span id="ctl00_cph_lblErrorMessage" class="error" style="font-size:Small;"></span>
+<div id="ctl00_cph_pnlReviews">
+	
+    <span style="font-size:Small;">
+<table class="nicetable2" style="text-align:left; width: 100%;">
+    
+    <tbody><tr>
+        <td width="100px"><b>Paper ID</b></td>
+        <td><span id="ctl00_cph_infoSubmission_lblPaperId" style="font-size:Small;">706</span></td>
+    </tr>
+    <tr>
+        <td><b>Title</b></td>
+        <td><span id="ctl00_cph_infoSubmission_lblPaperTitle" style="font-size:Small;">Extended and Unscented Gaussian Processes</span></td>
+    </tr>
+    
+    
+    
+    
+    
+</tbody></table></span>
+    
+    
+            <hr>
+            <table>
+                <tbody><tr>
+                    <td>
+                        <span id="ctl00_cph_gvReviews_ctl00_Label2" style="font-size:Small;font-weight:bold;">Masked Reviewer ID:</span>
+                    </td>
+                    <td>
+                        <span id="ctl00_cph_gvReviews_ctl00_Label1" style="font-size:Small;">Assigned_Reviewer_15</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span id="ctl00_cph_gvReviews_ctl00_Label3" style="font-size:Small;font-weight:bold;">Review:</span>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            </tbody></table>
+            <div>
+		<table rules="all" style="color:#333333;border-width:1px;border-style:None;font-family:Verdana;font-size:Small;border-collapse:collapse;" border="1" cellpadding="4" cellspacing="0">
+			<tbody><tr style="color:White;background-color:#5D7B9D;font-weight:bold;">
+				<th scope="col">Question</th><th scope="col">&nbsp;</th>
+			</tr><tr style="color:#333333;background-color:#F7F6F3;">
+				<td style="width:20%;">Comments to author(s).  First provide a 
+summary of the paper, and then address the following criteria:  Quality,
+ clarity, originality and significance.   (For detailed reviewing 
+guidelines, see http://nips.cc/PaperInformation/ReviewerInstructions)</td><td style="width:80%;">
+                            The authors present two similar methods for 
+approximate inference in latent Gaussian models. They consider models of
+ a particular form, where the likelihood is Gaussian after a nonlinear 
+transform of the latent values. This model class leads them to consider 
+linearisation of the transformation, which in turn leads to algorithms 
+for variational updates which resembe the extended and unscented Kalman 
+filter. <br><br>Pros<br>--<br>What an interesting read. I thouroughly 
+enjoyed reviewing this paper. It presents the ideas clearly and 
+thouroughly, I feel like I could implement these ideas quickly given the
+ detail presented. <br><br><br>I think the authors should perhaps have 
+made more of the particular model class they have chosen, which is 
+really interesting. Table 1 shows that the method work well for a range 
+of difference nonlinearities. It's a shame there's no mention of 
+learning the nonlinear function anywhere (aside from the noise 
+variance), I would think that would be of great interest. <br><br>Given the model class, I'm sure there is a relationship with the Warped GP work of Ed Snelson? Perhaps this is worth a mention?<br><br>Critisism<br>--<br>line
+ 166. the authors describe their method as 'variational updates'. I 
+think this is a litle misleading, since variational updates are 
+guaranteed to increase the objective function, and thus reduce the KL. 
+Here, this isn;t the case. Given the relationship with the 
+unscented/extended kalman filter, It would be great to know a litle 
+about the convergece properties of the approximations. Is convergence 
+guaranteed?<br><br>Table 2 compares the negative log probability of the 
+method with GP classification from the GPML toolbox. I think this is 
+very misleading: the two methods are using different models, and so 
+these numbers really cannot be compared. I strongly recommend removing 
+this. <br><br>It's a shame that the method doesn't give gradient of the 
+hyper-parameters for optimization. I suppose the authors are up-front 
+about this, but I think this will put people off adopting the approach 
+in general. <br><br>What's going on in Figure 1 (b)? this is for one particular inner loop? Seems like a relatively uninformative plot to me. <br><br>Table
+ 1, first row, contains a wierd result, in that the GP method and the 
+[9] method differ. I think in this case, posterior is Gaussian and the 
+approximation in [9] is exact, yet the results are different to the GP 
+result. What gives?<br><br><br>Typos<br>--<br>equations 8,9, missing a \partial symbol on the denominator
+                        </td>
+			</tr><tr style="color:#284775;background-color:White;">
+				<td style="width:20%;">Please summarize your review in 1-2 sentences</td><td style="width:80%;">
+                            Summary<br>--<br>Excellent authorship and an
+ entertaining paper. Would be improved by discussion of the convergence 
+properties of the method and a compelling application of the model.<br><br>I
+ feel that the comparison of the log likelihoods across two different 
+models is unfair, and should be removed. the discrepancy between the 
+exact GP and the variational method is very strange. <br><br>Prepared to increase my score if issues are addressed. 
+                        </td>
+			</tr><tr style="color:#333333;background-color:#F7F6F3;">
+				<td style="width:20%;">Quality Score - Does the paper deserves to be published?</td><td style="width:80%;">
+                            5: Marginally below the acceptance threshold
+                        </td>
+			</tr><tr style="color:#284775;background-color:White;">
+				<td style="width:20%;">Impact Score - Independently of the Quality 
+Score above, this is your opportunity to identify papers that are very 
+different, original, or otherwise potentially impactful for the NIPS 
+community.</td><td style="width:80%;">
+                            1: This work is incremental and unlikely to 
+have much impact even though it may be technically correct and well 
+executed.
+                        </td>
+			</tr><tr style="color:#333333;background-color:#F7F6F3;">
+				<td style="width:20%;">Confidence</td><td style="width:80%;">
+                            4: Reviewer is confident but not absolutely certain
+                        </td>
+			</tr>
+		</tbody></table>
+	</div>
+            
+        
+            <hr>
+            <table>
+                <tbody><tr>
+                    <td>
+                        <span id="ctl00_cph_gvReviews_ctl01_Label2" style="font-size:Small;font-weight:bold;">Masked Reviewer ID:</span>
+                    </td>
+                    <td>
+                        <span id="ctl00_cph_gvReviews_ctl01_Label1" style="font-size:Small;">Assigned_Reviewer_43</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span id="ctl00_cph_gvReviews_ctl01_Label3" style="font-size:Small;font-weight:bold;">Review:</span>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            </tbody></table>
+            <div>
+		<table rules="all" style="color:#333333;border-width:1px;border-style:None;font-family:Verdana;font-size:Small;border-collapse:collapse;" border="1" cellpadding="4" cellspacing="0">
+			<tbody><tr style="color:White;background-color:#5D7B9D;font-weight:bold;">
+				<th scope="col">Question</th><th scope="col">&nbsp;</th>
+			</tr><tr style="color:#333333;background-color:#F7F6F3;">
+				<td style="width:20%;">Comments to author(s).  First provide a 
+summary of the paper, and then address the following criteria:  Quality,
+ clarity, originality and significance.   (For detailed reviewing 
+guidelines, see http://nips.cc/PaperInformation/ReviewerInstructions)</td><td style="width:80%;">
+                            The authors present a simple idea for 
+approximating the variational lower bound on the marginal likelihood for
+ GPs in the case of an intractable likelihood p(y | f) with a particular
+ form ---  the observations y equal an arbitrary nonlinear function g(f)
+ with additive Gaussian noise. The lower bound requires solving an 
+expectation involving the nonlinear function g(f), which can't be done 
+analytically. The authors suggest linearising the function about the 
+current estimate of the posterior mean on f. The paper contains two 
+methods for performing the linearisation: by differentiation of g (as in
+ the extended Kalman filter), and by use of `sigma points' (as in the 
+unscented transform). The authors show how variational inference can 
+then be carried out with their approximations along with learning of the
+ GP hyperparameters, and making predictions at new test points. 
+Empirical evaluation is provided by using their method for regression 
+with 4 different nonlinear functions g(f), and for classification on the
+ USPS dataset using a logistic likelihood.<br><br>Although the idea is 
+fairly simple it is still a worthy addition to the family of approximate
+ GP inference methods for intractable likelihoods. By approximating the 
+lower bound the method does lose many of the nice statistical properties
+ of variational inference and the paper could benefit from some 
+discussion of this.<br><br>The paper is mostly well written and provides
+ a clear exposition. I would like the authors to provide some 
+disambiguation around the terms `input' and 'inverse model' however: in 
+section 2 the latent variable f is referred to as the input, whereas in 
+section 3 we now have x which is the input. This is compounded by the 
+discussion of inverse models, by which the authors mean the mapping from
+ the observations y to the latent variable f but which could easily be 
+understood in the GP setting to mean the mapping from the `output' f (or
+ y) to the `input' x. Other than this I find the paper to be eminently 
+understandable.<br><br>The experiments seem a little suspect to me. 
+There is very little discussion of the results presented in table 1, 
+which the paper would benefit from as very few of the results appear to 
+be significant, given the quoted standard deviations --- for NLL 
+`exp(f)' and `sin(f)' might be significant but the polynomial and tanh 
+functions don't appear to be. Is this also the case for the results in 
+table 2? The error bars are not reported here. The authors should also 
+compare, both theoretically and experimentally, to the variational 
+classification method implemented in the GPML toolbox for the logistic 
+likelihood.
+                        </td>
+			</tr><tr style="color:#284775;background-color:White;">
+				<td style="width:20%;">Please summarize your review in 1-2 sentences</td><td style="width:80%;">
+                            The paper approximately computes the 
+variational lower bound on GP inference with likelihoods of the form p(y
+ |f) = N(g(f), S) for arbitrary, nonlinear functions g, by linearising 
+g(f). The method is simple but still interesting and the paper is mostly
+ clear and understandable although it would benefit from some deeper 
+theoretical comparisons and discussion of the experiments.
+                        </td>
+			</tr><tr style="color:#333333;background-color:#F7F6F3;">
+				<td style="width:20%;">Quality Score - Does the paper deserves to be published?</td><td style="width:80%;">
+                            7: Good paper, accept
+                        </td>
+			</tr><tr style="color:#284775;background-color:White;">
+				<td style="width:20%;">Impact Score - Independently of the Quality 
+Score above, this is your opportunity to identify papers that are very 
+different, original, or otherwise potentially impactful for the NIPS 
+community.</td><td style="width:80%;">
+                            1: This work is incremental and unlikely to 
+have much impact even though it may be technically correct and well 
+executed.
+                        </td>
+			</tr><tr style="color:#333333;background-color:#F7F6F3;">
+				<td style="width:20%;">Confidence</td><td style="width:80%;">
+                            4: Reviewer is confident but not absolutely certain
+                        </td>
+			</tr>
+		</tbody></table>
+	</div>
+            
+        
+            <hr>
+            <table>
+                <tbody><tr>
+                    <td>
+                        <span id="ctl00_cph_gvReviews_ctl02_Label2" style="font-size:Small;font-weight:bold;">Masked Reviewer ID:</span>
+                    </td>
+                    <td>
+                        <span id="ctl00_cph_gvReviews_ctl02_Label1" style="font-size:Small;">Assigned_Reviewer_8</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span id="ctl00_cph_gvReviews_ctl02_Label3" style="font-size:Small;font-weight:bold;">Review:</span>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            </tbody></table>
+            <div>
+		<table rules="all" style="color:#333333;border-width:1px;border-style:None;font-family:Verdana;font-size:Small;border-collapse:collapse;" border="1" cellpadding="4" cellspacing="0">
+			<tbody><tr style="color:White;background-color:#5D7B9D;font-weight:bold;">
+				<th scope="col">Question</th><th scope="col">&nbsp;</th>
+			</tr><tr style="color:#333333;background-color:#F7F6F3;">
+				<td style="width:20%;">Comments to author(s).  First provide a 
+summary of the paper, and then address the following criteria:  Quality,
+ clarity, originality and significance.   (For detailed reviewing 
+guidelines, see http://nips.cc/PaperInformation/ReviewerInstructions)</td><td style="width:80%;">
+                            This is an interesting and well written paper using variational<br>approximations to deal with non-Gaussian likelihoods.<br><br>The ideas in the paper are very well explained and the connections to<br>the existing literature are good. The connections to the EKF and UKF<br>are interesting.<br><br>In section 1 and in section 3, it is claimed that the proposed<br>methodology would be applicable to problems with non-factorizing<br>likelihoods, but no further details are provided about this, and no<br>experiments deal with this case. Perhaps it would be clearer if these<br>notes were left to the conclusions (and outlook) final section?<br><br>The experimental section is good, including a fairly wide variety of<br>non-linear "g" functions. The comparison to ref [9] is good, however,<br>it would be nice to know *why* that method is being outperformed<br>(except in the tanh case). Can you provide any insight as to why and<br>when which method is the best approximation? The experimental section<br>could be further strengthened by including other competitive<br>algorithms in table 1: how would Laplace's method compare, and could<br>Expectation Propagation (EP) be applied?<br><br>The binary classification example is also good with good<br>comparisons. Since the likelihood used by the EGP and UGP methods in<br>non-standard (sigmoid + Gaussian noise) it would be relevant explain<br>what happens, ie, what is the inferred noise level, what happens with<br>the probability mass which exceeds the binary labels, can this just be<br>ignored? It is a bit unclear how the predictive class label is<br>defined... equation (42) just gives the predictive *mean*, what about<br>the predictive uncertainty, pls elaborate.<br><br>The method uses gradient free hyperparameter learning, which is not<br>the norm for comparable algorithms. Pls give a few more details about<br>this. In the examples provided only very few hyperparameters are<br>used... perhaps in this case gradient free hyperparameter optimization<br>is ok... would you expect it to work well if there were more (eg 10s)<br>of hyperparameters? Pls elaborate.<br><br>minor point: it may be helpful to state right away what is meant by<br>the term "non-linear likelihood" (when this became clear in section<br>2, I had to go back an re-read section 1).<br>
+                        </td>
+			</tr><tr style="color:#284775;background-color:White;">
+				<td style="width:20%;">Please summarize your review in 1-2 sentences</td><td style="width:80%;">
+                            This is a good, interesting and clearly written paper on the use of<br>the variational approximation framework to GP inference with<br>non-Gaussian likelihoods. The exposition of the method is good, and<br>the experimental section is clear and well presented. Good comparisons<br>are chosen; these could be strengthened by including other<br>competitors, eg Laplace's method and possibly EP. A good contribution<br>to the GP literature.<br>
+                        </td>
+			</tr><tr style="color:#333333;background-color:#F7F6F3;">
+				<td style="width:20%;">Quality Score - Does the paper deserves to be published?</td><td style="width:80%;">
+                            8: Top 50% of accepted NIPS papers
+                        </td>
+			</tr><tr style="color:#284775;background-color:White;">
+				<td style="width:20%;">Impact Score - Independently of the Quality 
+Score above, this is your opportunity to identify papers that are very 
+different, original, or otherwise potentially impactful for the NIPS 
+community.</td><td style="width:80%;">
+                            2: This work is different enough from 
+typical submissions to potentially have a major impact on a subset of 
+the NIPS community.
+                        </td>
+			</tr><tr style="color:#333333;background-color:#F7F6F3;">
+				<td style="width:20%;">Confidence</td><td style="width:80%;">
+                            5: Reviewer is absolutely certain
+                        </td>
+			</tr>
+		</tbody></table>
+	</div>
+            
+        
+    <br>
+    <br>
+
+</div>
+</td><td class="contentBorder">&nbsp;</td></tr></tbody></table>
+</form>
+
+
+</body></html>

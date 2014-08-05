@@ -1,0 +1,79 @@
+6000 Characters max
+
+- should address
+* must address
+
+
+-------------------------------------------------------------------------------
+Points to rebut:
+---------------
+
+* Convergence criticisms:
+    - Clarify what is meant by variational updates (only once mean iteration
+      has converged) -- R15
+    - What are the convergence properties of the approximations on the lower
+      bound, is convergence guaranteed? What are the effects on the variational
+      updates? -- R15, R43
+
+* Another compelling application of the model -- R15
+
+* Comparisons are unfair with the GPML toolbox (this is not true, all are using
+  Bernoulli log likelihood). -- R15
+
+* More discussion of the experiments:
+    - Why is the [9] method seriously under performing even the linear GP model 
+      the first experiment? -- R15
+    - Why is [9] being outperformed in all but the tanh experiment? -- R15, R8
+    - Which method is best for which situation? -- R8
+    - More discussion of the 1st experiment with reference to no real
+      significant differences between methods (at least in terms of nll). Is
+      this also the same with experiment 2 (there are no error bars) -- R43
+    - Can/how Laplace and EP be added to the comparisons in table 1? -- R8
+
+* Compare (theoretically and experimentally) to the variational classifier in
+  the GPML toolbox. 
+
+* It is a bit unclear how the predictive class label is defined (eq 42),
+  what about predictive uncertainty? -- R8
+
+* No hyperparameter gradients:
+    - may put people off adopting this approach. -- R15
+    - More discussion, how would this perform if 10's of parameters? (ARD
+      kernel). -- R8
+
+* No mention of learning the nonlinear function, also what is the relationship
+  with Warped GPs? -- R15
+
+* EGP/UGP used for classification: -- R8
+    - What are the inferred noise levels (since likelihood is sigmoid + 
+      Gaussian noise)?
+    - What happens with the probability mass that exceeds 0/1 levels?
+
+- Better explanation required for figure 1b -- R15
+
+- Disambiguation of the "input" and "inverse" terms, they have been overloaded
+  in the paper (have been used to refer to both f and x). -- R43
+
+- Discussion with GPs and non-factorising likelihoods can be left to the
+  conclusions. -- R8
+
+- State right away what is mean by "nonlinear likelihood", this is ambiguous
+  until section 2.
+
+
+-------------------------------------------------------------------------------
+Things to do:
+------------
+
+* Put error bars on the classification results in table 2. -- R43
+
+* Compare the classifiers against the variational classifier in the GPML
+  toolbox. -- R43
+
+* Another interesting application: -- R15
+    - warped GPs
+    - Log-Gaussian Cox Process
+
+* Comparison to other methods for the 1st experiment -- R8
+    - Laplace
+    - EP
