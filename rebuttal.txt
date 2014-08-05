@@ -49,6 +49,9 @@ Points to rebut:
       Gaussian noise)?
     - What happens with the probability mass that exceeds 0/1 levels?
 
+* Put error bars on the classification results in table 2. -- R43
+    -> Cannot - there is a set help out test set, so no cross val is done!
+
 - Better explanation required for figure 1b -- R15
 
 - Disambiguation of the "input" and "inverse" terms, they have been overloaded
@@ -64,8 +67,6 @@ Points to rebut:
 -------------------------------------------------------------------------------
 Things to do:
 ------------
-
-* Put error bars on the classification results in table 2. -- R43
 
 * Compare the classifiers against the variational classifier in the GPML
   toolbox. -- R43
