@@ -1,3 +1,123 @@
+Thank you to the reviewers for thoroughly reading our paper and for providing
+constructive feedback. All of the suggestions for improving clarity of the
+text, discussions of results, and corrections will be incorporated into the
+final version.
+
+R15-1: There is no mention of learning the nonlinear function, which would be
+of interest.
+
+Parameters can be learned for this function (currently implemented), either
+using provided or numerical gradients. However, this is not the goal of the
+paper as we wish to find the posterior over the latent inputs to this function. 
+
+R15-2: I’m sure there is a relationship with Warped GPs?
+
+While there are some similarities mechanistically with the warped GP, our
+objective is different in that we wish to infer the full posterior over the
+latent function, f. The goal of a warped GP is to infer a  transformation of a
+non-Gaussian process observation to a space where a GP can be constructed. That
+is, given an “inverse” function f = g^-1(y, theta), learn theta and the
+underlying GP. We can add this to the introduction.
+
+R15-3: Expresses concern that linearisation removes the guarantee of the
+variational objective (F) lower bounding LML. Also wants to know if convergence
+is guaranteed.
+
+When eq 14 has not converged we cannot guarantee F is still a lower bound.
+However, in the case of the EGP, a Gauss-Newton procedure is used to find the
+optimal m (mentioned in section 2.3 and 2.5), which has a global convergence
+proof under some conditions on the Jacobians, see [14] p255. Hence, when we are
+using converged m in the EGP (and the Jacobian conditions are satisfied),
+evaluating F is a valid lower bound. We cannot make the same guarantees for the
+UGP (though it works well in practice), but searching for such guarantees may
+be interesting future work. The secant method may provide some insight into
+this, perhaps also the observation that as the spread of sigma points (kappa)
+approaches zero, the A matrix will approach the Jacobian of g. These points can
+be clarified in the text.
+
+R15-4: It is not valid to compare the likelihoods from the GP methods with
+those from the GPML toolbox.
+
+This is not the case, and we can clarify this point in the paper. Even though
+our method has a different likelihood to the methods in the GMPL toolbox, the
+expectation, E[y*], from our model is actually the expected probability of a
+label, i.e., our equation (42) is the same as (3.25) from [3] for the
+classification experiment. We then evaluate the log likelihood of the true
+labels given these expected label probabilities using a Bernoulli likelihood.
+This is also known as the negative log probability loss, and is a standard
+classification benchmark, see; “Evaluating predictive uncertainty challenge”,
+Quinonero-Candela et al. 2005.
+
+R15-5: We do not give hyperparameter gradients for our method.
+
+Unfortunately there is a strong coupling between the hyperparameters and
+posterior parameter gradients (in the EGP), and so we have found that numerical
+methods work well and are easily implementable in this situation. These methods
+may not work for e.g., high dimensional ARD kernel functions (or more than ~10
+hyperparameters). Using automatic differentiation may be an interesting
+alternative for both the EGP and UGP.
+
+R15-6: Why does the method [9] do badly, even in the normal GP setting?
+
+We found that hyperparameter learning for [9] (essentially stochastic
+gradients) was not as effective as the numerical methods used by the other
+methods. In the identity forward model case if we were to set the
+hyperparameters to be the same for all algorithms we would expect the same
+results -- however this is not a particularly realistic setting so we did not
+include it in the experiment. We can clarify this in the text.
+
+R43-1:  By approximating the lower bound many of the statistical properties of
+variational inference are lost.
+
+Please see R15-3:
+
+R43-2: Very few of the results seem to be significant in Table 1, and there
+could be more discussion.
+
+We feel that this statement is perhaps a little strong -- we would suggest that
+only the tanh(2f) forward models do not have a significantly better NLL than
+[9]. Furthermore, the UGP can be used in situations where [9] and the EGP
+cannot (fig 1a), without sacrificing performance in situations where all
+methods can be used. This is a significant result and is one of the main
+contributions of the paper.
+
+R43-3: Error bars are not reported on Table 2.
+
+We do not report error bars on this dataset because no cross validation is
+performed -- there is a standard training and test set that [6] has
+established. We can clarify this point in the paper.
+
+R43-4: Compare to the variational method in the GPML toolbox.
+
+Here are the results: 
+VB: av nll = 0.10891, err = 3.3635%,  l_sig = 0.9045, l_l = 2.0664 
+This is comparable to the Laplace approximation, and worse than the
+UGP. A small bug fix in our code improves the EGP performance to match that of
+the UGP.  The variational GP classifier, like EP, has to be specifically
+derived for each forward model (bounding the sigmoid in this case), so is not
+as general as our methods.
+
+R8-1: Why is [9] being outperformed?
+
+see R15-6.
+
+R8-2: Explain more about the sigmoid + Gaussian likelihood, i.e. inferred noise
+level and probability mass outside the bounds [0, 1].
+
+We have found that for both the EGP and UGP the likelihood noise is pushed
+towards 0 (within numerical limits and subject to local extrema in F --
+mentioned in the paper), and so effectively the likelihood becomes a sigmoid
+within a dirac function, making the probability mass negligible outside [0, 1].
+The predictive uncertainty can be obtained by using eq (43) (this makes less
+sense for classification) and has been used in fig 1a. We could also
+potentially evaluate the integral int (E[y*] - g(f*))^2 N(f*|m*, C*)df*. These
+points can be added to the paper.
+
+R8-3: Please give more details of parameter learning.
+
+see R15-5.
+
+
 6000 Characters max
 
 - should address
