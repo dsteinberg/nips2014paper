@@ -92,10 +92,9 @@ R43-4: Compare to the variational method in the GPML toolbox.
 Here are the results: 
 VB: av nll = 0.10891, err = 3.3635%,  l_sig = 0.9045, l_l = 2.0664 
 This is comparable to the Laplace approximation, and worse than the
-UGP. A small bug fix in our code improves the EGP performance to match that of
-the UGP.  The variational GP classifier, like EP, has to be specifically
-derived for each forward model (bounding the sigmoid in this case), so is not
-as general as our methods.
+UGP. We remind the reviewers that the variational GP classifier, like EP, has
+to be specifically derived for each forward model (bounding the sigmoid in this
+case), so is not as general as our methods.  
 
 R8-1: Why is [9] being outperformed?
 
