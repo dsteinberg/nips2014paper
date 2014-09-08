@@ -146,9 +146,8 @@ The following forms are assumed for the prior and likelihood:
     \label{eq:priorlike}
 \end{equation}
 where $\nonlin{\cdot} : \real{D} \to \real{d}$ is a nonlinear function or
-forward model. Unfortunately the marginal likelihood is intractable %to compute
-as %because 
-the nonlinear function makes the likelihood and prior non-conjugate,
+forward model. Unfortunately the marginal likelihood is intractable
+as the nonlinear function makes the likelihood and prior non-conjugate,
 \begin{equation}
     \prob{\obs} = \int \gausC{\obs}{\nonlin{\lstate}, \lcov}
         \gausC{\lstate}{\prmean, \prcov} d\lstate,
@@ -183,8 +182,6 @@ Gaussian form,
     \qrob{\lstate} = \gausC{\lstate}{\pomean, \pocov}. \label{eq:varpost}
 \end{equation}
 Now we can evaluate the expectation and KL term in \eqref{eq:fengy},
-
-TODO -- IS THE QUADRATIC TERM IN THE KL THE WRONG WAY AROUND?
 \begin{align}
     \expec{q\lstate}{\log \probC{\obs}{\lstate}}
         =& - \frac{1}{2} \bigg[ 
@@ -193,10 +190,11 @@ TODO -- IS THE QUADRATIC TERM IN THE KL THE WRONG WAY AROUND?
             \brac{\obs - \nonlin{\lstate}}}\bigg],
             \label{eq:qlike} \\
      - \KL{\qrob{\lstate}}{\prob{\lstate}}
-        =& - \frac{1}{2} \bigg[\log\deter{\prcov\pocov\inv}
-            + \brac{\pomean - \prmean}\transpose\prcov\inv
-            \brac{\pomean - \prmean}
-            + \trace{\prcov\inv\pocov} - D\bigg] \label{eq:qkl}.
+        =& - \frac{1}{2} \bigg[\trace{\prcov\inv\pocov}
+        + \brac{\prmean - \pomean}\transpose\prcov\inv
+        \brac{\prmean - \pomean} 
+        - \log \deter{\pocov\prcov\inv}
+        - D\bigg] \label{eq:qkl}.
 \end{align}
 where the expectation involving $\nonlin{\cdot}$ may be intractable. One method
 of dealing with these expectations is presented in \cite{Opper2009} by assuming
@@ -211,8 +209,8 @@ To find the optimal posterior mean, $\pomean$, we need to find the derivative,
 \begin{equation}
     \frac{\partial\Fengy}{\partial\pomean} = -\frac{1}{2}
     \frac{\partial}{\partial\pomean} \expec{q\lstate}{
-        \brac{\lstate - \prmean}\transpose\prcov\inv
-        \brac{\lstate - \prmean}
+        \brac{\prmean - \lstate}\transpose\prcov\inv
+        \brac{\prmean - \lstate}
         + \brac{\obs - \nonlin{\lstate}}\transpose \lcov\inv
             \brac{\obs - \nonlin{\lstate}}},
 \end{equation}
@@ -231,8 +229,8 @@ augmented Gaussian,
 \end{equation}
 where
 \begin{equation}
-    \augobs = \begin{bmatrix} \obs \\ \mathbf{0} \end{bmatrix}, \quad
-    \augnonlin{\lstate} = \begin{bmatrix} \nonlin{\lstate} \\ \lstate - \prmean 
+    \augobs = \begin{bmatrix} \obs \\ \prmean \end{bmatrix}, \quad
+    \augnonlin{\lstate} = \begin{bmatrix} \nonlin{\lstate} \\ \lstate 
         \end{bmatrix}, \quad
     \augcov = \begin{bmatrix} \lcov & \mathbf{0} \\ \mathbf{0} & \prcov 
         \end{bmatrix}.
@@ -264,7 +262,7 @@ term $\intcpt \in \real{d}$. Using this approximation we get,
 \begin{equation}
     \nabla_\pomean \Fengy
         \approx \Linmat\transpose\lcov\inv\brac{\obs - \Linmat\pomean 
-            - \intcpt} - \prcov\inv\brac{\pomean - \prmean}
+            - \intcpt} + \prcov\inv\brac{\prmean - \pomean}
     \quad \text{and} \quad
     \nabla_\pomean \nabla_\pomean \Fengy
         \approx - \Linmat\transpose\lcov\inv\Linmat - \prcov\inv.
@@ -454,9 +452,9 @@ marginal likelihood, $\Fengy$. We can use our approximation
 \eqref{eq:linearize} again,
 \begin{multline}
     \Fengy \approx - \frac{1}{2} \bigg[
-        D\log{2\pi} + \log\deter{\lcov} + \log\deter{\prcov\pocov\inv}
-    + \brac{\pomean - \prmean}\transpose\prcov\inv
-        \brac{\pomean - \prmean} \\
+    D\log{2\pi} + \log\deter{\lcov} - \log\deter{\pocov\prcov\inv}
+    + \brac{\prmean - \pomean}\transpose\prcov\inv
+    \brac{\prmean - \pomean} \\
     + \brac{\obs - \Linmat\pomean - \intcpt}\transpose\lcov\inv
         \brac{\obs - \Linmat\pomean - \intcpt}
         \bigg].
@@ -474,9 +472,7 @@ only  terms  of $\Fengy$ dependent on $\pomean$ are:
             \lcov\inv
             \brac{\obs - \nonlin{\pomean}} \\
     -\frac{1}{2}
-        \brac{\pomean - \prmean}\transpose
-        \prcov\inv
-        \brac{\pomean - \prmean},
+    \brac{\prmean - \pomean}\transpose\prcov\inv\brac{\prmean - \pomean},
     \label{eq:MAP}
 \end{equation}
 for the Taylor series linearization case. This is also the \emph{maximum
@@ -644,7 +640,7 @@ to find the gradients, $\partial\Fengy/\partial\khypers$, for both the extended
 and unscented algorithms, where $\Fengy$ is approximated as,
 \begin{equation}
     \Fengy \approx - \frac{1}{2} \bigg[
-        N\log{2\pi\lvar} + \log\deter{\KERNL\pocov\inv}
+    N\log{2\pi\lvar} - \log\deter{\pocov\KERNL\inv}
     + \pomean\transpose\KERNL\inv \pomean
     + \frac{1}{\lvar}
         \brac{\obs - \Linmat\pomean - \intcpt}\transpose\!
