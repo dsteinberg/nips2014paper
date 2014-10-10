@@ -6,10 +6,10 @@ from glob import glob
 #import matplotlib.pyplot as plt
 
 # Choose which test to calculate results for
-testname = 'linear'
+#testname = 'linear'
 #testname = 'poly'
 #testname = 'sin'
-#testname = 'tanh'
+testname = 'tanh'
 #testname = 'exp'
 
 # Find data and result files
@@ -57,7 +57,7 @@ for i, oppfname in enumerate(oppres):
 
     Eys = oppfdata['yStar']
     Efs = oppfdata['mufPred']
-    Vfs = oppfdata['sigmafStar']
+    Vfs = oppfdata['sigmafStar']**2
 
     SMSEf.append(SMSE(fs, Efs))
     SMSEy.append(SMSE(ys, Eys))
