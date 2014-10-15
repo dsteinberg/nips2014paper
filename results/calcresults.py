@@ -11,6 +11,7 @@ from glob import glob
 #testname = 'exp'
 #testname = 'sin'
 testname = 'tanh'
+#testname = 'sign'
 
 # Find data and result files
 dataname = glob('../data/*{}*'.format(testname))
