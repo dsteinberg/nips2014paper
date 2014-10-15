@@ -8,9 +8,9 @@ from glob import glob
 # Choose which test to calculate results for
 #testname = 'linear'
 #testname = 'poly'
+#testname = 'exp'
 #testname = 'sin'
 testname = 'tanh'
-#testname = 'exp'
 
 # Find data and result files
 dataname = glob('../data/*{}*'.format(testname))
