@@ -465,32 +465,34 @@ the expected likelihood, $\trace{\Linmat\transpose\lcov\inv\Linmat\pocov} = D -
 \trace{\prcov\inv\pocov}$ once we have linearized $\nonlin{\cdot}$ and
 substituted \eqref{eq:pocovi}. In practice we only calculate this approximation
 $\Fengy$ if we need to optimize some model hyperparameters, like for a Gaussian
-process as described in section \ref{sec:gpmod} . For optimizing $\pomean$, the
-only  terms  of $\Fengy$ dependent on $\pomean$ are:
+process as described in section \ref{sec:gpmod}. When optimizing $\pomean$, the
+only terms of $\Fengy$ dependent on $\pomean$ for Taylor series linearization 
+are,
 \begin{equation}
     -\frac{1}{2} \brac{\obs - \nonlin{\pomean}}\transpose
             \lcov\inv
             \brac{\obs - \nonlin{\pomean}} \\
     -\frac{1}{2}
-    \brac{\prmean - \pomean}\transpose\prcov\inv\brac{\prmean - \pomean},
+    \brac{\prmean - \pomean}\transpose\prcov\inv\brac{\prmean - \pomean}.
     \label{eq:MAP}
 \end{equation}
-for the Taylor series linearization case. This is also the \emph{maximum
-    a-posteriori} objective, and optimizing this using the Gauss-Newton method
-will lead $\pomean$ to converge to the true posterior mean as long as the
-initial $\pomean_0$ is sufficiently close \cite{Nocedal2006}. No such
-guarantees exist for statistical linearization, though monitoring
-\eqref{eq:MAP} works well in practice (see the experiment in
-\autoref{sec:exptoy}). A line search could be used to select an optimal value
-for the step length, $\step$ in Equation \eqref{eq:pomean}. However, we find
-that setting $\step=1$, and then successively multiplying $\step$ by some
-number in $\brac{0, 1}$ until the MAP objective \eqref{eq:MAP} decreases, or
-some maximum number of iterations is exceeded is fast and works well in
-practice. If the maximum number of iterations is exceeded we call this a
-`diverge' condition, and terminate the search for $\pomean$ (and return the
-last good value). This only tends to happen for statistical linearization, but
-does not tend to impact the algorithms performance since we always make sure to
-improve $\Fengy$.
+This is also the \emph{maximum a-posteriori} objective. A global convergence
+proof exists for this objective when optimized by a Gauss-Newton procedure
+under some conditions on the Jacobians, see \cite[p255]{Nocedal2006}. This
+implies that once \eqref{eq:MAP} converges to the global optimum,
+\eqref{eq:approxfengy} is again the variational lower bound. No such guarantees
+exist for statistical linearization, though monitoring \eqref{eq:MAP} works
+well in practice (see the experiment in \autoref{sec:exptoy}). 
+
+A line search could be used to select an optimal value for the step length,
+$\step$ in Equation \eqref{eq:pomean}. However, we find that setting $\step=1$,
+and then successively multiplying $\step$ by some number in $\brac{0, 1}$ until
+the MAP objective \eqref{eq:MAP} decreases, or some maximum number of
+iterations is exceeded is fast and works well in practice. If the maximum
+number of iterations is exceeded we call this a `diverge' condition, and
+terminate the search for $\pomean$ (and return the last good value). This only
+tends to happen for statistical linearization, but does not tend to impact the
+algorithms performance since we always make sure to improve $\Fengy$.
 
 \section{Variational Inference in Gaussian Process Models with Linearization}
 \label{sec:gpmod}
@@ -677,22 +679,22 @@ then generated as $\obs = \nonlin{\lstate} + \epsilon$ where $\epsilon \sim
 cross validation to train (200 points) and test (800 points) the GPs. We use
 standardized mean squared error (SMSE) to test the predictions with the held
 out data in both the latent and observed spaces. We also use held-out average
-negative log-likelihood on the latent test data, which is calculated as
-$-\frac{1}{N\test} \sum_{n} \log \gausC{\lstates_n\test}{\pomeans_n\test,
-    \pocovs_n\test}$. All of the GPs use Mat\'ern $\frac{5}{2}$ covariance
-functions with the hyperparameters and $\lvar$ initialized at 1.0 and
-lower-bounded at 0.1 (and 0.01 for~$\lvar$).
+negative log predictive density (NLPD) on the latent test data, which is
+calculated as $-\frac{1}{N\test} \sum_{n} \log
+\gausC{\lstates_n\test}{\pomeans_n\test, \pocovs_n\test}$. All of the GPs use
+Mat\'ern $\frac{5}{2}$ covariance functions with the hyperparameters and
+$\lvar$ initialized at 1.0 and lower-bounded at 0.1 (and 0.01 for~$\lvar$).
 %
 \begin{table}[tb]
     \centering
     \caption[]{Prediction results from the nonlinear GPs with various 
         differentiable nonlinear functions. The predicted $\lstates\test$ and 
-        $\obss\test$ are the same for the $\nonlin{\lstate} = \lstate$ case, so
-        we do not report $\obss\test$ in this case.}
+        $\obss\test$ are the same for $\nonlin{\lstate} = \lstate$, so we do
+        not report $\obss\test$ in this case.}
     \footnotesize
     \begin{tabular}{r|c| c c c c c c}
         \multirow{2}{*}{$\nonlin{\lstate}$} & \multirow{2}{*}{Algorithm} & 
-            \multicolumn{2}{c}{Av.\ neg.\ ll.\ $\lstates\test$} &
+            \multicolumn{2}{c}{NLPD $\lstates\test$} &
             \multicolumn{2}{c}{SMSE $\lstates\test$} &
             \multicolumn{2}{c}{SMSE $\obss\test$} \\
         & & mean & std. & mean & std. & mean & std.\\
@@ -700,7 +702,7 @@ lower-bounded at 0.1 (and 0.01 for~$\lvar$).
         $\lstate$ 
 & UGP & -0.90046 & 0.06743 & 0.01219 & 0.00171 & -- & -- \\
 & EGP & -0.89908 & 0.06608 & 0.01224 & 0.00178 & -- & -- \\
-& \cite{Opper2009} & -0.27590 & 0.06884 & 0.01249 & 0.00159 & 0.04656 & 0.00201 \\
+& \cite{Opper2009} & -0.27590 & 0.06884 & 0.01249 & 0.00159 & -- & -- \\
 & GP & -0.90278 & 0.06988 & 0.01211 & 0.00160 & -- & -- \\
         \midrule
         $\lstate^3 + \lstate^2 + \lstate$ 
@@ -735,10 +737,10 @@ lower-bounded at 0.1 (and 0.01 for~$\lvar$).
         \label{sub:sign}
     \end{subfigure}
     \begin{subfigure}[b]{0.5\linewidth}
-        \includegraphics[width=\linewidth]{fig/trace_end}
+        \includegraphics[width=\linewidth]{fig/trace}
         \caption{MAP trace from learning $\pomean$}
         \label{sub:mape}
-        \vspace{1.5mm}
+        \vspace{0.5mm}
     \end{subfigure}
 
     \caption[]{Example of learning the unscented Gaussian process (UGP) with a
@@ -757,14 +759,14 @@ lower-bounded at 0.1 (and 0.01 for~$\lvar$).
 $\nonlin{\cdot}$. We test the EGP and UGP against the model in \cite{Opper2009}
 -- which uses 10,000 samples to evaluate the one dimensional expectations. We
 have used this number of  samples so the running times of the algorithm in
-\cite{Opper2009} are comparable to ours.  We also test against normal GP
+\cite{Opper2009} are comparable to ours. We also test against normal GP
 regression for a linear forward model ($\nonlin{\lstate} = \lstate$). In
 \autoref{fig:learnex} we show the results of the UGP using a forward model for
 which no derivative exists at the zero crossing points. Also shown is a typical
 objective function trace for learning the posterior mean which terminated on a
 `divergence' condition. We use quadrature for the predictions in observation
 space in \autoref{tab:toy} and the unscented transform for the predictions in
-\autoref{fig:learnex}.  Interestingly, there is almost no difference in
+\autoref{fig:learnex}. Interestingly, there is almost no difference in
 performance between the EGP and UGP, even though the EGP has access to the
 derivatives of the forward models and the UGP does not. Both the UGP and EGP
 outperform \cite{Opper2009}, apart from the $\tanh$ experiment for inversion.
@@ -772,6 +774,7 @@ We also found that the method in \cite{Opper2009} would suffer from numerical
 problems  on the non-differentiable forward model in \autoref{fig:learnex}.
 This agrees with the authors who state that their algorithm requires smooth
 likelihood models.
+
 
 \subsection{Binary Handwritten Digit Classification}
 
@@ -802,12 +805,12 @@ are learned using grid search with three-fold cross validation.
 %thresholded at $0.5$). 
 
 The results are summarized in \autoref{tab:class}, where we report the average
-negative log-likelihood, the error rate and the learned hyperparameter values
-for the GPs. Surprisingly, the EGP and UGP outperform the other classifiers on
-this dataset, despite the other classifiers being specifically formulated for
-this task. However, we find that our algorithms do get stuck in local minima
-for some initial values of $\lvar$, especially if it is set relatively large
-for this task~(e.g.~$1.0$).
+Bernoulli negative log-probability (NLP), the error rate and the learned
+hyperparameter values for the GPs. Surprisingly, the EGP and UGP outperform the
+other classifiers on this dataset, despite the other classifiers being
+specifically formulated for this task. However, we find that our algorithms do
+get stuck in local minima for some initial values of $\lvar$, especially if it
+is set relatively large for this task~(e.g.~$1.0$).
 
 \begin{table}[tb]
     \centering
@@ -815,7 +818,7 @@ for this task~(e.g.~$1.0$).
         dataset for numbers `3' and `5'.}
     \footnotesize
     \begin{tabular}{r| c c c c}
-        Algorithm & Av.\ neg.\ ll.\ $\obss\test$ & Error rate (\%) 
+        Algorithm & NLP $\obss\test$ & Error rate (\%) 
             & $\log\!\brac{\sigma_\text{se}}$ & $\log\!\brac{l_\text{se}}$ \\
         \toprule
         GP -- Laplace & 0.11528 & 2.9754 & 2.5855 & 2.5823 \\
