@@ -154,15 +154,16 @@ The following forms are assumed for the prior and likelihood:
     \label{eq:priorlike}
 \end{equation}
 where $\nonlin{\cdot} : \real{D} \to \real{d}$ is a nonlinear function or
-forward model. Unfortunately the marginal likelihood is intractable
+forward model. Unfortunately the marginal likelihood $\prob{\obs}$ is intractable
 as the nonlinear function makes the likelihood and prior non-conjugate,
-\begin{equation}
-    \prob{\obs} = \int \gausC{\obs}{\nonlin{\lstate}, \lcov}
-        \gausC{\lstate}{\prmean, \prcov} d\lstate,
-    \label{eq:marglike}
-\end{equation}
-which also makes the posterior intractable to evaluate. Thus, we choose to
-approximate the posterior and marginal likelihood using variational inference
+%\begin{equation}
+%    \prob{\obs} = \int \gausC{\obs}{\nonlin{\lstate}, \lcov}
+%        \gausC{\lstate}{\prmean, \prcov} d\lstate,
+%    \label{eq:marglike}
+%\end{equation}
+which also makes the posterior $\probC{\lstate}{\obs}$ intractable to evaluate. Thus, we choose to
+approximate the posterior % and marginal likelihood 
+using variational inference
 \cite{Jordan1999}.
 
 
