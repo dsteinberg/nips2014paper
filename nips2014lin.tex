@@ -695,8 +695,13 @@ $\lvar$ initialized at 1.0 and lower-bounded at 0.1 (and 0.01 for~$\lvar$).
 %
 \begin{table}[tb]
     \centering
-    \caption[]{Prediction results from the nonlinear GPs with various 
-        differentiable nonlinear functions. The predicted $\lstates\test$ and 
+    \caption[]
+    {%Prediction results from the nonlinear GPs with various 
+      %  differentiable nonlinear functions. 
+       The negative log predictive density (NLPD) and the standardized 
+       mean squared error (SMSE) on test data for various differentiable functions. 
+       Lower values are better for both measures. 
+        The predicted $\lstates\test$ and 
         $\obss\test$ are the same for $\nonlin{\lstate} = \lstate$, so we do
         not report $\obss\test$ in this case.}
     \footnotesize
@@ -822,8 +827,12 @@ is set relatively large for this task~(e.g.~$1.0$).
 
 \begin{table}[tb]
     \centering
-    \caption[]{Classification performance on the USPS handwritten-digits
-        dataset for numbers `3' and `5'.}
+    \caption[]{Classification performance on the USPS handwritten-digits dataset for
+    numbers `3' and `5'. Lower values of the negative log probability (NLP) and 
+    error rate indicate better performance. The learned  signal variance 
+    $\!\brac{\sigma^{2}_\text{se}}$ and  length scale  $\!\brac{l_\text{se}}$ 
+    of the latent process are also shown.
+    }
     \footnotesize
     \begin{tabular}{r| c c c c}
         Algorithm & NLP $\obss\test$ & Error rate (\%) 
@@ -865,9 +874,9 @@ hyperparameters that do not rely upon derivatives of the forward model.
 {
 \small
 This research was supported by the Science Industry Endowment Fund (RP 04-174)
-Big Data Knowledge Discovery project. The authors would like to thank Fabio
-Ramos, Lachlan McCalman, Simon O'Callaghan and Alistair Reid for their helpful
-suggestions and support.
+Big Data Knowledge Discovery project. We thank Fabio
+Ramos, Lachlan McCalman, Simon O'Callaghan, Alistair Reid and Trung Nguyen for 
+their helpful feedback.
 %
 NICTA is funded by the Australian Government through the Department of 
 Communications and the Australian Research Council through the ICT Centre of Excellence Program.
