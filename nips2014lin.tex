@@ -466,7 +466,7 @@ the expected likelihood, $\trace{\Linmat\transpose\lcov\inv\Linmat\pocov} = D -
 \trace{\prcov\inv\pocov}$ once we have linearized $\nonlin{\cdot}$ and
 substituted \eqref{eq:pocovi}. In practice we only calculate this approximation
 $\Fengy$ if we need to optimize some model hyperparameters, like for a Gaussian
-process as described in section \ref{sec:gpmod}. When optimizing $\pomean$, the
+process as described in  \autoref{sec:gpmod}. When optimizing $\pomean$, the
 only terms of $\Fengy$ dependent on $\pomean$ for Taylor series linearization 
 are,
 \begin{equation}
@@ -663,14 +663,14 @@ any implicitly dependent gradient terms between $\lstate$ and $\khypers$.
 In this section we evaluate the performance of the EGP and UGP on a 
 set of synthetic inversion problems and on a classification problem 
 using the USPS handwritten digits dataset.
-
+%
 \label{sec:experiments}
-
+%
 %We have implemented both the EGP and UGP, as well as regular GP in python code
 %using NLopt~\cite{JohnsonNLOPT} for hyperparameter learning (BOBYQA) and scipy
 %\cite{JonesScipy} (scipy.integrate.quad) for quadrature.
-
-
+%
+%
 \subsection{Toy Inversion Problems}
 \label{sec:exptoy}
 %
