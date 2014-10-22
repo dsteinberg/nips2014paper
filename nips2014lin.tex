@@ -659,7 +659,7 @@ and unscented algorithms, where $\Fengy$ is approximated as,
     \label{eq:fengygp}
 \end{equation}
 In particular we use derivative-free optimization methods (e.g. BOBYQA)
-from the NLopt library \cite{JohnsonNLOPT}, which we find fast and highly
+from the NLopt library \cite{JohnsonNLOPT}, which we find fast and 
 effective. This also has the advantage of not requiring explicit knowledge of
 $\partial\nonlin{\lstates}\!/\partial\lstates$ or higher order derivatives for
 any implicitly dependent gradient terms between $\lstate$ and $\khypers$. 
@@ -680,9 +680,11 @@ using the USPS handwritten digits dataset.
 
 \subsection{Toy Inversion Problems}
 \label{sec:exptoy}
-
-In this experiment we evaluate the performance of the EGP and UGP for inversion
-problems. All of our code is in python, and we generate `latent' function data
+%
+In this experiment % we evaluate the performance of the EGP and UGP for inversion
+% problems.  All of our code is in python, 
+% and 
+we generate `latent' function data
 from $\lstate \sim \gaus{\mathbf{0}, \KERNL}$ where a Mat\'ern $\frac{5}{2}$
 kernel function is used with amplitude $\sigma_{m52} = 0.8$, length scale
 $l_{m52} = 0.6$ and $\inobs \in \real{}$ are uniformly spaced between $[-2\pi,
@@ -691,7 +693,7 @@ then generated as $\obs = \nonlin{\lstate} + \epsilon$ where $\epsilon \sim
 \gaus{0, 0.2^2}$. 1000 points are generated in this way, and we use 5-fold
 cross validation to train (200 points) and test (800 points) the GPs. We use
 standardized mean squared error (SMSE) to test the predictions with the held
-out data in both the latent and observed spaces. We also use held-out average
+out data in both the latent and observed spaces. We also use  average
 negative log predictive density (NLPD) on the latent test data, which is
 calculated as $-\frac{1}{N\test} \sum_{n} \log
 \gausC{\lstates_n\test}{\pomeans_n\test, \pocovs_n\test}$. All of the GPs use
@@ -768,7 +770,8 @@ $\lvar$ initialized at 1.0 and lower-bounded at 0.1 (and 0.01 for~$\lvar$).
         A typical trace from the MAP objective function used to learn $\pomean$
         from the nonlinear function in (\subref{sub:sign}) is shown in
         (\subref{sub:mape}). The optimization shown terminated because of a
-        `divergence' condition, which was typical for this example.}
+        `divergence' condition. %, which was typical for this example.
+        }
 
     \label{fig:learnex}
 \end{figure}
