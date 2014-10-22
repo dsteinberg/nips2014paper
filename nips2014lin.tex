@@ -115,6 +115,14 @@ statistical linearization, does not even require derivatives of the likelihood
 model (like \cite{Opper2009}) and so non-differentiable likelihoods can be
 incorporated.
 
+Our method has some mechanistic similarities to the 
+Warped GP (WGP, \cite{snelson2003warped}). However, our objective is different 
+in that we wish to infer the full posterior over the latent function $f$, whereas 
+the goal of  WGP is to infer a transformation of a non-Gaussian 
+process observation to a space where a GP can be constructed. In other 
+words, WGP is concerned with inferring an inverse function $g^{-1}(\cdot)$
+such as the transformed (latent) function is well modeled by a GP.
+
 Initially we formulate our models in \autoref{sec:gausmod} for the
 \emph{finite} Gaussian case because the linearization methods are more general
 and comparable with existing algorithms. In fact we show we can derive the
