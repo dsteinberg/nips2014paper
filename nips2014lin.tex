@@ -12,6 +12,8 @@
 \usepackage{graphicx}
 \usepackage{caption,subcaption}
 
+\usepackage{natbib} % EVB
+
 \newtheorem{remark}{Remark}
 
 
@@ -375,8 +377,9 @@ One method of obtaining these points is the unscented transform
     \Sfunc_i &= \pomean - \brac{\sqrt{\brac{D + \scoef} \pocov}}_i \quad
         \text{for} \quad i = D+1 \ldots 2D,
         \label{eq:spointi} \\
-    \Sobs_i &= \nonlin{\Sfunc_i}.
+    \Sobs_i &= \nonlin{\Sfunc_i} \text{,}
 \end{align}
+for a free parameter $\scoef$. 
 Here $(\sqrt{\cdot})_i$ refers to columns of the matrix square root, we follow
 \cite{Julier2004} and use the Cholesky decomposition. Unlike the usual
 unscented transform, which uses the prior to create the sigma points, here we
@@ -393,10 +396,10 @@ where,
 \begin{equation}
     \Sw_0 = \frac{\scoef}{D + \scoef},
         \qquad \Sw_i = \frac{1}{2\brac{D + \scoef}}
-        \quad \text{for} \quad i = 1 \ldots 2D,
+        \quad \text{for} \quad i = 1 \ldots 2D \text{.}
     \label{eq:slweights}
 \end{equation}
-for a free parameter $\scoef$. According to \cite{Julier2004} various settings
+According to \cite{Julier2004} various settings
 of $\scoef$ can capture information about the higher order moments of the
 distribution of $\obs$; or setting $\scoef = 0.5$ yields uniform weights.
 Therefore, the objective of statistical linearization is,
@@ -551,7 +554,7 @@ obtain $\pocov\inv = \KERNL\inv + \Linmat\Lvar\inv\Linmat$, that is, the
 inverse posterior covariance is just the prior inverse covariance, but with a
 modified diagonal. This means if we were to use this inverse parameterization
 of the Gaussian, which is also used in \cite{Opper2009}, we would
- only have to infer $2N$ parameters (not $N + N^2$).
+ only have to infer $2N$ parameters (instead of $N + N(N+1)/2$).
  We can obtain the iterative steps for $\pomean$ straightforwardly:
 \begin{equation}
     \pomean_{k+1} = \brac{1-\step}\pomean_k 
@@ -687,7 +690,7 @@ standardized mean squared error (SMSE) to test the predictions with the held
 out data in both the latent and observed spaces. We also use  average
 negative log predictive density (NLPD) on the latent test data, which is
 calculated as $-\frac{1}{N\test} \sum_{n} \log
-\gausC{\lstates_n\test}{\pomeans_n\test, \pocovs_n\test}$. All of the GPs use
+\gausC{\lstates_n\test}{\pomeans_n\test, \pocovs_n\test}$. All  GP methods use
 Mat\'ern $\frac{5}{2}$ covariance functions with the hyperparameters and
 $\lvar$ initialized at 1.0 and lower-bounded at 0.1 (and 0.01 for~$\lvar$).
 %
@@ -803,14 +806,14 @@ For this experiment we evaluate the EGP and UGP on a %more routine binary
 classification task, where we are just interested in a probabilistic prediction
 of class labels, and not the values of the latent function. We use 
 the USPS handwritten digits dataset with the task of distinguishing between
-`3' and `5' -- this is the same experiment from \cite{Rasmussen2006}. A
+`3' and `5' -- this is the same experiment from \citep[][ \S 3.7.3]{Rasmussen2006}. A
 logistic sigmoid is used as the forward model, $\nonlin{\cdot}$, in our
 algorithms. We test against Laplace, expectation propagation and variational
 Bayes logistic GP classifiers (from the GPML Matlab toolbox
 \cite{Rasmussen2006}), a support vector machine (SVM) with a radial basis
 kernel function (and probabilistic outputs \cite{Platt1999}), and logistic
 regression (both from the scikit-learn python library \cite{scikit-learn}). A
-square exponential kernel with amplitude $\sigma_\text{se}$ and length scale
+squared exponential kernel with amplitude $\sigma_\text{se}$ and length scale
 $l_\text{se}$ is used for the GPs in this experiment. We initialize these
 hyperparameters at $1.0$, and put a lower bound of $0.1$ on them. We initialize
 $\lvar$ and place a lower bound at $10^{-14}$ for the EGP and UGP (the
@@ -868,7 +871,7 @@ We have presented a variational inference framework with linearization for
 Gaussian models with nonlinear likelihood functions, which we show can be used
 to derive updates for the extended and unscented Kalman filter algorithms, the
 iEKF and the iSPKF. We then generalize these results and develop two inference
-algorithms for Gaussian process, the EGP and UGP. The UGP does not use
+algorithms for Gaussian processes, the EGP and UGP. The UGP does not use
 derivatives of the nonlinear forward model, yet performs as well as the EGP for
 inversion and classification problems. 
 %
@@ -904,7 +907,10 @@ Communications and the Australian Research Council through the ICT Centre of Exc
 
 %\subsubsection*{References}
 %\printbibliography[heading=none]
-\bibliographystyle{IEEEtran}
+% \bibliographystyle{IEEEtran}
+
+\bibliographystyle{unsrt} % EVB 
+
 \bibliography{nips2014lin}
 
 
