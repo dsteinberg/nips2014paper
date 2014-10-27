@@ -70,8 +70,8 @@
 Nonlinear inversion problems, where we wish to infer the latent inputs to a
 system given observations of its output and the system's forward-model, have a
 long history in the natural sciences, dynamical modeling and estimation. An
-example is the robot-arm inverse kinematics problem, where we wish to infer how
-to drive the robot's joints (i.e.~joint torques) in order to place the
+example is the robot-arm inverse kinematics problem. We wish to infer how to
+drive the robot's joints (i.e.~joint torques) in order to place the
 end-effector in a particular position, given we can measure its position and
 know the forward kinematics of the arm. Most of the existing algorithms either
 estimate the system inputs at a particular point in time like the
@@ -106,7 +106,7 @@ models. In this model, the expectations arising from the use of arbitrary
 evaluated using sampling techniques or quadrature. 
 %
 We present two alternatives to this algorithm that are also underpinned by
-variational principles but  are based on linearizing the nonlinear likelihood
+variational principles but are based on linearizing the nonlinear likelihood
 models about the posterior mean. These methods are straight-forwardly
 applicable to non-factorizing likelihoods and would retain computational
 efficiency, unlike \cite{Opper2009} which would require evaluation of
@@ -146,16 +146,16 @@ The following forms are assumed for the prior and likelihood:
     \label{eq:priorlike}
 \end{equation}
 where $\nonlin{\cdot} : \real{D} \to \real{d}$ is a nonlinear function or
-forward model. Unfortunately the marginal likelihood $\prob{\obs}$ is intractable
-as the nonlinear function makes the likelihood and prior non-conjugate,
+forward model. Unfortunately the marginal likelihood, $\prob{\obs}$, is
+intractable as the nonlinear function makes the likelihood and prior
+non-conjugate.
 %\begin{equation}
 %    \prob{\obs} = \int \gausC{\obs}{\nonlin{\lstate}, \lcov}
 %        \gausC{\lstate}{\prmean, \prcov} d\lstate,
 %    \label{eq:marglike}
 %\end{equation}
-which also makes the posterior $\probC{\lstate}{\obs}$ intractable to evaluate. Thus, we choose to
-approximate the posterior % and marginal likelihood 
-using variational inference
+This also makes the posterior $\probC{\lstate}{\obs}$ intractable to evaluate,
+and so we choose to approximate it with variational inference 
 \cite{Jordan1999}.
 
 
@@ -165,7 +165,7 @@ Using variational inference procedures we can put a lower bound on the
 log-marginal likelihood using Jensen's inequality, 
 \begin{equation}
     \log \prob{\obs} \geq \int \qrob{\lstate} \log 
-        \frac{\prob{\obs, \lstate}}{\qrob{\lstate}} d\lstate,
+        \frac{\probC{\obs}{\lstate}\prob{\lstate}}{\qrob{\lstate}} d\lstate,
 \end{equation}
 with equality iff $\KL{\qrob{\lstate}}{\probC{\lstate}{\obs}} = 0$, and where
 $\qrob{\lstate}$ is an approximation to the true posterior,
@@ -178,11 +178,8 @@ and can be re-written as follows
 \end{equation}
 where $\expec{q\lstate}{\cdot}$ is an expectation with respect to the
 variational posterior, $\qrob{\lstate}$. We assume the posterior takes a
-Gaussian form,
-\begin{equation}
-    \qrob{\lstate} = \gausC{\lstate}{\pomean, \pocov}. \label{eq:varpost}
-\end{equation}
-Now we can evaluate the expectation and KL term in \eqref{eq:fengy},
+Gaussian form, $\qrob{\lstate} = \gausC{\lstate}{\pomean, \pocov}$, so
+we can evaluate the expectation and KL term in~\eqref{eq:fengy},
 \begin{align}
     \expec{q\lstate}{\log \probC{\obs}{\lstate}}
         =& - \frac{1}{2} \bigg[ 
@@ -217,8 +214,8 @@ To find the optimal posterior mean, $\pomean$, we need to find the derivative,
 \end{equation}
 where all terms in $\Fengy$ independent of $\pomean$ have been dropped, and we
 have placed the quadratic and trace terms from the KL component,
-\eqref{eq:qkl}, back into the expectation. We can represent this as an
-augmented Gaussian,
+\eqref{eq:qkl}, back into the expectation.
+We can represent this as an augmented Gaussian,
 \begin{equation}
     \frac{\partial\Fengy}{\partial\pomean} = -\frac{1}{2}
         \frac{\partial}{\partial\pomean}
@@ -243,7 +240,7 @@ problem\footnote{$-\frac{1}{2}
         \brac{\augobs - \augnonlin{\lstate}} = 0$.}, but about
 the expected posterior value of $\lstate$. Even without the expectation, there
 is no  closed form solution to $\partial\Fengy/\partial\pomean = 0$.
-However, we can use the iterative Newton algorithm to find $\pomean$. It begins
+However, we can use an iterative Newton method to find $\pomean$. It begins
 with an initial guess, $\pomean_0$, then proceeds with the iterations,
 \begin{equation}
     \pomean_{k+1} = \pomean_k -
@@ -354,9 +351,10 @@ $g(\cdot)$ around the posterior mean.
 Having derived the updates in our variational framework, the proof of this is
 trivial by making  $\step =1$, and using \eqref{eq:pomean_ekf} --
 \eqref{eq:pocov_ekf} as the iterative updates.
-%
+
+
 \subsection{Statistical Linearization}
-%
+
 Another method for linearizing $\nonlin{\cdot}$ is \emph{statistical
     linearization} (see e.g.~\cite{Geist2010}). Statistical linearization finds
 a least squares best fit to $\nonlin{\cdot}$ about a point; in our case this
@@ -464,11 +462,12 @@ marginal likelihood, $\Fengy$. We can use our approximation
 Here the trace term from \eqref{eq:qkl} has cancelled with a trace term from
 the expected likelihood, $\trace{\Linmat\transpose\lcov\inv\Linmat\pocov} = D -
 \trace{\prcov\inv\pocov}$ once we have linearized $\nonlin{\cdot}$ and
-substituted \eqref{eq:pocovi}. In practice we only calculate this approximation
-$\Fengy$ if we need to optimize some model hyperparameters, like for a Gaussian
-process as described in  \autoref{sec:gpmod}. When optimizing $\pomean$, the
-only terms of $\Fengy$ dependent on $\pomean$ for Taylor series linearization 
-are,
+substituted \eqref{eq:pocovi}. Unfortunately this approximation is no longer a
+lower bound on the log marginal likelihood in general. In practice we only
+calculate this approximation $\Fengy$ if we need to optimize some model
+hyperparameters, like for a Gaussian process as described in
+\autoref{sec:gpmod}. When optimizing $\pomean$, the only terms of $\Fengy$
+dependent on $\pomean$ in the Taylor series linearization case are,
 \begin{equation}
     -\frac{1}{2} \brac{\obs - \nonlin{\pomean}}\transpose
             \lcov\inv
@@ -493,7 +492,8 @@ iterations is exceeded is fast and works well in practice. If the maximum
 number of iterations is exceeded we call this a `diverge' condition, and
 terminate the search for $\pomean$ (and return the last good value). This only
 tends to happen for statistical linearization, but does not tend to impact the
-algorithms performance since we always make sure to improve $\Fengy$.
+algorithms performance since we always make sure to improve (approximate)
+$\Fengy$.
 
 \section{Variational Inference in Gaussian Process Models with Linearization}
 \label{sec:gpmod}
@@ -565,20 +565,18 @@ Also as before,
     \pocov = \brac{\ident{N} - \Kgain\Linmat}\!\KERNL.
     \label{eq:pocovgp}
 \end{equation}
-The values for $\Lins_n$ and $\intcpts_n$ for the Taylor series linearization
-are now,
-\begin{equation}
-    \Lins_n = \frac{\partial\nonlin{\pomeans_n}}{\partial\pomeans_n},
-    \qquad
-    \intcpts_n = \nonlin{\pomeans_n}
-        - \frac{\partial\nonlin{\pomeans_n}}{\partial\pomeans_n} \pomeans_n,
-\end{equation}
-and for statistical linearization,
-\begin{equation}
-    \Lins_n = \frac{\xcovs_{\pomeans\obss,n}}{\pocovs_{nn}},
-    \qquad
-    \intcpts_n = \bar\obss_n - \Lins_n\pomeans_n.
-\end{equation}
+The values for $\Lins_n$ and $\intcpts_n$ for the linearization methods are,
+\begin{alignat}{3}
+    \text{Taylor}:&\quad
+        \Lins_n &= \frac{\partial\nonlin{\pomeans_n}}{\partial\pomeans_n},
+        \quad
+        \intcpts_n &= \nonlin{\pomeans_n}
+        - \frac{\partial\nonlin{\pomeans_n}}{\partial\pomeans_n} \pomeans_n, \\
+    \text{Statistical}:&\quad
+        \Lins_n &= \frac{\xcovs_{\pomeans\obss,n}}{\pocovs_{nn}},
+        \quad
+        \intcpts_n &= \bar\obss_n - \Lins_n\pomeans_n.
+\end{alignat}
 $\pocovs_{nn}$ is the $n$th diagonal element of $\pocov$ and
 $\xcovs_{\pomeans\obss,n}$ and $\bar\obss_n$ are calculated the same way as
 \eqref{eq:spoint0} -- \eqref{eq:slweights} where the sigma points for each
