@@ -554,7 +554,7 @@ obtain $\pocov\inv = \KERNL\inv + \Linmat\Lvar\inv\Linmat$, that is, the
 inverse posterior covariance is just the prior inverse covariance, but with a
 modified diagonal. This means if we were to use this inverse parameterization
 of the Gaussian, which is also used in \cite{Opper2009}, we would
- only have to infer $2N$ parameters (not $N + N^2$).
+ only have to infer $2N$ parameters (instead of $N + N(N+1)/2$).
  We can obtain the iterative steps for $\pomean$ straightforwardly:
 \begin{equation}
     \pomean_{k+1} = \brac{1-\step}\pomean_k 
