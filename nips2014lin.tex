@@ -12,7 +12,7 @@
 \usepackage{graphicx}
 \usepackage{caption,subcaption}
 
-\usepackage{natbib} % EVB
+%\usepackage{natbib} % EVB
 
 \newtheorem{remark}{Remark}
 
@@ -481,11 +481,10 @@ dependent on $\pomean$ in the Taylor series linearization case are,
 \end{equation}
 This is also the \emph{maximum a-posteriori} objective. A global convergence
 proof exists for this objective when optimized by a Gauss-Newton procedure
-under some conditions on the Jacobians, see \cite[p255]{Nocedal2006}. This
-implies that once \eqref{eq:MAP} converges to the global optimum,
-\eqref{eq:approxfengy} is again the variational lower bound. No such guarantees
-exist for statistical linearization, though monitoring \eqref{eq:MAP} works
-well in practice (see the experiment in \autoref{sec:exptoy}). 
+under some conditions on the Jacobians, see \cite[p255]{Nocedal2006}.  No such
+guarantees exist for statistical linearization, though monitoring
+\eqref{eq:MAP} works well in practice (see the experiment in
+\autoref{sec:exptoy}). 
 
 A line search could be used to select an optimal value for the step length,
 $\step$ in Equation \eqref{eq:pomean}. However, we find that setting $\step=1$,
@@ -804,21 +803,21 @@ the UGP had the best performance but the EGP was outperformed by  \cite{Opper200
 
 For this experiment we evaluate the EGP and UGP on a %more routine binary
 classification task, where we are just interested in a probabilistic prediction
-of class labels, and not the values of the latent function. We use 
-the USPS handwritten digits dataset with the task of distinguishing between
-`3' and `5' -- this is the same experiment from \citep[][ \S 3.7.3]{Rasmussen2006}. A
-logistic sigmoid is used as the forward model, $\nonlin{\cdot}$, in our
-algorithms. We test against Laplace, expectation propagation and variational
-Bayes logistic GP classifiers (from the GPML Matlab toolbox
-\cite{Rasmussen2006}), a support vector machine (SVM) with a radial basis
-kernel function (and probabilistic outputs \cite{Platt1999}), and logistic
-regression (both from the scikit-learn python library \cite{scikit-learn}). A
-squared exponential kernel with amplitude $\sigma_\text{se}$ and length scale
-$l_\text{se}$ is used for the GPs in this experiment. We initialize these
-hyperparameters at $1.0$, and put a lower bound of $0.1$ on them. We initialize
-$\lvar$ and place a lower bound at $10^{-14}$ for the EGP and UGP (the
-optimized values are near or at this value). The hyperparameters for the SVM
-are learned using grid search with three-fold cross validation. 
+of class labels, and not the values of the latent function. We use the USPS
+handwritten digits dataset with the task of distinguishing between `3' and `5'
+-- this is the same experiment from \cite[\S 3.7.3]{Rasmussen2006} A logistic
+sigmoid is used as the forward model, $\nonlin{\cdot}$, in our algorithms. We
+test against Laplace, expectation propagation and variational Bayes logistic GP
+classifiers (from the GPML Matlab toolbox \cite{Rasmussen2006}), a support
+vector machine (SVM) with a radial basis kernel function (and probabilistic
+outputs \cite{Platt1999}), and logistic regression (both from the scikit-learn
+python library \cite{scikit-learn}). A squared exponential kernel with
+amplitude $\sigma_\text{se}$ and length scale $l_\text{se}$ is used for the GPs
+in this experiment. We initialize these hyperparameters at $1.0$, and put a
+lower bound of $0.1$ on them. We initialize $\lvar$ and place a lower bound at
+$10^{-14}$ for the EGP and UGP (the optimized values are near or at this
+value). The hyperparameters for the SVM are learned using grid search with
+three-fold cross validation. 
 
 %of a Bernoulli distribution, $-\frac{1}{N\test} \sum_n \log
 %\bernC{\obss_n\test}{\pi\test_n}$ where $\pi\test_n =
@@ -899,17 +898,17 @@ Big Data Knowledge Discovery project. We thank Fabio
 Ramos, Lachlan McCalman, Simon O'Callaghan, Alistair Reid and Trung Nguyen for 
 their helpful feedback.
 %
-NICTA is funded by the Australian Government through the Department of 
-Communications and the Australian Research Council through the ICT Centre of Excellence Program.
-
+NICTA is funded by the Australian Government through the Department of
+Communications and the Australian Research Council through the ICT Centre of
+Excellence Program.
 }
 
 
-%\subsubsection*{References}
+\subsubsection*{References}
 %\printbibliography[heading=none]
-% \bibliographystyle{IEEEtran}
+ \bibliographystyle{IEEEtran}
 
-\bibliographystyle{unsrt} % EVB 
+%\bibliographystyle{unsrt} % EVB 
 
 \bibliography{nips2014lin}
 
