@@ -236,10 +236,12 @@ where
         \end{bmatrix}.
 \end{equation}
 Now we can see solving for $\pomean$ is essentially a nonlinear least squares 
-problem\footnote{$-\frac{1}{2}
-        \frac{\partial}{\partial\lstate}
-        \brac{\augobs - \augnonlin{\lstate}}\transpose\augcov\inv
-        \brac{\augobs - \augnonlin{\lstate}} = 0$.}, but about
+problem%
+    %\footnote{$-\frac{1}{2}
+        %\frac{\partial}{\partial\lstate}
+        %\brac{\augobs - \augnonlin{\lstate}}\transpose\augcov\inv
+        %\brac{\augobs - \augnonlin{\lstate}} = 0$.}
+, but about
 the expected posterior value of $\lstate$. Even without the expectation, there
 is no  closed form solution to $\partial\Fengy/\partial\pomean = 0$.
 However, we can use an iterative Newton method to find $\pomean$. It begins
@@ -265,7 +267,7 @@ term $\intcpt \in \real{d}$. Using this approximation we get,
             - \intcpt} + \prcov\inv\brac{\prmean - \pomean}
     \quad \text{and} \quad
     \nabla_\pomean \nabla_\pomean \Fengy
-        \approx - \Linmat\transpose\lcov\inv\Linmat - \prcov\inv.
+        \approx - \prcov\inv - \Linmat\transpose\lcov\inv\Linmat.
         \label{eq:deldelF}
 \end{equation}
 Substituting \eqref{eq:deldelF} into \eqref{eq:newton} and using the Woodbury
@@ -293,19 +295,22 @@ posterior covariance by setting $\partial\Fengy/\partial\pocov = 0$ where,
     } 
     + \frac{1}{2} \frac{\partial}{\partial\pocov} \log \deter{\pocov}.
 \end{equation}
-Again we do not have an analytic solution to this, so we once more apply the 
+Again we do not have an analytic solution, so we once more apply the
 approximation in \eqref{eq:linearize} to get,
 \begin{equation}
     \pocov = \sbrac{\prcov\inv + \Linmat\transpose\lcov\inv\Linmat}\inv
-        \approx - \brac{\nabla_\pomean \nabla_\pomean \Fengy}\inv.
-    \label{eq:pocovi}
-\end{equation}
-Using the Woodbury identity,
-\begin{equation}
-    \pocov = \brac{\ident{D} - \Kgain\Linmat}\!\prcov
+        %\approx - \brac{\nabla_\pomean \nabla_\pomean \Fengy}\inv.
+    = \brac{\ident{D} - \Kgain\Linmat}\!\prcov,
     \label{eq:pocov}
 \end{equation}
-where the \emph{converged} values of $\Linmat$ and $\Kgain$ are used.
+%Using the Woodbury identity,
+%\begin{equation}
+    %\pocov = \brac{\ident{D} - \Kgain\Linmat}\!\prcov
+    %\label{eq:pocov}
+%\end{equation}
+where we have made use of the Woodbury identity, and the \emph{converged}
+values of $\Linmat$ and $\Kgain$ are used. At this point it is also worth
+noting the relationship between \eqref{eq:pocov} and \eqref{eq:deldelF}.
 
 
 \subsection{Taylor Series Linearization}
@@ -385,20 +390,17 @@ Here $(\sqrt{\cdot})_i$ refers to columns of the matrix square root, we follow
 unscented transform, which uses the prior to create the sigma points, here we
 have used the posterior because of the expectation in \eqref{eq:augsys}. Using
 these points we can define the following statistics,
-\begin{equation}
-    \bar\obs = \sum^{2D}_{i=0} \Sw_i \Sobs_i,
+\begin{alignat}{2}
+    \bar\obs &= \sum^{2D}_{i=0} \Sw_i \Sobs_i,
     \qquad
-    \xcov = \sum^{2D}_{i=0} \Sw_i \brac{\Sobs_i - \bar\obs}
+    &\xcov = \sum^{2D}_{i=0} \Sw_i \brac{\Sobs_i - \bar\obs}
         \brac{\Sfunc_i - \pomean}\transpose,
-    \label{eq:slstats}
-\end{equation}
-where,
-\begin{equation}
-    \Sw_0 = \frac{\scoef}{D + \scoef},
-        \qquad \Sw_i = \frac{1}{2\brac{D + \scoef}}
+    \label{eq:slstats} \\
+    \Sw_0 &= \frac{\scoef}{D + \scoef},
+        &\Sw_i = \frac{1}{2\brac{D + \scoef}}
         \quad \text{for} \quad i = 1 \ldots 2D \text{.}
     \label{eq:slweights}
-\end{equation}
+\end{alignat}
 According to \cite{Julier2004} various settings
 of $\scoef$ can capture information about the higher order moments of the
 distribution of $\obs$; or setting $\scoef = 0.5$ yields uniform weights.
@@ -485,7 +487,6 @@ under some conditions on the Jacobians, see \cite[p255]{Nocedal2006}.  No such
 guarantees exist for statistical linearization, though monitoring
 \eqref{eq:MAP} works well in practice (see the experiment in
 \autoref{sec:exptoy}). 
-
 A line search could be used to select an optimal value for the step length,
 $\step$ in Equation \eqref{eq:pomean}. However, we find that setting $\step=1$,
 and then successively multiplying $\step$ by some number in $\brac{0, 1}$ until
@@ -515,7 +516,7 @@ latent function, $\nonlin{\lstate}$, and $\lstate \in \real{N}$ is the latent
 function we are interested in inferring. $\KERNL \in \real{N\times N}$ is the
 kernel matrix, where each element $\kernl_{ij} = \kernl\!\brac{\inobs_i,
     \inobs_j}$ is the result of applying a kernel function to each input,
-$\inobs \in \real{D}$, in a pair-wise manner. It is also important to note that
+$\inobs \in \real{P}$, in a pair-wise manner. It is also important to note that
 the likelihood noise model is \emph{isotropic} with a variance of $\lvar$. This
 is not a necessary condition, and we can use a correlated noise likelihood
 model, however the factorized likelihood case is still useful and provides some
@@ -659,12 +660,11 @@ any implicitly dependent gradient terms between $\lstate$ and $\khypers$.
 
 
 \section{Experiments}
+\label{sec:experiments}
 %
 In this section we evaluate the performance of the EGP and UGP on a 
-set of synthetic inversion problems and on a classification problem 
-using the USPS handwritten digits dataset.
-%
-\label{sec:experiments}
+set of synthetic inversion problems and on the USPS handwritten digits binary 
+classification problem.
 %
 %We have implemented both the EGP and UGP, as well as regular GP in python code
 %using NLopt~\cite{JohnsonNLOPT} for hyperparameter learning (BOBYQA) and scipy
@@ -673,26 +673,7 @@ using the USPS handwritten digits dataset.
 %
 \subsection{Toy Inversion Problems}
 \label{sec:exptoy}
-%
-In this experiment % we evaluate the performance of the EGP and UGP for inversion
-% problems.  All of our code is in python, 
-% and 
-we generate `latent' function data
-from $\lstate \sim \gaus{\mathbf{0}, \KERNL}$ where a Mat\'ern $\frac{5}{2}$
-kernel function is used with amplitude $\sigma_{m52} = 0.8$, length scale
-$l_{m52} = 0.6$ and $\inobs \in \real{}$ are uniformly spaced between $[-2\pi,
-2\pi]$ to generate $\KERNL$. Observations used to test and train the GPs are
-then generated as $\obs = \nonlin{\lstate} + \epsilon$ where $\epsilon \sim
-\gaus{0, 0.2^2}$. 1000 points are generated in this way, and we use 5-fold
-cross validation to train (200 points) and test (800 points) the GPs. We use
-standardized mean squared error (SMSE) to test the predictions with the held
-out data in both the latent and observed spaces. We also use  average
-negative log predictive density (NLPD) on the latent test data, which is
-calculated as $-\frac{1}{N\test} \sum_{n} \log
-\gausC{\lstates_n\test}{\pomeans_n\test, \pocovs_n\test}$. All  GP methods use
-Mat\'ern $\frac{5}{2}$ covariance functions with the hyperparameters and
-$\lvar$ initialized at 1.0 and lower-bounded at 0.1 (and 0.01 for~$\lvar$).
-%
+
 \begin{table}[tb]
     \centering
     \caption[]
@@ -716,25 +697,27 @@ $\lvar$ initialized at 1.0 and lower-bounded at 0.1 (and 0.01 for~$\lvar$).
 & UGP & -0.90046 & 0.06743 & 0.01219 & 0.00171 & -- & -- \\
 & EGP & -0.89908 & 0.06608 & 0.01224 & 0.00178 & -- & -- \\
 & \cite{Opper2009} & -0.27590 & 0.06884 & 0.01249 & 0.00159 & -- & -- \\
-& GP & -0.90278 & 0.06988 & 0.01211 & 0.00160 & -- & -- \\
+& GP & -\textbf{0.90278} & 0.06988 & \textbf{0.01211} & 0.00160 & -- & -- \\
         \midrule
         $\lstate^3 + \lstate^2 + \lstate$ 
-& UGP & -0.23622 & 1.72609 & 0.01534 & 0.00202 & 0.02184 & 0.00525 \\
-& EGP & -0.22325 & 1.76231 & 0.01518 & 0.00203 & 0.02184 & 0.00528 \\
+& UGP & -\textbf{0.23622} & 1.72609 & 0.01534 & 0.00202 &
+\textbf{0.02184} & 0.00525 \\
+& EGP & -0.22325 & 1.76231 & \textbf{0.01518} & 0.00203 & \textbf{0.02184} & 0.00528 \\
 & \cite{Opper2009} & -0.14559 & 0.04026 & 0.06733 & 0.01421 & 0.02686 & 0.00266 \\
         \midrule
         $\exp\!\brac{\lstate}$ 
-& UGP & -0.75475 & 0.32376 & 0.13860 & 0.04833 & 0.03865 & 0.00403 \\
-& EGP & -0.75706 & 0.32051 & 0.13971 & 0.04842 & 0.03872 & 0.00411 \\
+& UGP & -0.75475 & 0.32376 & \textbf{0.13860} & 0.04833 & \textbf{0.03865} & 0.00403 \\
+& EGP & -\textbf{0.75706} & 0.32051 & 0.13971 & 0.04842 & 0.03872 & 0.00411 \\
 & \cite{Opper2009} & -0.08176 & 0.10986 & 0.17614 & 0.04845 & 0.05956 & 0.01070 \\
         \midrule
         $\sin\!\brac{\lstate}$ 
-& UGP & -0.59710 & 0.22861 & 0.03305 & 0.00840 & 0.11513 & 0.00521 \\
-& EGP & -0.59705 & 0.21611 & 0.03480 & 0.00791 & 0.11478 & 0.00532 \\
+& UGP & -\textbf{0.59710} & 0.22861 & \textbf{0.03305} & 0.00840 & 0.11513 & 0.00521 \\
+& EGP & -0.59705 & 0.21611 & 0.03480 & 0.00791 & \textbf{0.11478} & 0.00532 \\
 & \cite{Opper2009} & -0.04363 & 0.03883 & 0.05913 & 0.01079 & 0.11890 & 0.00652 \\
         \midrule
         $\tanh\!\brac{2\lstate}$
-& UGP & 0.01101 & 0.60256 & 0.15703 & 0.06077 & 0.08767 & 0.00292 \\
+& UGP & \textbf{0.01101} & 0.60256 & \textbf{0.15703} & 0.06077 &
+\textbf{0.08767} & 0.00292 \\
 & EGP & 0.57403 & 1.25248 & 0.18739 & 0.07869 & 0.08874 & 0.00394 \\
 & \cite{Opper2009} & 0.15743 & 0.14663 & 0.16049 & 0.04563 & 0.09434 & 0.00425 \\
         \bottomrule
@@ -757,41 +740,54 @@ $\lvar$ initialized at 1.0 and lower-bounded at 0.1 (and 0.01 for~$\lvar$).
     \end{subfigure}
 
     \caption[]{Example of learning the unscented Gaussian process (UGP) with a
-        non-differentiable nonlinear function in (\subref{sub:sign}), where % In this
-        % figure we show 
-        the predictive distribution of
-        $\expec{q\lstates\test}{\obss\test}$ is computed using Equation \eqref{eq:slpred}.
-        A typical trace from the MAP objective function used to learn $\pomean$
-        from the nonlinear function in (\subref{sub:sign}) is shown in
-        (\subref{sub:mape}). The optimization shown terminated because of a
-        `divergence' condition. %, which was typical for this example.
-        }
+        non-differentiable nonlinear function in (\subref{sub:sign}), where the
+        predictive distribution of $\expec{q\lstates\test}{\obss\test}$ is
+        computed using Equation \eqref{eq:slpred}.  A typical trace from the
+        MAP objective function used to learn $\pomean$ from the nonlinear
+        function in (\subref{sub:sign}) is shown in (\subref{sub:mape}). The
+        optimization shown terminated because of a `divergence' condition. %,
+        which was typical for this example.}
 
     \label{fig:learnex}
 \end{figure}
 
+In this experiment % we evaluate the performance of the EGP and UGP for inversion
+% problems.  All of our code is in python, 
+% and 
+we generate `latent' function data
+from $\lstate \sim \gaus{\mathbf{0}, \KERNL}$ where a Mat\'ern $\frac{5}{2}$
+kernel function is used with amplitude $\sigma_{m52} = 0.8$, length scale
+$l_{m52} = 0.6$ and $\inobs \in \real{}$ are uniformly spaced between $[-2\pi,
+2\pi]$ to generate $\KERNL$. Observations used to test and train the GPs are
+then generated as $\obs = \nonlin{\lstate} + \epsilon$ where $\epsilon \sim
+\gaus{0, 0.2^2}$. 1000 points are generated in this way, and we use 5-fold
+cross validation to train (200 points) and test (800 points) the GPs. We use
+standardized mean squared error (SMSE) to test the predictions with the held
+out data in both the latent and observed spaces. We also use  average
+negative log predictive density (NLPD) on the latent test data, which is
+calculated as $-\frac{1}{N\test} \sum_{n} \log
+\gausC{\lstates_n\test}{\pomeans_n\test, \pocovs_n\test}$. All  GP methods use
+Mat\'ern $\frac{5}{2}$ covariance functions with the hyperparameters and
+$\lvar$ initialized at 1.0 and lower-bounded at 0.1 (and 0.01 for~$\lvar$).
+
 \autoref{tab:toy} shows results for multiple differentiable forward models,
 $\nonlin{\cdot}$. We test the EGP and UGP against the model in \cite{Opper2009}
 -- which uses 10,000 samples to evaluate the one dimensional expectations. 
-% We
-%have used this number of  samples so the running times of the algorithm in
-%\cite{Opper2009} are comparable to ours. 
-Although this number of samples may seem excessive for these simple problems, our goal
-here is to have a competitive baseline algorithm. 
-We also test against normal GP
-regression for a linear forward model ($\nonlin{\lstate} = \lstate$). In
-\autoref{fig:learnex} we show the results of the UGP using a forward model for
-which no derivative exists at the zero crossing points. Also shown is a typical
-objective function trace for learning the posterior mean which terminated on a
-`divergence' condition. We use quadrature for the predictions in observation
-space in \autoref{tab:toy} and the unscented transform for the predictions in
-\autoref{fig:learnex}. Interestingly, there is almost no difference in
-performance between the EGP and UGP, even though the EGP has access to the
-derivatives of the forward models and the UGP does not. 
-Both the UGP and EGP
-consistently outperformed \cite{Opper2009} in terms of  NLPD and  SMSE, 
-apart from the $\tanh$ experiment for inversion. In this experiment, 
-the UGP had the best performance but the EGP was outperformed by  \cite{Opper2009}.
+Although this number of samples may seem excessive for these simple problems,
+our goal here is to have a competitive baseline algorithm.  We also test
+against normal GP regression for a linear forward model ($\nonlin{\lstate} =
+\lstate$). In \autoref{fig:learnex} we show the results of the UGP using a
+forward model for which no derivative exists at the zero crossing points. Also
+shown is a typical objective function trace for learning the posterior mean
+which terminated on a `divergence' condition. We use quadrature for the
+predictions in observation space in \autoref{tab:toy} and the unscented
+transform for the predictions in \autoref{fig:learnex}. Interestingly, there is
+almost no difference in performance between the EGP and UGP, even though the
+EGP has access to the derivatives of the forward models and the UGP does not.
+Both the UGP and EGP consistently outperformed \cite{Opper2009} in terms of
+NLPD and  SMSE, apart from the $\tanh$ experiment for inversion. In this
+experiment, the UGP had the best performance but the EGP was outperformed by
+\cite{Opper2009}.
 
 %We also found that the method in \cite{Opper2009} would suffer from numerical
 %problems  on the non-differentiable forward model in \autoref{fig:learnex}.
@@ -837,12 +833,13 @@ is set relatively large for this task~(e.g.~$1.0$).
 
 \begin{table}[tb]
     \centering
-    \caption[]{Classification performance on the USPS handwritten-digits dataset for
-    numbers `3' and `5'. Lower values of the negative log probability (NLP) and 
-    error rate indicate better performance. The learned  signal variance 
-    $\!\brac{\sigma^{2}_\text{se}}$ and  length scale  $\!\brac{l_\text{se}}$ 
-    of the latent process are also shown.
-    }
+
+    \caption[]{Classification performance on the USPS handwritten-digits
+        dataset for numbers `3' and `5'. Lower values of the negative log
+        probability (NLP) and error rate indicate better performance. The
+        learned  signal variance $\!\brac{\sigma^{2}_\text{se}}$ and length
+        scale  $\!\brac{l_\text{se}}$ of the latent process are also shown. }
+
     \footnotesize
     \begin{tabular}{r| c c c c}
         Algorithm & NLP $\obss\test$ & Error rate (\%) 
@@ -854,7 +851,7 @@ is set relatively large for this task~(e.g.~$1.0$).
         SVM (RBF) & 0.08055 & 2.3286 & -- & -- \\
         Logistic Reg. & 0.11995 & 3.6223 & -- & -- \\
         \midrule
-        UGP & 0.07290 & 1.9405 & 1.5743 & 1.5262 \\
+        UGP & \textbf{0.07290} & \textbf{1.9405} & 1.5743 & 1.5262 \\
         EGP & 0.08051 & 2.1992 & 2.9134 & 1.7872 \\
         %UGP & 0.06524 & 2.1992 & 1.5140 & 1.4257 \\
         %EGP & 0.12946 & 2.0699 & 3.3068 & 1.7480 \\
@@ -874,20 +871,20 @@ algorithms for Gaussian processes, the EGP and UGP. The UGP does not use
 derivatives of the nonlinear forward model, yet performs as well as the EGP for
 inversion and classification problems. 
 %
-Our method has some mechanistic similarities to the 
-Warped GP (WGP, \cite{snelson2003warped}). However, our objective is different 
-in that we wish to infer the full posterior over the latent function $f$, whereas 
-the goal of  WGP is to infer a transformation of a non-Gaussian 
-process observation to a space where a GP can be constructed. In other 
-words, WGP is concerned with inferring an inverse function $g^{-1}(\cdot)$
-such as the transformed (latent) function is well modeled by a GP.
+Our method has some mechanistic similarities to the Warped GP (WGP),
+\cite{snelson2003warped}. However, our objective is different in that we wish
+to infer the full posterior over the latent function $f$, whereas the goal of
+WGP is to infer a transformation of a non-Gaussian process observation to a
+space where a GP can be constructed. In other words, WGP is concerned with
+inferring an inverse function $g^{-1}(\cdot)$ such as the transformed (latent)
+function is well modeled by a GP.
 %
-As future work we would like to create
-multi-task EGPs and UGPs. This would extend their applicability to inversion
-problems where the forward models have multiple inputs and outputs, such as
-inverse kinematics. We also wish to further investigate hyperparameter learning
-to ascertain if there are other effective methods of learning the
-hyperparameters that do not rely upon derivatives of the forward model. 
+As future work we would like to create multi-task EGPs and UGPs. This would
+extend their applicability to inversion problems where the forward models have
+multiple inputs and outputs, such as inverse kinematics. We also wish to
+further investigate hyperparameter learning to ascertain if there are other
+effective methods of learning the hyperparameters that do not rely upon
+derivatives of the forward model. 
 
 
 \subsubsection*{Acknowledgments}
@@ -903,14 +900,7 @@ Communications and the Australian Research Council through the ICT Centre of
 Excellence Program.
 }
 
-
-\subsubsection*{References}
-%\printbibliography[heading=none]
- \bibliographystyle{IEEEtran}
-
-%\bibliographystyle{unsrt} % EVB 
-
+\bibliographystyle{IEEEtran}
 \bibliography{nips2014lin}
-
 
 \end{document}
