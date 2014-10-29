@@ -184,13 +184,13 @@ Gaussian form, $\qrob{\lstate} = \gausC{\lstate}{\pomean, \pocov}$, so
 we can evaluate the expectation and KL term in~\eqref{eq:fengy},
 \begin{align}
     \expec{q\lstate}{\log \probC{\obs}{\lstate}}
-        =& - \frac{1}{2} \bigg[ 
+        =& -\frac{1}{2} \bigg[ 
             D\log{2\pi} + \log\deter{\lcov} 
             + \expec{q\lstate}{\brac{\obs - \nonlin{\lstate}}\transpose\lcov\inv
             \brac{\obs - \nonlin{\lstate}}}\bigg],
             \label{eq:qlike} \\
-     - \KL{\qrob{\lstate}}{\prob{\lstate}}
-        =& - \frac{1}{2} \bigg[\trace{\prcov\inv\pocov}
+     \KL{\qrob{\lstate}}{\prob{\lstate}}
+        =& ~\frac{1}{2} \bigg[\trace{\prcov\inv\pocov}
         + \brac{\prmean - \pomean}\transpose\prcov\inv
         \brac{\prmean - \pomean} 
         - \log \deter{\pocov\prcov\inv}
@@ -253,14 +253,14 @@ with an initial guess, $\pomean_0$, then proceeds with the iterations,
 \end{equation}
 for some step length, $\step \in (0, 1]$. Unfortunately, evaluating
 $\nabla_\pomean\Fengy$ is still intractable because of the nonlinear term
-within the expectation in \eqref{eq:augsys}. We can linearize
-$\nonlin{\lstate}$, so we can then tractably evaluate the expectation,
+within the expectation in \eqref{eq:augsys}. If we linearize
+$\nonlin{\lstate}$, we can evaluate the expectation,
 \begin{equation}
     \nonlin{\lstate} \approx \Linmat\lstate + \intcpt,
     \label{eq:linearize}
 \end{equation}
 for some linearization matrix $\Linmat \in \real{d \times D}$ and an intercept
-term $\intcpt \in \real{d}$. Using this approximation we get,
+term $\intcpt \in \real{d}$. Using this we get,
 \begin{equation}
     \nabla_\pomean \Fengy
         \approx \Linmat\transpose\lcov\inv\brac{\obs - \Linmat\pomean 
@@ -271,7 +271,7 @@ term $\intcpt \in \real{d}$. Using this approximation we get,
         \label{eq:deldelF}
 \end{equation}
 Substituting \eqref{eq:deldelF} into \eqref{eq:newton} and using the Woodbury
-identity we get,
+identity we can derive the iterations,
 \begin{equation}
     \pomean_{k+1} = \brac{1-\step}\pomean_k + \step\prmean 
         + \step\Kgain_k\brac{\obs - \intcpt_k - \Linmat_k\prmean},
@@ -325,13 +325,13 @@ $\pomean_k$,
 \end{equation}
 where $\jacob{\pomean_k}$ is the Jacobian $\partial\nonlin{\pomean_k}\!/
 \partial\pomean_k$. By linearizing the function in this way we end up with a
-Gauss-Newton optimization procedure for finding $\pomean$.  Equating
-coefficients with Equation \eqref{eq:linearize} we have that:
+\emph{Gauss-Newton} optimization procedure for finding $\pomean$. Equating
+coefficients with Equation \eqref{eq:linearize}, 
 \begin{equation}
     \Linmat = \jacob{\pomean_k}, \qquad \intcpt = \nonlin{\pomean_k} -
-    \jacob{\pomean_k}\pomean_k.
+    \jacob{\pomean_k}\pomean_k,
 \end{equation}
-Substituting these values into \eqref{eq:pomean} we get,
+and then substituting these values into \eqref{eq:pomean} we get,
 \begin{equation}
     \pomean_{k+1} = \brac{1-\step}\pomean_k + \step\prmean 
         + \step\Kgain_k\brac{\obs - \nonlin{\pomean_k} 
@@ -363,17 +363,15 @@ trivial by making  $\step =1$, and using \eqref{eq:pomean_ekf} --
 \subsection{Statistical Linearization}
 
 Another method for linearizing $\nonlin{\cdot}$ is \emph{statistical
-    linearization} (see e.g.~\cite{Geist2010}). Statistical linearization finds
-a least squares best fit to $\nonlin{\cdot}$ about a point; in our case this
-point is the \emph{posterior} mean, $\pomean$. The advantage of this method is
+    linearization} (see e.g.~\cite{Geist2010}), which finds a least squares
+best fit to $\nonlin{\cdot}$ about a point. The advantage of this method is
 that it does not require derivatives
-$\partial\nonlin{\lstate}\!/\partial\lstate$.  To obtain the fit, multiple
-observations of the forward model  $\nonlin{\cdot}$ at  different input points
+$\partial\nonlin{\lstate}\!/\partial\lstate$. To obtain the fit, multiple
+observations of the forward model $\nonlin{\cdot}$ at different input points
 are required. Hence, the key question is where to evaluate our forward model so
-as to obtain representative samples to carry out the linearization. 
-%
-One method of obtaining these points is the unscented transform
-\cite{Julier2004}, which defines $2D+1$ `sigma' points,
+as to obtain representative samples to carry out the linearization.  One method
+of obtaining these points is the unscented transform \cite{Julier2004}, which
+defines $2D+1$ `sigma' points,
 \begin{align}
     \Sfunc_0 &= \pomean,
         \label{eq:spoint0} \\
@@ -421,13 +419,14 @@ Substituting $\intcpt$ back into \eqref{eq:pomean}, we obtain,
         + \Linmat_k\brac{\pomean_k - \prmean}}.
     \label{eq:pomean_sl}
 \end{equation}
+
 Here $\Kgain_k$, $\Linmat_k$ and $\bar\obs_k$ have been evaluated using the
 statistics from the $k$th iteration. This implies that the posterior
 covariance, $\pocov_k$, is now estimated at every iteration of Equation
-\eqref{eq:pomean_sl} since we use it to form $\Linmat_k$ and $\intcpt_k$, and 
+\eqref{eq:pomean_sl} since we use it to form $\Linmat_k$ and $\intcpt_k$.
 $\Kgain_k$ and $\pocov_k$ have the same form as \eqref{eq:kgain} and
 \eqref{eq:pocov} respectively. 
-%
+
 \begin{remark}
 A single step of the  iterated unscented sigma-point Kalman filter (iSPKF,
 \cite{Sibley2006}) can be seen as an ad hoc approximation to an update in our
@@ -438,12 +437,13 @@ Equations \eqref{eq:pomean_sl} and \eqref{eq:pocov} are equivalent to the
 equations for a single update of the iterated sigma-point Kalman filter (iSPKF)
 for $\step = 1$, except for the term $\bar\obs_k$ appearing in
 \eqref{eq:pomean_sl} as opposed to $\nonlin{\pomean_k}$. The main difference is
-that we have derived our updates from  variational principles.  Furthermore, we
-have found experimentally that the updates in Equations \eqref{eq:pomean_sl}
-and \eqref{eq:pocov} provide better results consistently across a wide variety
-of problems.
+that we have derived our updates from  variational principles.
+%Furthermore, we
+%have found experimentally that the updates in Equations \eqref{eq:pomean_sl}
+%and \eqref{eq:pocov} provide better results consistently across a wide variety
+%of problems.
 %
-These updates  are also similar to the regular recursive unscented Kalman
+These updates are also more similar to the regular recursive unscented Kalman
 filter \cite{Julier2004}, and statistically linearized recursive least squares
 \cite{Geist2010}.
 
@@ -837,8 +837,9 @@ is set relatively large for this task~(e.g.~$1.0$).
     \caption[]{Classification performance on the USPS handwritten-digits
         dataset for numbers `3' and `5'. Lower values of the negative log
         probability (NLP) and error rate indicate better performance. The
-        learned  signal variance $\!\brac{\sigma^{2}_\text{se}}$ and length
-        scale  $\!\brac{l_\text{se}}$ of the latent process are also shown. }
+        learned signal variance $\!\brac{\sigma^{2}_\text{se}}$ and length
+        scale $\!\brac{l_\text{se}}$ are also shown for consistency with
+        \cite[\S 3.7.3]{Rasmussen2006}.}
 
     \footnotesize
     \begin{tabular}{r| c c c c}
