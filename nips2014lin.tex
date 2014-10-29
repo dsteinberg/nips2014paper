@@ -609,8 +609,9 @@ $\bar\obss\test$ by evaluating the one-dimensional integral,
         \nonlin{\lstates\test} \gausC{\lstates\test}{\pomeans\test,
             \pocovs\test} d\lstates\test,
 \end{equation}
-for which we use quadrature (specifically the scipy.integrate.quad routine
-\cite{JonesScipy}). Alternatively, if we were to use the UGP we can use another
+for which we use quadrature.
+%(specifically the scipy.integrate.quad routine\cite{JonesScipy}). 
+Alternatively, if we were to use the UGP we can use another
 application of the unscented transform to approximate the predictive
 distribution $\obss\test \sim \gaus{\bar\obss\test, \lvar_{\obss\test}}$ where,
 \begin{equation}
@@ -619,8 +620,7 @@ distribution $\obss\test \sim \gaus{\bar\obss\test, \lvar_{\obss\test}}$ where,
         \bar\obss\test}^2.
     \label{eq:slpred}
 \end{equation}
-which works well in practice, see \autoref{fig:learnex} for a
-demonstration.
+This works well in practice, see \autoref{fig:learnex} for a demonstration.
 
 
 \subsection{Learning the Linearized GPs}
@@ -631,7 +631,7 @@ Much like the Laplace approximation for binary Gaussian Process classifiers
 $\pomean$, and the outer loop is to optimize the likelihood parameters
 (e.g.~the variance $\lvar$) and kernel hyperparameters,
 $\kfunc{\cdot}{\cdot|\khypers}$. The dominant computational cost in learning
-the parameters is the inversion in Equation \eqref{eq:pocovgp}, and so the
+the parameters is the inversion in Equation \eqref{eq:pomeangp}, and so the
 computational complexity of the EGP and UGP is about the same as for the
 Laplace GP approximation.
 %
@@ -652,7 +652,7 @@ In particular we use derivative-free optimization methods (e.g. BOBYQA) from
 the NLopt library~\cite{JohnsonNLOPT}, which we find fast and effective. This
 also has the advantage of not requiring knowledge of
 $\partial\nonlin{\lstates}\!/\partial\lstates$ or higher order derivatives for
-any implicit gradient terms between $\lstate$ and~$\khypers$. 
+any implicit gradient dependencies between $\lstate$ and~$\khypers$. 
 
 
 \section{Experiments}
@@ -672,15 +672,12 @@ any implicit gradient terms between $\lstate$ and~$\khypers$.
 
 \begin{table}[tb]
     \centering
-    \caption[]
-    {%Prediction results from the nonlinear GPs with various 
-      %  differentiable nonlinear functions. 
-       The negative log predictive density (NLPD) and the standardized 
-       mean squared error (SMSE) on test data for various differentiable functions. 
-       Lower values are better for both measures. 
-        The predicted $\lstates\test$ and 
-        $\obss\test$ are the same for $\nonlin{\lstate} = \lstate$, so we do
-        not report $\obss\test$ in this case.}
+    \caption[]{The negative log predictive density (NLPD) and the standardized
+        mean squared error (SMSE) on test data for various differentiable
+        forward models. Lower values are better for both measures.  The predicted
+        $\lstates\test$ and $\obss\test$ are the same for $\nonlin{\lstate} =
+        \lstate$, so we do not report $\obss\test$ in this case.}
+
     \footnotesize
     \begin{tabular}{r|c| c c c c c c}
         \multirow{2}{*}{$\nonlin{\lstate}$} & \multirow{2}{*}{Algorithm} & 
@@ -735,53 +732,48 @@ any implicit gradient terms between $\lstate$ and~$\khypers$.
         \vspace{0.5mm}
     \end{subfigure}
 
-    \caption[]{Example of learning the unscented Gaussian process (UGP) with a
-        non-differentiable nonlinear function in (\subref{sub:sign}), where the
-        predictive distribution of $\expec{q\lstates\test}{\obss\test}$ is
-        computed using Equation \eqref{eq:slpred}. A typical trace from the
-        MAP objective function used to learn $\pomean$ from this nonlinear
-        function is shown in (\subref{sub:mape}). The optimization shown
-        terminated because of a `divergence' condition.}
+    \caption[]{Learning the UGP with a non-differentiable forward model in
+        (\subref{sub:sign}), and a corresponding trace from the MAP objective
+        function used to learn $\pomean$ is shown in (\subref{sub:mape}). The
+        optimization shown terminated because of a `divergence' condition,
+        though the objective function value has still improved.}
 
     \label{fig:learnex}
 \end{figure}
 
-In this experiment % we evaluate the performance of the EGP and UGP for inversion
-% problems.  All of our code is in python, 
-% and 
-we generate `latent' function data
-from $\lstate \sim \gaus{\mathbf{0}, \KERNL}$ where a Mat\'ern $\frac{5}{2}$
-kernel function is used with amplitude $\sigma_{m52} = 0.8$, length scale
-$l_{m52} = 0.6$ and $\inobs \in \real{}$ are uniformly spaced between $[-2\pi,
-2\pi]$ to generate $\KERNL$. Observations used to test and train the GPs are
-then generated as $\obs = \nonlin{\lstate} + \epsilon$ where $\epsilon \sim
-\gaus{0, 0.2^2}$. 1000 points are generated in this way, and we use 5-fold
-cross validation to train (200 points) and test (800 points) the GPs. We use
-standardized mean squared error (SMSE) to test the predictions with the held
-out data in both the latent and observed spaces. We also use  average
-negative log predictive density (NLPD) on the latent test data, which is
-calculated as $-\frac{1}{N\test} \sum_{n} \log
-\gausC{\lstates_n\test}{\pomeans_n\test, \pocovs_n\test}$. All  GP methods use
-Mat\'ern $\frac{5}{2}$ covariance functions with the hyperparameters and
-$\lvar$ initialized at 1.0 and lower-bounded at 0.1 (and 0.01 for~$\lvar$).
+In this experiment we generate `latent' function data from $\lstate \sim
+\gaus{\mathbf{0}, \KERNL}$ where a Mat\'ern $\frac{5}{2}$ kernel function is
+used with amplitude $\sigma_{m52} = 0.8$, length scale $l_{m52} = 0.6$ and
+$\inobs \in \real{}$ are uniformly spaced between $[-2\pi, 2\pi]$ to build
+$\KERNL$. Observations used to test and train the GPs are then generated as
+$\obs = \nonlin{\lstate} + \epsilon$ where $\epsilon \sim \gaus{0, 0.2^2}$.
+1000 points are generated in this way, and we use 5-fold cross validation to
+train (200 points) and test (800 points) the GPs. We use standardized mean
+squared error (SMSE) to test the predictions with the held out data in both the
+latent and observed spaces. We also use  average negative log predictive
+density (NLPD) on the latent test data, which is calculated as
+$-\frac{1}{N\test} \sum_{n} \log \gausC{\lstates_n\test}{\pomeans_n\test,
+    \pocovs_n\test}$. All  GP methods use Mat\'ern $\frac{5}{2}$ covariance
+functions with the hyperparameters and $\lvar$ initialized at 1.0 and
+lower-bounded at 0.1 (and 0.01 for~$\lvar$).
 
 \autoref{tab:toy} shows results for multiple differentiable forward models,
 $\nonlin{\cdot}$. We test the EGP and UGP against the model in \cite{Opper2009}
 -- which uses 10,000 samples to evaluate the one dimensional expectations.
 Although this number of samples may seem excessive for these simple problems,
 our goal here is to have a competitive baseline algorithm. We also test against
-normal GP regression for a linear forward model ($\nonlin{\lstate} = \lstate$).
+normal GP regression for a linear forward model, $\nonlin{\lstate} = \lstate$.
 In \autoref{fig:learnex} we show the results of the UGP using a forward model
 for which no derivative exists at the zero crossing points, as well as an
 objective function trace for learning the posterior mean. We use quadrature for
 the predictions in observation space in \autoref{tab:toy} and the unscented
-transform for the predictions in \autoref{fig:learnex}. Interestingly, there
-is almost no difference in performance between the EGP and UGP, even though the
-EGP has access to the derivatives of the forward models and the UGP does not.
-Both the UGP and EGP consistently outperformed \cite{Opper2009} in terms of
-NLPD and  SMSE, apart from the $\tanh$ experiment for inversion. In this
-experiment, the UGP had the best performance but the EGP was outperformed by
-\cite{Opper2009}.
+transform, Equation \eqref{eq:slpred}, for the predictions in
+\autoref{fig:learnex}. Interestingly, there is almost no difference in
+performance between the EGP and UGP, even though the EGP has access to the
+derivatives of the forward models and the UGP does not.  Both the UGP and EGP
+consistently outperformed \cite{Opper2009} in terms of NLPD and  SMSE, apart
+from the $\tanh$ experiment for inversion. In this experiment, the UGP had the
+best performance but the EGP was outperformed by \cite{Opper2009}.
 
 %We also found that the method in \cite{Opper2009} would suffer from numerical
 %problems  on the non-differentiable forward model in \autoref{fig:learnex}.
@@ -814,13 +806,13 @@ validation.
 %\expec{}{\prob{\obss\test_n = 1}}$ is the probabilistic output of the
 %classifier.  as the percentage of incorrectly misclassified labels in the test
 %set (once the probabilistic outputs have been thresholded at $0.5$). 
-
+%
 The results are summarized in \autoref{tab:class}, where we report the average
 Bernoulli negative log-probability (NLP), the error rate and the learned
-hyperparameter values for the GPs. Surprisingly, the EGP and UGP outperform the
-other classifiers on this dataset, despite the other classifiers being
-specifically formulated for this task. However, we find that our algorithms do
-get stuck in local minima for some large initial values of $\lvar$, e.g.~$1.0$.
+hyperparameter values for the GPs. Surprisingly, the UGP outperforms the other
+classifiers on this dataset, despite the other classifiers being specifically
+formulated for this task. However, we find that our algorithms do get stuck in
+local minima for some large initial values of $\lvar$, e.g.~$1.0$.
 
 \begin{table}[tb]
     \centering
@@ -862,15 +854,14 @@ iEKF and the iSPKF. We then generalize these results and develop two inference
 algorithms for Gaussian processes, the EGP and UGP. The UGP does not use
 derivatives of the nonlinear forward model, yet performs as well as the EGP for
 inversion and classification problems. 
-%
-Our method has some mechanistic similarities to the Warped GP (WGP),
-\cite{snelson2003warped}. However, our objective is different in that we wish
-to infer the full posterior over the latent function $f$, whereas the goal of
-WGP is to infer a transformation of a non-Gaussian process observation to a
-space where a GP can be constructed. In other words, WGP is concerned with
-inferring an inverse function $g^{-1}(\cdot)$ such as the transformed (latent)
-function is well modeled by a GP.
-%
+
+Our method is similar to the Warped GP (WGP) \cite{snelson2003warped}, however,
+we wish to infer the \emph{full} posterior over the latent function $f$. The
+goal of the WGP is to infer a transformation of a non-Gaussian process
+observation to a space where a GP can be constructed. That is, the WGP is
+concerned with inferring an inverse function $g^{-1}(\cdot)$ so the transformed
+(latent) function is well modeled by a GP.
+
 As future work we would like to create multi-task EGPs and UGPs. This would
 extend their applicability to inversion problems where the forward models have
 multiple inputs and outputs, such as inverse kinematics. We also wish to
@@ -878,13 +869,12 @@ further investigate hyperparameter learning to ascertain if there are other
 effective methods of learning the hyperparameters that do not rely upon
 derivatives of the forward model. 
 
-
 \subsubsection*{Acknowledgments}
 {
 \small
 This research was supported by the Science Industry Endowment Fund (RP 04-174)
-Big Data Knowledge Discovery project. We thank Fabio
-Ramos, Lachlan McCalman, Simon O'Callaghan, Alistair Reid and Trung Nguyen for 
+Big Data Knowledge Discovery project. We thank F.\ Ramos, L.\ McCalman, 
+S.\ O'Callaghan, A.\ Reid and T.\ Nguyen for 
 their helpful feedback.
 %
 NICTA is funded by the Australian Government through the Department of
