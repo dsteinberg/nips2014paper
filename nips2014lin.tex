@@ -456,7 +456,7 @@ marginal likelihood, $\Fengy$. We can use our approximation
 \eqref{eq:linearize} again,
 \begin{multline}
     \Fengy \approx - \frac{1}{2} \bigg[
-    D\log{2\pi} + \log\deter{\lcov} - \log\deter{\pocov\prcov\inv}
+    D\log{2\pi} + \log\deter{\lcov} - \log\deter{\pocov} + \log{\deter{\prcov}}
     + \brac{\prmean - \pomean}\transpose\prcov\inv
     \brac{\prmean - \pomean} \\
     + \brac{\obs - \Linmat\pomean - \intcpt}\transpose\lcov\inv
@@ -510,7 +510,6 @@ likelihood and prior,
     \lstate \sim \gaus{\mathbf{0}, \KERNL}.
     \label{eq:gplikeprior}
 \end{equation}
-
 Here $\obs \in \real{N}$ are the $N$ noisy observed values of the transformed
 latent function, $\nonlin{\lstate}$, and $\lstate \in \real{N}$ is the latent
 function we are interested in inferring. $\KERNL \in \real{N\times N}$ is the
@@ -535,12 +534,9 @@ our variational inference framework:
         - \frac{1}{2\lvar} \sum_{n=1}^N 
             \expec{q\lstates_n}{\brac{\obss_n - \nonlin{\lstates_n}}^2}.
 \end{equation*}
-As a consequence the linearization is one-dimensional -- per element of 
-$\lstate$,
-\begin{equation}
-    \nonlin{\lstates_n} \approx \Lins_n\lstates_n + \intcpts_n.
-\end{equation}
-Using this we can derive the approximate gradients,
+As a consequence the linearization is one-dimensional, that is
+$\nonlin{\lstates_n} \approx \Lins_n\lstates_n + \intcpts_n$.  Using this we
+can derive the approximate gradients,
 \begin{equation}
     \nabla_\pomean\Fengy \approx \frac{1}{\lvar}\Linmat\brac{\obs -
         \Linmat\pomean - \intcpt} - \KERNL\inv\pomean,
@@ -553,18 +549,18 @@ where $\Linmat = \diag{\sbrac{\Lins_1, \ldots, \Lins_N}}$ and $\Lvar =
 obtain $\pocov\inv = \KERNL\inv + \Linmat\Lvar\inv\Linmat$, that is, the
 inverse posterior covariance is just the prior inverse covariance, but with a
 modified diagonal. This means if we were to use this inverse parameterization
-of the Gaussian, which is also used in \cite{Opper2009}, we would
- only have to infer $2N$ parameters (instead of $N + N(N+1)/2$).
- We can obtain the iterative steps for $\pomean$ straightforwardly:
+of the Gaussian, which is also used in \cite{Opper2009}, we would only have to
+infer $2N$ parameters (instead of $N + N(N+1)/2$). We can obtain the iterative
+steps for $\pomean$ straightforwardly:
 \begin{equation}
     \pomean_{k+1} = \brac{1-\step}\pomean_k 
-        + \step\Kgain_k\brac{\obs - \intcpt_k}.
+        + \step\Kgain_k\brac{\obs - \intcpt_k}, 
+        \quad \text{where} \quad
+    \Kgain_k = \KERNL\Linmat_k\brac{\Lvar + \Linmat_k\KERNL\Linmat_k}\inv,
     \label{eq:pomeangp}
 \end{equation}
-Also as before,
+and also for the posterior covariance,
 \begin{equation}
-    \Kgain_k = \KERNL\Linmat_k\brac{\Lvar + \Linmat_k\KERNL\Linmat_k}\inv
-    \quad \text{and} \quad
     \pocov = \brac{\ident{N} - \Kgain\Linmat}\!\KERNL.
     \label{eq:pocovgp}
 \end{equation}
@@ -638,7 +634,7 @@ $\kfunc{\cdot}{\cdot|\khypers}$. The dominant computational cost in learning
 the parameters is the inversion in Equation \eqref{eq:pocovgp}, and so the
 computational complexity of the EGP and UGP is about the same as for the
 Laplace GP approximation.
-
+%
 To find the kernel hyperparameters (and $\lvar$), we use numerical techniques
 to find the gradients, $\partial\Fengy/\partial\khypers$, for both the extended
 and unscented algorithms, where $\Fengy$ is approximated as,
@@ -652,19 +648,19 @@ and unscented algorithms, where $\Fengy$ is approximated as,
     \bigg].
     \label{eq:fengygp}
 \end{equation}
-In particular we use derivative-free optimization methods (e.g. BOBYQA)
-from the NLopt library \cite{JohnsonNLOPT}, which we find fast and 
-effective. This also has the advantage of not requiring explicit knowledge of
+In particular we use derivative-free optimization methods (e.g. BOBYQA) from
+the NLopt library~\cite{JohnsonNLOPT}, which we find fast and effective. This
+also has the advantage of not requiring knowledge of
 $\partial\nonlin{\lstates}\!/\partial\lstates$ or higher order derivatives for
-any implicitly dependent gradient terms between $\lstate$ and $\khypers$. 
+any implicit gradient terms between $\lstate$ and~$\khypers$. 
 
 
 \section{Experiments}
 \label{sec:experiments}
 %
-In this section we evaluate the performance of the EGP and UGP on a 
-set of synthetic inversion problems and on the USPS handwritten digits binary 
-classification problem.
+%In this section we evaluate the performance of the EGP and UGP on a 
+%set of synthetic inversion problems and on the USPS handwritten digits binary 
+%classification problem.
 %
 %We have implemented both the EGP and UGP, as well as regular GP in python code
 %using NLopt~\cite{JohnsonNLOPT} for hyperparameter learning (BOBYQA) and scipy
@@ -742,11 +738,10 @@ classification problem.
     \caption[]{Example of learning the unscented Gaussian process (UGP) with a
         non-differentiable nonlinear function in (\subref{sub:sign}), where the
         predictive distribution of $\expec{q\lstates\test}{\obss\test}$ is
-        computed using Equation \eqref{eq:slpred}.  A typical trace from the
-        MAP objective function used to learn $\pomean$ from the nonlinear
-        function in (\subref{sub:sign}) is shown in (\subref{sub:mape}). The
-        optimization shown terminated because of a `divergence' condition. %,
-        which was typical for this example.}
+        computed using Equation \eqref{eq:slpred}. A typical trace from the
+        MAP objective function used to learn $\pomean$ from this nonlinear
+        function is shown in (\subref{sub:mape}). The optimization shown
+        terminated because of a `divergence' condition.}
 
     \label{fig:learnex}
 \end{figure}
@@ -772,17 +767,16 @@ $\lvar$ initialized at 1.0 and lower-bounded at 0.1 (and 0.01 for~$\lvar$).
 
 \autoref{tab:toy} shows results for multiple differentiable forward models,
 $\nonlin{\cdot}$. We test the EGP and UGP against the model in \cite{Opper2009}
--- which uses 10,000 samples to evaluate the one dimensional expectations. 
+-- which uses 10,000 samples to evaluate the one dimensional expectations.
 Although this number of samples may seem excessive for these simple problems,
-our goal here is to have a competitive baseline algorithm.  We also test
-against normal GP regression for a linear forward model ($\nonlin{\lstate} =
-\lstate$). In \autoref{fig:learnex} we show the results of the UGP using a
-forward model for which no derivative exists at the zero crossing points. Also
-shown is a typical objective function trace for learning the posterior mean
-which terminated on a `divergence' condition. We use quadrature for the
-predictions in observation space in \autoref{tab:toy} and the unscented
-transform for the predictions in \autoref{fig:learnex}. Interestingly, there is
-almost no difference in performance between the EGP and UGP, even though the
+our goal here is to have a competitive baseline algorithm. We also test against
+normal GP regression for a linear forward model ($\nonlin{\lstate} = \lstate$).
+In \autoref{fig:learnex} we show the results of the UGP using a forward model
+for which no derivative exists at the zero crossing points, as well as an
+objective function trace for learning the posterior mean. We use quadrature for
+the predictions in observation space in \autoref{tab:toy} and the unscented
+transform for the predictions in \autoref{fig:learnex}. Interestingly, there
+is almost no difference in performance between the EGP and UGP, even though the
 EGP has access to the derivatives of the forward models and the UGP does not.
 Both the UGP and EGP consistently outperformed \cite{Opper2009} in terms of
 NLPD and  SMSE, apart from the $\tanh$ experiment for inversion. In this
@@ -797,39 +791,36 @@ experiment, the UGP had the best performance but the EGP was outperformed by
 
 \subsection{Binary Handwritten Digit Classification}
 
-For this experiment we evaluate the EGP and UGP on a %more routine binary
-classification task, where we are just interested in a probabilistic prediction
-of class labels, and not the values of the latent function. We use the USPS
-handwritten digits dataset with the task of distinguishing between `3' and `5'
--- this is the same experiment from \cite[\S 3.7.3]{Rasmussen2006} A logistic
-sigmoid is used as the forward model, $\nonlin{\cdot}$, in our algorithms. We
-test against Laplace, expectation propagation and variational Bayes logistic GP
-classifiers (from the GPML Matlab toolbox \cite{Rasmussen2006}), a support
-vector machine (SVM) with a radial basis kernel function (and probabilistic
-outputs \cite{Platt1999}), and logistic regression (both from the scikit-learn
-python library \cite{scikit-learn}). A squared exponential kernel with
-amplitude $\sigma_\text{se}$ and length scale $l_\text{se}$ is used for the GPs
-in this experiment. We initialize these hyperparameters at $1.0$, and put a
-lower bound of $0.1$ on them. We initialize $\lvar$ and place a lower bound at
-$10^{-14}$ for the EGP and UGP (the optimized values are near or at this
-value). The hyperparameters for the SVM are learned using grid search with
-three-fold cross validation. 
-
+For this experiment we evaluate the EGP and UGP on a classification task. We
+are just interested in a probabilistic prediction of class labels, and not the
+values of the latent function. We use the USPS handwritten digits dataset with
+the task of distinguishing between `3' and `5' -- this is the same experiment
+from \cite[\S 3.7.3]{Rasmussen2006}. A logistic sigmoid is used as the forward
+model, $\nonlin{\cdot}$, in our algorithms. We test against Laplace,
+expectation propagation and variational Bayes logistic GP classifiers (from the
+GPML Matlab toolbox \cite{Rasmussen2006}), a support vector machine (SVM) with
+a radial basis kernel function (and probabilistic outputs \cite{Platt1999}),
+and logistic regression (both from the scikit-learn python library
+\cite{scikit-learn}). A squared exponential kernel with amplitude
+$\sigma_\text{se}$ and length scale $l_\text{se}$ is used for the GPs in this
+experiment. We initialize these hyperparameters at $1.0$, and put a lower bound
+of $0.1$ on them. We initialize $\lvar$ and place a lower bound at $10^{-14}$
+for the EGP and UGP (the optimized values are near or at this value). The
+hyperparameters for the SVM are learned using grid search with three-fold cross
+validation. 
+%
 %of a Bernoulli distribution, $-\frac{1}{N\test} \sum_n \log
 %\bernC{\obss_n\test}{\pi\test_n}$ where $\pi\test_n =
 %\expec{}{\prob{\obss\test_n = 1}}$ is the probabilistic output of the
-%classifier. 
- %as the percentage of incorrectly
-%misclassified labels in the test set (once the probabilistic outputs have been
-%thresholded at $0.5$). 
+%classifier.  as the percentage of incorrectly misclassified labels in the test
+%set (once the probabilistic outputs have been thresholded at $0.5$). 
 
 The results are summarized in \autoref{tab:class}, where we report the average
 Bernoulli negative log-probability (NLP), the error rate and the learned
 hyperparameter values for the GPs. Surprisingly, the EGP and UGP outperform the
 other classifiers on this dataset, despite the other classifiers being
 specifically formulated for this task. However, we find that our algorithms do
-get stuck in local minima for some initial values of $\lvar$, especially if it
-is set relatively large for this task~(e.g.~$1.0$).
+get stuck in local minima for some large initial values of $\lvar$, e.g.~$1.0$.
 
 \begin{table}[tb]
     \centering
