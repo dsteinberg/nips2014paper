@@ -300,7 +300,7 @@ posterior covariance by setting $\partial\Fengy/\partial\pocov = 0$ where,
     + \frac{1}{2} \frac{\partial}{\partial\pocov} \log \deter{\pocov}.
 \end{equation}
 Again we do not have an analytic solution, so we once more apply the
-approximation in \eqref{eq:linearize} to get,
+approximation \eqref{eq:linearize} to get,
 \begin{equation}
     \pocov = \sbrac{\prcov\inv + \Linmat\transpose\lcov\inv\Linmat}\inv
         %\approx - \brac{\nabla_\pomean \nabla_\pomean \Fengy}\inv.
@@ -314,7 +314,8 @@ approximation in \eqref{eq:linearize} to get,
 %\end{equation}
 where we have once more made use of the Woodbury identity and also the
 \emph{converged} values of $\Linmat$ and $\Kgain$. At this point it is also
-worth noting the relationship between \eqref{eq:pocov} and \eqref{eq:deldelF}.
+worth noting the relationship between Equations \eqref{eq:pocov} and
+\eqref{eq:deldelF}.
 
 
 \subsection{Taylor Series Linearization}
@@ -330,13 +331,13 @@ $\pomean_k$,
 where $\jacob{\pomean_k}$ is the Jacobian $\partial\nonlin{\pomean_k}\!/
 \partial\pomean_k$. By linearizing the function in this way we end up with a
 \emph{Gauss-Newton} optimization procedure for finding $\pomean$. Equating
-coefficients with Equation \eqref{eq:linearize}, 
+coefficients with \eqref{eq:linearize}, 
 \begin{equation}
     \Linmat = \jacob{\pomean_k}, \qquad \intcpt = \nonlin{\pomean_k} -
     \jacob{\pomean_k}\pomean_k,
 \end{equation}
 and then substituting these values into Equations
-\eqref{eq:pomean}-\eqref{eq:pocov} we get,
+\eqref{eq:pomean} -- \eqref{eq:pocov} we get,
 \begin{align}
     \pomean_{k+1} &= \brac{1-\step}\pomean_k + \step\prmean 
         + \step\Kgain_k\brac{\obs - \nonlin{\pomean_k} 
@@ -413,7 +414,7 @@ This is simply linear least-squares and has the solution \cite{Geist2010}:
     \Linmat = \xcov \pocov\inv, \qquad
     \intcpt = \bar\obs - \Linmat\pomean.
 \end{equation}
-Substituting $\intcpt$ back into \eqref{eq:pomean}, we obtain, 
+Substituting $\intcpt$ back into Equation \eqref{eq:pomean}, we obtain, 
 \begin{equation}
     \pomean_{k+1} = \brac{1-\step}\pomean_k + \step\prmean 
         + \step\Kgain_k\brac{\obs - \bar\obs_k 
@@ -423,9 +424,9 @@ Substituting $\intcpt$ back into \eqref{eq:pomean}, we obtain,
 
 Here $\Kgain_k$, $\Linmat_k$ and $\bar\obs_k$ have been evaluated using the
 statistics from the $k$th iteration. This implies that the posterior
-covariance, $\pocov_k$, is now estimated at every iteration of Equation
+covariance, $\pocov_k$, is now estimated at every iteration of
 \eqref{eq:pomean_sl} since we use it to form $\Linmat_k$ and $\intcpt_k$.
-$\Kgain_k$ and $\pocov_k$ have the same form as \eqref{eq:kgain} and
+$\Kgain_k$ and $\pocov_k$ have the same form as Equations \eqref{eq:kgain} and
 \eqref{eq:pocov} respectively. 
 
 \begin{remark}
@@ -436,9 +437,9 @@ statistically linearized variational framework.
 
 Equations \eqref{eq:pomean_sl} and \eqref{eq:pocov} are equivalent to the
 equations for a single update of the iterated sigma-point Kalman filter (iSPKF)
-for $\step = 1$, except for the term $\bar\obs_k$ appearing in
+for $\step = 1$, except for the term $\bar\obs_k$ appearing in Equation
 \eqref{eq:pomean_sl} as opposed to $\nonlin{\pomean_k}$. The main difference is
-that we have derived our updates from  variational principles.
+that we have derived our updates from variational principles.
 %Furthermore, we
 %have found experimentally that the updates in Equations \eqref{eq:pomean_sl}
 %and \eqref{eq:pocov} provide better results consistently across a wide variety
@@ -451,7 +452,7 @@ filter \cite{Julier2004}, and statistically linearized recursive least squares
 
 \subsection{Optimizing the Posterior}
 
-Because of the expectations involving an arbitrary function in
+Because of the expectations involving an arbitrary function in Equation
 \eqref{eq:qlike}, no analytical solution exists for the lower bound on the
 marginal likelihood, $\Fengy$. We can use our approximation
 \eqref{eq:linearize} again,
@@ -465,8 +466,9 @@ marginal likelihood, $\Fengy$. We can use our approximation
         \bigg].
     \label{eq:approxfengy}
 \end{multline}
-Here the trace term from \eqref{eq:qkl} has cancelled with a trace term from
-the expected likelihood, $\trace{\Linmat\transpose\lcov\inv\Linmat\pocov} = D -
+Here the trace term from Equation \eqref{eq:qkl} has cancelled with a trace
+term from the expected likelihood,
+$\trace{\Linmat\transpose\lcov\inv\Linmat\pocov} = D -
 \trace{\prcov\inv\pocov}$ once we have linearized $\nonlin{\cdot}$ and
 substituted \eqref{eq:pocov}. Unfortunately this approximation is no longer a
 lower bound on the log marginal likelihood in general. In practice we only
@@ -578,15 +580,13 @@ The values for $\Lins_n$ and $\intcpts_n$ for the linearization methods are,
         \intcpts_n &= \bar\obss_n - \Lins_n\pomeans_n.
 \end{alignat}
 $\pocovs_{nn}$ is the $n$th diagonal element of $\pocov$ and
-$\xcovs_{\pomeans\obss,n}$ and $\bar\obss_n$ are calculated the same way as
+$\xcovs_{\pomeans\obss,n}$ and $\bar\obss_n$ are scalar versions of Equations
 \eqref{eq:spoint0} -- \eqref{eq:slweights} where the sigma points for each
 observation, $n$, are $\Sfunc_{n} = \big\{\pomeans_n,~\pomeans_n +
 \sqrt{\brac{1 + \scoef}\pocovs_{nn}},~\pomeans_n - \sqrt{\brac{1 +
         \scoef}\pocovs_{nn}}\big\}$. We refer to the Taylor series linearized
 GP as the \emph{extended} GP (EGP), and the statistically linearized GP as the
 \emph{unscented} GP (UGP). 
-% to be consistent with the literature on the EKF and
-%UKF.
 
 
 \subsection{Prediction}
