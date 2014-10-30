@@ -815,8 +815,9 @@ The results are summarized in \autoref{tab:class}, where we report the average
 Bernoulli negative log-probability (NLP), the error rate and the learned
 hyperparameter values for the GPs. Surprisingly, the UGP outperforms the other
 classifiers on this dataset, despite the other classifiers being specifically
-formulated for this task. However, we find that our algorithms do get stuck in
-local minima for some large initial values of $\lvar$, e.g.~$1.0$.
+formulated for this task. 
+%However, we find that our algorithms do get stuck in
+%local minima for some large initial values of $\lvar$, e.g.~$1.0$.
 
 \begin{table}[tb]
     \centering
@@ -868,10 +869,11 @@ concerned with inferring an inverse function $g^{-1}(\cdot)$ so the transformed
 
 As future work we would like to create multi-task EGPs and UGPs. This would
 extend their applicability to inversion problems where the forward models have
-multiple inputs and outputs, such as inverse kinematics. We also wish to
-further investigate hyperparameter learning to ascertain if there are other
-effective methods of learning the hyperparameters that do not rely upon
-derivatives of the forward model. 
+multiple inputs and outputs, such as inverse kinematics. 
+%We also wish to
+%further investigate hyperparameter learning to ascertain if there are other
+%effective methods of learning the hyperparameters that do not rely upon
+%derivatives of the forward model. 
 
 \subsubsection*{Acknowledgments}
 {
