@@ -160,9 +160,9 @@ non-conjugate.
 %        \gausC{\lstate}{\prmean, \prcov} d\lstate,
 %    \label{eq:marglike}
 %\end{equation}
-This also makes the posterior $\probC{\lstate}{\obs}$ intractable to evaluate,
-and so we choose to approximate it with variational inference 
-\cite{Jordan1999}.
+This also makes the posterior $\probC{\lstate}{\obs}$, which is the solution to
+the inverse problem, intractable to evaluate.  So, we choose to approximate the
+posterior with variational inference \cite{Jordan1999}.
 
 
 \subsection{Variational Approximation}
@@ -197,13 +197,13 @@ we can evaluate the expectation and KL term in~\eqref{eq:fengy},
         =& ~\frac{1}{2} \bigg[\trace{\prcov\inv\pocov}
         + \brac{\prmean - \pomean}\transpose\prcov\inv
         \brac{\prmean - \pomean} 
-        - \log \deter{\pocov\prcov\inv}
+        - \log\deter{\pocov} + \log\deter{\prcov}
         - D\bigg] \label{eq:qkl}.
 \end{align}
 where the expectation involving $\nonlin{\cdot}$ may be intractable. One method
 of dealing with these expectations is presented in \cite{Opper2009} by assuming
 that the likelihood factorizes across observations. Here we provide two
-alternatives based on linearizing $\nonlin{\cdot}$ about  the posterior mean
+alternatives based on linearizing $\nonlin{\cdot}$ about  the posterior mean,
 $\pomean$.
 
 
@@ -219,8 +219,8 @@ To find the optimal posterior mean, $\pomean$, we need to find the derivative,
             \brac{\obs - \nonlin{\lstate}}},
 \end{equation}
 where all terms in $\Fengy$ independent of $\pomean$ have been dropped, and we
-have placed the quadratic and trace terms from the KL component,
-\eqref{eq:qkl}, back into the expectation.
+have placed the quadratic and trace terms from the KL component in Equation
+\eqref{eq:qkl} back into the expectation.
 We can represent this as an augmented Gaussian,
 \begin{equation}
     \frac{\partial\Fengy}{\partial\pomean} = -\frac{1}{2}
@@ -255,9 +255,9 @@ with an initial guess, $\pomean_0$, then proceeds with the iterations,
     \step\brac{\nabla_\pomean\nabla_\pomean\Fengy}\inv \nabla_\pomean\Fengy,
     \label{eq:newton}
 \end{equation}
-for some step length, $\step \in (0, 1]$. Unfortunately, evaluating
+for some step length, $\step \in (0, 1]$. Though evaluating
 $\nabla_\pomean\Fengy$ is still intractable because of the nonlinear term
-within the expectation in \eqref{eq:augsys}. If we linearize
+within the expectation in Equation \eqref{eq:augsys}. If we linearize
 $\nonlin{\lstate}$, we can evaluate the expectation,
 \begin{equation}
     \nonlin{\lstate} \approx \Linmat\lstate + \intcpt,
@@ -312,9 +312,9 @@ approximation in \eqref{eq:linearize} to get,
     %\pocov = \brac{\ident{D} - \Kgain\Linmat}\!\prcov
     %\label{eq:pocov}
 %\end{equation}
-where we have made use of the Woodbury identity, and the \emph{converged}
-values of $\Linmat$ and $\Kgain$ are used. At this point it is also worth
-noting the relationship between \eqref{eq:pocov} and \eqref{eq:deldelF}.
+where we have once more made use of the Woodbury identity and also the
+\emph{converged} values of $\Linmat$ and $\Kgain$. At this point it is also
+worth noting the relationship between \eqref{eq:pocov} and \eqref{eq:deldelF}.
 
 
 \subsection{Taylor Series Linearization}
@@ -335,21 +335,18 @@ coefficients with Equation \eqref{eq:linearize},
     \Linmat = \jacob{\pomean_k}, \qquad \intcpt = \nonlin{\pomean_k} -
     \jacob{\pomean_k}\pomean_k,
 \end{equation}
-and then substituting these values into \eqref{eq:pomean} we get,
-\begin{equation}
-    \pomean_{k+1} = \brac{1-\step}\pomean_k + \step\prmean 
+and then substituting these values into Equations
+\eqref{eq:pomean}-\eqref{eq:pocov} we get,
+\begin{align}
+    \pomean_{k+1} &= \brac{1-\step}\pomean_k + \step\prmean 
         + \step\Kgain_k\brac{\obs - \nonlin{\pomean_k} 
         + \jacob{\pomean_k}\brac{\pomean_k - \prmean}},
-    \label{eq:pomean_ekf}
-\end{equation}
-where,
-\begin{equation}
-    \Kgain_k = \prcov\jacob{\pomean_k}\transpose\brac{\lcov +
-        \jacob{\pomean_k}\prcov\jacob{\pomean_k}\transpose}\inv
-    \quad\text{and}\quad
-    \pocov = \brac{\ident{D} - \Kgain\jacob{\pomean}}\!\prcov.
+    \label{eq:pomean_ekf} \\
+    \Kgain_k &= \prcov\jacob{\pomean_k}\transpose\brac{\lcov +
+        \jacob{\pomean_k}\prcov\jacob{\pomean_k}\transpose}\inv, \\
+    \pocov &= \brac{\ident{D} - \Kgain\jacob{\pomean}}\!\prcov.
     \label{eq:pocov_ekf}
-\end{equation}
+\end{align}
 Here $\jacob{\pomean}$ and $\Kgain$ without the $k$ subscript are constructed
 about the converged posterior, $\pomean$. 
 %
@@ -360,7 +357,7 @@ using the Taylor series linearization of the non-linear forward model
 $g(\cdot)$ around the posterior mean.
 \end{remark}
 Having derived the updates in our variational framework, the proof of this is
-trivial by making  $\step =1$, and using \eqref{eq:pomean_ekf} --
+trivial by making  $\step =1$, and using Equations \eqref{eq:pomean_ekf} --
 \eqref{eq:pocov_ekf} as the iterative updates.
 
 
@@ -471,7 +468,7 @@ marginal likelihood, $\Fengy$. We can use our approximation
 Here the trace term from \eqref{eq:qkl} has cancelled with a trace term from
 the expected likelihood, $\trace{\Linmat\transpose\lcov\inv\Linmat\pocov} = D -
 \trace{\prcov\inv\pocov}$ once we have linearized $\nonlin{\cdot}$ and
-substituted \eqref{eq:pocovi}. Unfortunately this approximation is no longer a
+substituted \eqref{eq:pocov}. Unfortunately this approximation is no longer a
 lower bound on the log marginal likelihood in general. In practice we only
 calculate this approximation $\Fengy$ if we need to optimize some model
 hyperparameters, like for a Gaussian process as described in
@@ -810,7 +807,7 @@ validation.
 %\expec{}{\prob{\obss\test_n = 1}}$ is the probabilistic output of the
 %classifier.  as the percentage of incorrectly misclassified labels in the test
 %set (once the probabilistic outputs have been thresholded at $0.5$). 
-%
+
 The results are summarized in \autoref{tab:class}, where we report the average
 Bernoulli negative log-probability (NLP), the error rate and the learned
 hyperparameter values for the GPs. Surprisingly, the UGP outperforms the other
@@ -869,7 +866,7 @@ concerned with inferring an inverse function $g^{-1}(\cdot)$ so the transformed
 
 As future work we would like to create multi-task EGPs and UGPs. This would
 extend their applicability to inversion problems where the forward models have
-multiple inputs and outputs, such as inverse kinematics. 
+multiple inputs and outputs, such as inverse kinematics for dynamical systems.
 %We also wish to
 %further investigate hyperparameter learning to ascertain if there are other
 %effective methods of learning the hyperparameters that do not rely upon
