@@ -636,20 +636,23 @@ the parameters is the inversion in Equation \eqref{eq:pomeangp}, and so the
 computational complexity of the EGP and UGP is about the same as for the
 Laplace GP approximation.
 %
-To find the kernel hyperparameters (and $\lvar$), we use numerical techniques
-to find the gradients, $\partial\Fengy/\partial\khypers$, for both the extended
-and unscented algorithms, where $\Fengy$ is approximated as,
+To learn the kernel hyperparameters and $\lvar$ we use numerical techniques
+to find the gradients, $\partial\Fengy/\partial\khypers$, for both the
+algorithms, where $\Fengy$ is approximated,
 \begin{equation}
-    \Fengy \approx - \frac{1}{2} \bigg[
-    N\log{2\pi\lvar} - \log\deter{\pocov\KERNL\inv}
+    \Fengy \approx - \frac{1}{2} \left[
+    N\!\log{2\pi\lvar}
+    %- \log\deter{\pocov\KERNL\inv}
+    - \log\deter{\pocov}
+    + \log\deter{\KERNL}
     + \pomean\transpose\KERNL\inv \pomean
     + \frac{1}{\lvar}
         \brac{\obs - \Linmat\pomean - \intcpt}\transpose\!
         \brac{\obs - \Linmat\pomean - \intcpt}
-    \bigg].
+    \right].
     \label{eq:fengygp}
 \end{equation}
-In particular we use derivative-free optimization methods (e.g. BOBYQA) from
+Specifically we use derivative-free optimization methods (e.g. BOBYQA) from
 the NLopt library~\cite{JohnsonNLOPT}, which we find fast and effective. This
 also has the advantage of not requiring knowledge of
 $\partial\nonlin{\lstates}\!/\partial\lstates$ or higher order derivatives for
