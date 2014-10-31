@@ -11,6 +11,7 @@
 %            maxbibnames=20]{biblatex}
 \usepackage{graphicx}
 \usepackage{caption,subcaption}
+\usepackage[T1]{fontenc}
 
 %\usepackage{natbib} % EVB
 
@@ -727,13 +728,13 @@ any implicit gradient dependencies between $\lstate$ and~$\khypers$.
 %
 \begin{figure}[tb]
     \begin{subfigure}[b]{0.5\linewidth}
-        \includegraphics[width=\linewidth]{fig/signdemo}
+        \includegraphics[width=\linewidth]{fig/signdemo.png}
         \caption{$\nonlin{\lstate} = 2\times\text{sign}\!\brac{\lstate}
             + \lstate^3$}
         \label{sub:sign}
     \end{subfigure}
     \begin{subfigure}[b]{0.5\linewidth}
-        \includegraphics[width=\linewidth]{fig/trace}
+        \includegraphics[width=\linewidth]{fig/trace.png}
         \caption{MAP trace from learning $\pomean$}
         \label{sub:mape}
         \vspace{0.5mm}
