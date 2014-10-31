@@ -369,10 +369,10 @@ Another method for linearizing $\nonlin{\cdot}$ is \emph{statistical
 best fit to $\nonlin{\cdot}$ about a point. The advantage of this method is
 that it does not require derivatives
 $\partial\nonlin{\lstate}\!/\partial\lstate$. To obtain the fit, multiple
-observations of the forward model $\nonlin{\cdot}$ at different input points
-are required. Hence, the key question is where to evaluate our forward model so
-as to obtain representative samples to carry out the linearization.  One method
-of obtaining these points is the unscented transform \cite{Julier2004}, which
+observations of the forward model output for different input points are
+required. Hence, the key question is where to evaluate our forward model so as
+to obtain representative samples to carry out the linearization.  One method of
+obtaining these points is the unscented transform \cite{Julier2004}, which
 defines $2D+1$ `sigma' points,
 \begin{align}
     \Sfunc_0 &= \pomean,
@@ -384,12 +384,12 @@ defines $2D+1$ `sigma' points,
         \label{eq:spointi} \\
     \Sobs_i &= \nonlin{\Sfunc_i} \text{,}
 \end{align}
-for a free parameter $\scoef$. 
-Here $(\sqrt{\cdot})_i$ refers to columns of the matrix square root, we follow
-\cite{Julier2004} and use the Cholesky decomposition. Unlike the usual
-unscented transform, which uses the prior to create the sigma points, here we
-have used the posterior because of the expectation in \eqref{eq:augsys}. Using
-these points we can define the following statistics,
+for a free parameter $\scoef$.  Here $(\sqrt{\cdot})_i$ refers to columns of
+the matrix square root, we follow \cite{Julier2004} and use the Cholesky
+decomposition. Unlike the usual unscented transform, which uses the prior to
+create the sigma points, here we have used the posterior because of the
+expectation in Equation \eqref{eq:augsys}. Using these points we can define the
+following statistics,
 \begin{alignat}{2}
     \bar\obs &= \sum^{2D}_{i=0} \Sw_i \Sobs_i,
     \qquad
@@ -404,7 +404,8 @@ these points we can define the following statistics,
 According to \cite{Julier2004} various settings
 of $\scoef$ can capture information about the higher order moments of the
 distribution of $\obs$; or setting $\scoef = 0.5$ yields uniform weights.
-Therefore, the objective of statistical linearization is,
+To find the linearization coefficients statistical linearization solves the
+following objective,
 \begin{equation}
     \argmin_{\Linmat, \intcpt} \sum^{2D}_{i=0} 
         \lnorm{2}{\Sobs_i - \brac{\Linmat\Sfunc_i + \intcpt}}^2.
@@ -469,7 +470,7 @@ marginal likelihood, $\Fengy$. We can use our approximation
 Here the trace term from Equation \eqref{eq:qkl} has cancelled with a trace
 term from the expected likelihood,
 $\trace{\Linmat\transpose\lcov\inv\Linmat\pocov} = D -
-\trace{\prcov\inv\pocov}$ once we have linearized $\nonlin{\cdot}$ and
+\trace{\prcov\inv\pocov}$, once we have linearized $\nonlin{\cdot}$ and
 substituted \eqref{eq:pocov}. Unfortunately this approximation is no longer a
 lower bound on the log marginal likelihood in general. In practice we only
 calculate this approximation $\Fengy$ if we need to optimize some model
@@ -485,11 +486,12 @@ dependent on $\pomean$ in the Taylor series linearization case are,
     \label{eq:MAP}
 \end{equation}
 This is also the \emph{maximum a-posteriori} objective. A global convergence
-proof exists for this objective when optimized by a Gauss-Newton procedure
-under some conditions on the Jacobians, see \cite[p255]{Nocedal2006}.  No such
-guarantees exist for statistical linearization, though monitoring
-\eqref{eq:MAP} works well in practice (see the experiment in
-\autoref{sec:exptoy}). 
+proof exists for this objective when optimized by a Gauss-Newton procedure,
+like our Taylor series linearization algorithm,  under some conditions on the
+Jacobians, see \cite[p255]{Nocedal2006}. No such guarantees exist for
+statistical linearization, though monitoring \eqref{eq:MAP} works well in
+practice (see the experiment in \autoref{sec:exptoy}). 
+
 A line search could be used to select an optimal value for the step length,
 $\step$ in Equation \eqref{eq:pomean}. However, we find that setting $\step=1$,
 and then successively multiplying $\step$ by some number in $\brac{0, 1}$ until
@@ -537,7 +539,7 @@ our variational inference framework:
         - \frac{1}{2\lvar} \sum_{n=1}^N 
             \expec{q\lstates_n}{\brac{\obss_n - \nonlin{\lstates_n}}^2}.
 \end{equation*}
-As a consequence the linearization is one-dimensional, that is
+As a consequence, the linearization is one-dimensional, that is
 $\nonlin{\lstates_n} \approx \Lins_n\lstates_n + \intcpts_n$.  Using this we
 can derive the approximate gradients,
 \begin{equation}
@@ -562,7 +564,7 @@ steps for $\pomean$ straightforwardly:
     \Kgain_k = \KERNL\Linmat_k\brac{\Lvar + \Linmat_k\KERNL\Linmat_k}\inv,
     \label{eq:pomeangp}
 \end{equation}
-and also for the posterior covariance,
+and also an expression for posterior covariance,
 \begin{equation}
     \pocov = \brac{\ident{N} - \Kgain\Linmat}\!\KERNL.
     \label{eq:pocovgp}
@@ -579,9 +581,9 @@ The values for $\Lins_n$ and $\intcpts_n$ for the linearization methods are,
         \quad
         \intcpts_n &= \bar\obss_n - \Lins_n\pomeans_n.
 \end{alignat}
-$\pocovs_{nn}$ is the $n$th diagonal element of $\pocov$ and
+$\pocovs_{nn}$ is the $n$th diagonal element of $\pocov$, and
 $\xcovs_{\pomeans\obss,n}$ and $\bar\obss_n$ are scalar versions of Equations
-\eqref{eq:spoint0} -- \eqref{eq:slweights} where the sigma points for each
+\eqref{eq:spoint0} -- \eqref{eq:slweights}. The sigma points for each
 observation, $n$, are $\Sfunc_{n} = \big\{\pomeans_n,~\pomeans_n +
 \sqrt{\brac{1 + \scoef}\pocovs_{nn}},~\pomeans_n - \sqrt{\brac{1 +
         \scoef}\pocovs_{nn}}\big\}$. We refer to the Taylor series linearized
@@ -591,17 +593,18 @@ GP as the \emph{extended} GP (EGP), and the statistically linearized GP as the
 
 \subsection{Prediction}
 
-To find the distribution for a test point, $\lstates\test$, 
-we only need to combine our approximate Gaussian posterior with 
-our GP prior. This
-gives $\lstates\test \sim \gaus{\pomeans\test, \pocovs\test}$ where,
+The predictive distribution of a latent value, $\lstates\test$, given a query
+point, $\inobs\test$, requires the marginalization $\int
+\probC{\lstates\test}{\lstate}\qrobC{\lstate}{\pomean, \pocov} d\lstate$, where
+$\probC{\lstates\test}{\lstate}$ is a regular predictive GP. This gives
+$\lstates\test \sim \gaus{\pomeans\test, \pocovs\test}$, and,
 \begin{equation}
     \pomeans\test = \Kernl\testT\KERNL\inv\pomean,
     \qquad
     \pocovs\test = \kernl\ttest - \Kernl\testT\KERNL\inv\sbrac{\ident{N} -
         \pocov\KERNL\inv}\Kernl\test,
 \end{equation}
-and $\kernl\ttest = \kernl\!\brac{\inobs\test, \inobs\test}$ and $\Kernl\test
+where $\kernl\ttest = \kernl\!\brac{\inobs\test, \inobs\test}$ and $\Kernl\test
 = \sbrac{\kernl\!\brac{\inobs_1, \inobs\test}, \ldots, \kernl\!\brac{\inobs_N,
         \inobs\test}}\transpose$. We can also find the predicted observations,
 $\bar\obss\test$ by evaluating the one-dimensional integral,
