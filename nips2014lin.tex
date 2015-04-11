@@ -620,7 +620,7 @@ Alternatively, if we were to use the UGP we can use another
 application of the unscented transform to approximate the predictive
 distribution $\obss\test \sim \gaus{\bar\obss\test, \lvar_{\obss\test}}$ where,
 \begin{equation}
-    \bar\obss\test = \sum^2_{i=0} \Sw_i \Sfunc_i\test, \qquad 
+    \bar\obss\test = \sum^2_{i=0} \Sw_i \Sobs_i\test, \qquad 
     \lvar_{\obss\test} = \sum^2_{i=0} \Sw_i \brac{\Sobs_i\test -
         \bar\obss\test}^2.
     \label{eq:slpred}
